@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear Servicio - Lavacar</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- FontAwesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+  <style>
+    .step { max-width: 700px; margin: auto; }
+    .step-indicator span {
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #dee2e6;
+      font-weight: bold;
+    }
+    .step-indicator .active {
+      background: #0d6efd;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body class="bg-light">
+
+<div class="container py-5">
+
+  <!-- Indicador de pasos -->
+  <div class="text-center mb-4 step-indicator">
+    <span id="indicator-1" class="active">1</span> —
+    <span id="indicator-2">2</span> —
+    <span id="indicator-3">3</span>
+  </div>
+
+  <!-- PASO 1 -->
+  <div class="card step step-1">
+    <div class="card-header fw-bold">
+      Paso 1: Información del Servicio
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label">Nombre del servicio</label>
+        <input type="text" id="serviceName" class="form-control" placeholder="Ej. Lavado Interior">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Descripción</label>
+        <textarea id="serviceDesc" class="form-control" rows="3"
+          placeholder="Limpieza de asientos, alfombras, tablero..."></textarea>
+      </div>
+
+      <div class="text-end">
+        <button class="btn btn-primary" onclick="goStep(2)">
+          Siguiente <i class="fas fa-arrow-right ms-1"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 2 -->
+  <div class="card step step-2 d-none">
+    <div class="card-header fw-bold">
+      Paso 2: Precios por Categoría
+    </div>
+    <div class="card-body table-responsive">
+
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Categoría</th>
+            <th class="text-end">Precio</th>
+          </tr>
+        </thead>
+        <tbody id="priceTable">
+          <!-- JS -->
+        </tbody>
+      </table>
+
+      <div class="d-flex justify-content-between">
+        <button class="btn btn-outline-secondary" onclick="goStep(1)">
+          <i class="fas fa-arrow-left me-1"></i> Volver
+        </button>
+        <button class="btn btn-primary" onclick="goStep(3)">
+          Siguiente <i class="fas fa-arrow-right ms-1"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 3 -->
+  <div class="card step step-3 d-none">
+    <div class="card-header fw-bold">
+      Paso 3: Confirmación
+    </div>
+    <div class="card-body">
+      <p><strong>Servicio:</strong> <span id="confirmName"></span></p>
+      <p><strong>Descripción:</strong> <span id="confirmDesc"></span></p>
+
+      <ul class="list-group mb-3" id="confirmPrices">
+        <!-- JS -->
+      </ul>
+
+      <div class="d-flex justify-content-between">
+        <button class="btn btn-outline-secondary" onclick="goStep(2)">
+          <i class="fas fa-arrow-left me-1"></i> Volver
+        </button>
+        <button class="btn btn-success" onclick="saveService()">
+          <i class="fas fa-save me-1"></i> Guardar Servicio
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const categories = ["Sedan", "SUV", "Pickup", "Minibus"];
+const prices = {};
+
+document.addEventListener("DOMContentLoaded", () => {
+  const tbody = document.getElementById("priceTable");
+  categories.forEach(cat => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${cat}</td>
+        <td class="text-end">
+          <input type="number" min="0" class="form-control text-end price-input"
+            data-category="${cat}" placeholder="0.00">
+        </td>
+      </tr>
+    `;
+  });
+});
+
+function goStep(step) {
+  if (step === 2 && !document.getElementById("serviceName").value.trim()) {
+    alert("Ingrese el nombre del servicio");
+    return;
+  }
+
+  if (step === 3) {
+    const inputs = document.querySelectorAll(".price-input");
+    let valid = false;
+
+    inputs.forEach(i => {
+      const val = parseFloat(i.value);
+      if (val > 0) {
+        prices[i.dataset.category] = val;
+        valid = true;
+      }
+    });
+
+    if (!valid) {
+      alert("Ingrese al menos un precio");
+      return;
+    }
+
+    buildConfirmation();
+  }
+
+  document.querySelectorAll(".step").forEach(s => s.classList.add("d-none"));
+  document.querySelector(".step-" + step).classList.remove("d-none");
+
+  document.querySelectorAll(".step-indicator span").forEach(s => s.classList.remove("active"));
+  document.getElementById("indicator-" + step).classList.add("active");
+}
+
+function buildConfirmation() {
+  document.getElementById("confirmName").textContent =
+    document.getElementById("serviceName").value;
+
+  document.getElementById("confirmDesc").textContent =
+    document.getElementById("serviceDesc").value;
+
+  const ul = document.getElementById("confirmPrices");
+  ul.innerHTML = "";
+
+  Object.entries(prices).forEach(([cat, price]) => {
+    ul.innerHTML += `
+      <li class="list-group-item d-flex justify-content-between">
+        ${cat}
+        <span>$${price.toFixed(2)}</span>
+      </li>
+    `;
+  });
+}
+
+function saveService() {
+  const data = {
+    name: document.getElementById("serviceName").value,
+    description: document.getElementById("serviceDesc").value,
+    prices: prices
+  };
+
+  console.log("Datos a guardar:", data);
+  alert("Servicio guardado (ver consola)");
+
+  // Aquí luego haces fetch/AJAX a PHP
+}
+</script>
+
+</body>
+</html>
