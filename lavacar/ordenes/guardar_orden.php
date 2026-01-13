@@ -189,4 +189,3 @@ try {
         'message' => $e->getMessage()
     ]);
 }
-?>

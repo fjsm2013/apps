@@ -468,7 +468,7 @@
         border-color: var(--frosh-gray-200);
     }
 
-    /* Active page indicator */
+    /* Active page indicator - Desktop (gris como antes) */
     .nav-btn.active {
         color: white;
         background-color: var(--frosh-gray-700);
@@ -477,6 +477,17 @@
 
     .nav-btn.active:hover {
         background-color: var(--frosh-gray-600);
+    }
+
+    /* Active dropdown items - Mobile (azul FROSH) */
+    .dropdown-item.active {
+        color: white;
+        background-color: var(--report-info, #274AB3);
+    }
+
+    .dropdown-item.active:hover {
+        background-color: #1e3a8a;
+        color: white;
     }
 
     /* ---------- DASHBOARD ---------- */
@@ -1010,9 +1021,9 @@
 
 <!-- Floating Action Button for Mobile Quick Actions -->
 <div class="fab-container d-md-none">
-    <button class="fab-main" id="fabMain" title="Acciones rápidas">
+    <!--<button class="fab-main" id="fabMain" title="Acciones rápidas">
         <i class="fa-solid fa-plus"></i>
-    </button>
+    </button>-->
     <div class="fab-menu" id="fabMenu">
         <a href="<?= LAVACAR_BASE_URL ?>/dashboard.php" class="fab-item" title="Dashboard">
             <i class="fa-solid fa-home"></i>
@@ -1121,13 +1132,91 @@
 <script>
 // Mark active navigation item
 document.addEventListener('DOMContentLoaded', function() {
-    const currentPath = window.location.pathname;
-    const navButtons = document.querySelectorAll('.nav-btn, .dropdown-item');
+    // Esperar un poco para asegurar que el DOM esté completamente cargado
+    setTimeout(function() {
+        const currentPath = window.location.pathname;
+        const navButtons = document.querySelectorAll('.nav-btn, .dropdown-item');
+        
+        // Debug: mostrar la ruta actual
+        console.log('Current path:', currentPath);
+        
+        // Primero remover TODAS las clases active de todos los elementos de navegación
+        navButtons.forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Determinar qué sección está activa basado en la ruta actual
+        let targetHref = '';
+        
+        if (currentPath.includes('/ordenes/')) {
+            targetHref = '/ordenes/index.php';
+            console.log('Detected: ordenes section');
+        } else if (currentPath.includes('/reportes/ordenes-activas.php')) {
+            targetHref = '/reportes/ordenes-activas.php';
+            console.log('Detected: ordenes-activas section');
+        } else if (currentPath.includes('/reportes/')) {
+            targetHref = '/reportes/index.php';
+            console.log('Detected: reportes section');
+        } else if (currentPath.includes('/administracion/')) {
+            targetHref = '/administracion/index.php';
+            console.log('Detected: administracion section');
+        } else if (currentPath.includes('/dashboard.php') || currentPath.endsWith('/lavacar/') || currentPath.endsWith('/lavacar')) {
+            targetHref = '/dashboard.php';
+            console.log('Detected: dashboard section');
+        }
+        
+        // Solo activar el elemento que coincida exactamente con el targetHref
+        if (targetHref) {
+            navButtons.forEach(btn => {
+                const href = btn.getAttribute('href');
+                if (href && href.includes(targetHref)) {
+                    btn.classList.add('active');
+                    console.log('Activated:', href);
+                }
+            });
+        }
+    }, 100); // Esperar 100ms para asegurar que todo esté cargado
     
-    navButtons.forEach(btn => {
-        const href = btn.getAttribute('href');
-        if (href && currentPath.includes(href.split('/').pop())) {
-            btn.classList.add('active');
+    // Función adicional para limpiar navegación activa después de Bootstrap
+    function cleanActiveNavigation() {
+        const currentPath = window.location.pathname;
+        const navButtons = document.querySelectorAll('.nav-btn, .dropdown-item');
+        
+        // Remover todas las clases active
+        navButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Determinar el href objetivo
+        let targetHref = '';
+        if (currentPath.includes('/ordenes/')) {
+            targetHref = '/ordenes/index.php';
+        } else if (currentPath.includes('/reportes/ordenes-activas.php')) {
+            targetHref = '/reportes/ordenes-activas.php';
+        } else if (currentPath.includes('/reportes/')) {
+            targetHref = '/reportes/index.php';
+        } else if (currentPath.includes('/administracion/')) {
+            targetHref = '/administracion/index.php';
+        } else if (currentPath.includes('/dashboard.php') || currentPath.endsWith('/lavacar/') || currentPath.endsWith('/lavacar')) {
+            targetHref = '/dashboard.php';
+        }
+        
+        // Activar solo el correcto
+        if (targetHref) {
+            navButtons.forEach(btn => {
+                const href = btn.getAttribute('href');
+                if (href && href.includes(targetHref)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+    }
+    
+    // Ejecutar limpieza adicional después de un tiempo más largo
+    setTimeout(cleanActiveNavigation, 500);
+    
+    // También ejecutar cuando se abra el dropdown móvil
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.mobile-nav-btn')) {
+            setTimeout(cleanActiveNavigation, 50);
         }
     });
 

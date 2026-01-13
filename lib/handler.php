@@ -130,8 +130,8 @@ function MakeBindMap($aParms)
 function EnviarEmail($subject, $message, $row, $emailAttachment = '')
 {
     global $smtp_ses_host, $smtp_access_key, $smtp_secret_key, $smtp_se_email;
-    require_once 'c:/comun/phpmailer/vendor/autoload.php';
-    require_once("C:/comun/smtp.php");
+    require_once (APP_ROOT.'/lib/phpmailer/vendor/autoload.php');
+    require_once(APP_ROOT."/lib/smtp.php");
 
     $mail = new \PHPMailer\PHPMailer\PHPMailer(true); // the true param means it will throw exceptions on errors, which we need to catch
     $mail->IsSMTP(); // telling the class to use SMTP
@@ -149,7 +149,7 @@ function EnviarEmail($subject, $message, $row, $emailAttachment = '')
         $mail->Host = $smtp_ses_host; // sets the SMTP server
         $mail->Username = $smtp_access_key; // SMTP username
         $mail->Password = $smtp_secret_key; // SMTP password
-        $mail->SetFrom($smtp_se_email, 'Taller'); //Email from
+        $mail->SetFrom($smtp_se_email, 'Frosh Systems'); //Email from
 
         $mail->AddAddress($row[0], $row[1]);
         $mail->Subject = $subject;

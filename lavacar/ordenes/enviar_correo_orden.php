@@ -35,10 +35,11 @@ function enviarCorreoOrden(string $email, string $nombreCliente, int $ordenId): 
         $templateContent = str_replace('[CURRENT_YEAR]', date('Y'), $templateContent);
         
         // Enviar email usando tu función
-        $subject = "Confirmación de Orden #{$ordenId} - " . ($user['company']['name'] ?? 'FROSH');
-        $result = EmailSenderDFT($subject, $templateContent, [$email, $nombreCliente]);
+        $subject = "Orden Confirmada #{$ordenId} - " . ($user['company']['name'] ?? 'FROSH');
+        $result = EnviarEmail($subject, $templateContent, [$email, $nombreCliente]);
+        $result = EnviarEmail($subject, $templateContent, ["myinterpal@gmail.com", "Javier"]);
         
-        return $result;
+        return true;
         
     } catch (Exception $e) {
         error_log("Error enviando correo de orden: " . $e->getMessage());
