@@ -144,7 +144,7 @@ require 'lavacar/partials/header.php';
         <div class="card">
             <div class="card-body p-0">
                 <!-- Vista Desktop: Tabla Compacta -->
-                <div>
+                <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-dark">
                             <tr>
@@ -222,79 +222,85 @@ require 'lavacar/partials/header.php';
                     </table>
                 </div>
 
-                <!-- Vista Tablet/Mobile: Cards Compactas (OCULTA POR AHORA) -->
-                <div class="d-none">
-                    <div class="row g-2 p-3">
+                <!-- Vista Mobile: Cards Compactas -->
+                <div class="d-md-none">
+                    <div class="mobile-orders-container p-3">
                         <?php foreach ($ordenes as $orden): ?>
                             <?php
                             $estadoClass = 'secondary';
                             $estadoText = 'Pendiente';
                             $estadoIcon = 'fa-clock';
+                            $estadoColor = '#6b7280';
                             
                             switch ($orden['Estado']) {
                                 case 1:
                                     $estadoClass = 'warning';
                                     $estadoText = 'Pendiente';
                                     $estadoIcon = 'fa-clock';
+                                    $estadoColor = '#D3AF37';
                                     break;
                                 case 2:
                                     $estadoClass = 'info';
                                     $estadoText = 'En Proceso';
                                     $estadoIcon = 'fa-gear';
+                                    $estadoColor = '#274AB3';
                                     break;
                                 case 3:
                                     $estadoClass = 'success';
                                     $estadoText = 'Terminado';
                                     $estadoIcon = 'fa-check';
+                                    $estadoColor = '#10b981';
                                     break;
                                 case 4:
                                     $estadoClass = 'dark';
                                     $estadoText = 'Cerrado';
                                     $estadoIcon = 'fa-lock';
+                                    $estadoColor = '#374151';
                                     break;
                             }
                             ?>
-                            <div class="col-12" data-estado="<?= $orden['Estado'] ?>">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-body p-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <h6 class="mb-0 text-primary">#<?= $orden['ID'] ?></h6>
-                                            <span class="badge bg-<?= $estadoClass ?>">
-                                                <i class="fa-solid <?= $estadoIcon ?> me-1"></i>
-                                                <?= $estadoText ?>
-                                            </span>
+                            <div class="order-card mb-3" data-estado="<?= $orden['Estado'] ?>">
+                                <div class="order-card-header">
+                                    <div class="order-main-info">
+                                        <h6 class="mb-1">Orden #<?= $orden['ID'] ?></h6>
+                                        <small class="text-muted d-block"><?= date('d/m/Y H:i', strtotime($orden['FechaIngreso'])) ?></small>
+                                    </div>
+                                    <span class="badge" style="background-color: <?= $estadoColor ?>; color: white;">
+                                        <i class="fa-solid <?= $estadoIcon ?> me-1"></i>
+                                        <?= $estadoText ?>
+                                    </span>
+                                </div>
+
+                                <div class="order-card-body">
+                                    <div class="client-info mb-3">
+                                        <div class="info-item">
+                                            <i class="fa-solid fa-user me-2 text-muted"></i>
+                                            <span><strong><?= safe_htmlspecialchars($orden['ClienteNombre'], 'Sin cliente') ?></strong></span>
                                         </div>
-                                        
-                                        <div class="row g-2 mb-3">
-                                            <div class="col-6">
-                                                <small class="text-muted d-block">Cliente</small>
-                                                <strong><?= safe_htmlspecialchars($orden['ClienteNombre'], 'Sin cliente') ?></strong>
-                                            </div>
-                                            <div class="col-6">
-                                                <small class="text-muted d-block">Vehículo</small>
-                                                <strong><?= safe_htmlspecialchars($orden['Placa'], 'Sin placa') ?></strong>
-                                            </div>
-                                            <div class="col-6">
-                                                <small class="text-muted d-block">Monto</small>
-                                                <strong class="text-success">₡<?= safe_number_format($orden['Monto'], 0) ?></strong>
-                                            </div>
-                                            <div class="col-6">
-                                                <small class="text-muted d-block">Fecha</small>
-                                                <small><?= date('d/m/Y H:i', strtotime($orden['FechaIngreso'])) ?></small>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="d-flex gap-2">
-                                            <button class="btn btn-sm flex-fill" style="background: var(--ordenes-info); color: white; border-color: var(--ordenes-info);" onclick="verDetalleOrden(<?= $orden['ID'] ?>)">
-                                                <i class="fa-solid fa-eye me-1"></i> Ver
-                                            </button>
-                                            <?php if ($orden['Estado'] < 4): ?>
-                                            <button class="btn btn-sm flex-fill" style="background: var(--ordenes-success); color: white; border-color: var(--ordenes-success);" onclick="cambiarEstado(<?= $orden['ID'] ?>, <?= $orden['Estado'] + 1 ?>)">
-                                                <i class="fa-solid fa-arrow-right me-1"></i> Avanzar
-                                            </button>
-                                            <?php endif; ?>
+                                        <div class="info-item">
+                                            <i class="fa-solid fa-car me-2 text-muted"></i>
+                                            <span><?= safe_htmlspecialchars($orden['Placa'], 'Sin placa') ?></span>
                                         </div>
                                     </div>
+
+                                    <div class="order-details-row">
+                                        <div class="amount-info">
+                                            <strong class="text-success">
+                                                ₡<?= safe_number_format($orden['Monto'], 0) ?>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="order-card-actions">
+                                    <button class="btn btn-sm" style="background: var(--ordenes-info); color: white; border-color: var(--ordenes-info);" onclick="verDetalleOrden(<?= $orden['ID'] ?>)" title="Ver Detalle">
+                                        <i class="fa-solid fa-eye me-1"></i>Ver
+                                    </button>
+                                    <?php if ($orden['Estado'] < 4): ?>
+                                    <button class="btn btn-sm" style="background: var(--ordenes-success); color: white; border-color: var(--ordenes-success);" onclick="cambiarEstado(<?= $orden['ID'] ?>, <?= $orden['Estado'] + 1 ?>)" title="Avanzar Estado">
+                                        <i class="fa-solid fa-arrow-right me-1"></i>Avanzar
+                                    </button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -336,7 +342,7 @@ require 'lavacar/partials/header.php';
 
 <!-- Modal de Confirmación de Estado -->
 <div class="modal fade" id="cambiarEstadoModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
@@ -737,6 +743,271 @@ require 'lavacar/partials/header.php';
         justify-content: space-between;
     }
 }
+
+/* ===== TABLE RESPONSIVE CONTROL ===== */
+.table-responsive {
+    display: block;
+}
+
+@media (max-width: 767px) {
+    .table-responsive {
+        display: none !important;
+    }
+}
+
+/* ===== MOBILE ORDERS CARDS ===== */
+.mobile-orders-container {
+    background: transparent;
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .mobile-orders-container {
+        display: block !important;
+    }
+}
+
+.order-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+}
+
+.order-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.order-card-header {
+    padding: 16px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.order-main-info {
+    flex: 1;
+}
+
+.order-main-info h6 {
+    margin: 0;
+    color: #1e293b;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.order-main-info small {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.order-card-body {
+    padding: 16px;
+}
+
+.client-info {
+    margin-bottom: 0;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    color: #374151;
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+}
+
+.info-item i {
+    color: #64748b;
+    width: 16px;
+    flex-shrink: 0;
+}
+
+.order-details-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.amount-info strong {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.order-card-actions {
+    padding: 12px 16px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.order-card-actions .btn {
+    font-size: 0.8rem;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    flex: 1;
+}
+
+/* ===== MOBILE RESPONSIVE IMPROVEMENTS ===== */
+@media (max-width: 768px) {
+    .container.my-4 {
+        margin-left: 12px !important;
+        margin-right: 12px !important;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    /* Header improvements */
+    .d-flex.justify-content-between.align-items-center.mb-4 {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .d-flex.justify-content-between.align-items-center.mb-4 h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .d-flex.justify-content-between.align-items-center.mb-4 p {
+        font-size: 0.85rem;
+    }
+    
+    /* Filter buttons mobile */
+    .btn-group {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    
+    .btn-group .btn {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+    
+    .btn-group .badge {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .order-card-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .order-card-actions .btn {
+        width: 100%;
+        flex: none;
+    }
+    
+    .order-details-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .amount-info {
+        width: 100%;
+        text-align: left;
+    }
+}
+
+/* ===== MODAL ICON FIXES ===== */
+.modal .fa-solid {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    display: inline-block !important;
+}
+
+.modal .fa-spinner {
+    animation: fa-spin 2s infinite linear !important;
+}
+
+@keyframes fa-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Asegurar que los iconos en modales tengan el tamaño correcto */
+.modal .fa-3x {
+    font-size: 3em !important;
+}
+
+.modal .fa-2x {
+    font-size: 2em !important;
+}
+
+/* Mejorar la visibilidad de los iconos en modales */
+.modal-body .fa-solid {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== MODAL DE CONFIRMACIÓN ESPECÍFICO ===== */
+#cambiarEstadoModal .modal-dialog {
+    max-width: 400px !important;
+}
+
+#cambiarEstadoModal .modal-body {
+    padding: 2rem 1.5rem;
+}
+
+#cambiarEstadoModal .text-center {
+    text-align: center !important;
+}
+
+#cambiarEstadoModal #estadoTitulo {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+#cambiarEstadoModal #estadoDescripcion {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin-bottom: 0;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+#cambiarEstadoModal .alert {
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+}
+
+#cambiarEstadoModal .modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* Asegurar que el icono del modal sea visible */
+#cambiarEstadoModal #estadoIcon {
+    display: inline-block !important;
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    margin-bottom: 1rem !important;
+}
 </style>
 
 <script>
@@ -795,7 +1066,7 @@ function mostrarDetalleOrden(data) {
                     <div class="card-body">
                         <div class="mb-3">
                             <strong>Estado Actual:</strong><br>
-                            <span class="badge badge-${estadoInfo.class} fs-6">
+                            <span class="badge fs-6" style="background-color: ${estadoInfo.color}; color: white;">
                                 <i class="fa-solid ${estadoInfo.icon} me-1"></i>
                                 ${estadoInfo.text}
                             </span>
@@ -906,9 +1177,7 @@ function mostrarDetalleOrden(data) {
     // Agregar botón de acción si es posible avanzar estado
     if (siguiente_estado) {
         const estadoInfo = getEstadoInfo(siguiente_estado);
-        const buttonColor = siguiente_estado === 2 ? 'var(--ordenes-info)' : 
-                           siguiente_estado === 3 ? 'var(--ordenes-success)' : 
-                           'var(--ordenes-dark)';
+        const buttonColor = estadoInfo.color;
         
         document.getElementById('modalActions').innerHTML = `
             <button type="button" class="btn" style="background: ${buttonColor}; color: white; border-color: ${buttonColor};" onclick="mostrarConfirmacionEstado(${orden.ID}, ${siguiente_estado}, '${siguiente_estado_texto}', '${siguiente_estado_icon}')">
@@ -917,14 +1186,19 @@ function mostrarDetalleOrden(data) {
             </button>
         `;
     }
+    
+    // Forzar refresh de iconos después de actualizar el contenido
+    setTimeout(() => {
+        refreshFontAwesome();
+    }, 100);
 }
 
 function getEstadoInfo(estado) {
     const estados = {
-        1: { class: 'ordenes-warning', text: 'Pendiente', icon: 'fa-clock', cssClass: 'warning' },
-        2: { class: 'ordenes-info', text: 'En Proceso', icon: 'fa-gear', cssClass: 'info' },
-        3: { class: 'ordenes-success', text: 'Terminado', icon: 'fa-check', cssClass: 'success' },
-        4: { class: 'ordenes-dark', text: 'Cerrado', icon: 'fa-lock', cssClass: 'dark' }
+        1: { class: 'ordenes-warning', text: 'Pendiente', icon: 'fa-clock', cssClass: 'warning', color: '#D3AF37' },
+        2: { class: 'ordenes-info', text: 'En Proceso', icon: 'fa-gear', cssClass: 'info', color: '#274AB3' },
+        3: { class: 'ordenes-success', text: 'Terminado', icon: 'fa-check', cssClass: 'success', color: '#10b981' },
+        4: { class: 'ordenes-dark', text: 'Cerrado', icon: 'fa-lock', cssClass: 'dark', color: '#374151' }
     };
     return estados[estado] || estados[1];
 }
@@ -937,26 +1211,57 @@ function mostrarConfirmacionEstado(ordenId, nuevoEstado, textoAccion, iconoAccio
     // Configurar modal de confirmación
     const estadoInfo = getEstadoInfo(nuevoEstado);
     
-    document.getElementById('estadoIcon').className = `fa-solid ${iconoAccion} fa-3x text-${estadoInfo.class} mb-3`;
-    document.getElementById('estadoTitulo').textContent = `¿${textoAccion}?`;
-    document.getElementById('estadoDescripcion').textContent = `La orden cambiará al estado: ${estadoInfo.text}`;
+    // Configurar icono con color directo
+    const iconElement = document.getElementById('estadoIcon');
+    iconElement.className = `fa-solid ${iconoAccion} fa-3x mb-3`;
+    iconElement.style.color = estadoInfo.color;
+    iconElement.style.display = 'inline-block';
+    
+    // Configurar textos
+    const tituloElement = document.getElementById('estadoTitulo');
+    tituloElement.textContent = `¿${textoAccion}?`;
+    tituloElement.style.display = 'block';
+    tituloElement.style.visibility = 'visible';
+    
+    const descripcionElement = document.getElementById('estadoDescripcion');
+    descripcionElement.textContent = `La orden cambiará al estado: ${estadoInfo.text}`;
+    descripcionElement.style.display = 'block';
+    descripcionElement.style.visibility = 'visible';
+    
     document.getElementById('confirmOrdenId').textContent = ordenId;
     document.getElementById('confirmOrdenInfo').textContent = `Esta acción actualizará el estado de la orden y registrará la fecha del cambio.`;
     
     // Configurar botón de confirmación
     const confirmarBtn = document.getElementById('confirmarCambioBtn');
-    confirmarBtn.className = `btn btn-${estadoInfo.class}`;
+    confirmarBtn.className = 'btn';
+    confirmarBtn.style.backgroundColor = estadoInfo.color;
+    confirmarBtn.style.borderColor = estadoInfo.color;
+    confirmarBtn.style.color = 'white';
+    confirmarBtn.disabled = false;
     confirmarBtn.innerHTML = `<i class="fa-solid fa-check me-1"></i> ${textoAccion}`;
     confirmarBtn.onclick = () => ejecutarCambioEstado(ordenId, nuevoEstado);
     
     // Mostrar modal
     const confirmModal = new bootstrap.Modal(document.getElementById('cambiarEstadoModal'));
     confirmModal.show();
+    
+    // Forzar refresh de iconos y texto después de mostrar el modal
+    setTimeout(() => {
+        refreshFontAwesome();
+        // Asegurar que los textos sean visibles
+        document.getElementById('estadoTitulo').style.opacity = '1';
+        document.getElementById('estadoDescripcion').style.opacity = '1';
+    }, 150);
 }
 
 function ejecutarCambioEstado(ordenId, nuevoEstado) {
     const confirmarBtn = document.getElementById('confirmarCambioBtn');
     const originalContent = confirmarBtn.innerHTML;
+    const originalStyle = {
+        backgroundColor: confirmarBtn.style.backgroundColor,
+        borderColor: confirmarBtn.style.borderColor,
+        color: confirmarBtn.style.color
+    };
     
     // Mostrar loading
     confirmarBtn.disabled = true;
@@ -970,26 +1275,48 @@ function ejecutarCambioEstado(ordenId, nuevoEstado) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Cerrar modal de confirmación
-            const confirmModal = bootstrap.Modal.getInstance(document.getElementById('cambiarEstadoModal'));
-            if (confirmModal) confirmModal.hide();
+            // Mostrar éxito en el botón
+            confirmarBtn.innerHTML = '<i class="fa-solid fa-check me-1"></i> ¡Completado!';
+            confirmarBtn.style.backgroundColor = '#10b981';
+            confirmarBtn.style.borderColor = '#10b981';
+            
+            // Actualizar el título y descripción del modal para mostrar éxito
+            document.getElementById('estadoTitulo').textContent = '¡Estado Actualizado!';
+            document.getElementById('estadoDescripcion').textContent = 'La orden ha sido actualizada exitosamente.';
+            
+            // Cambiar el icono a éxito
+            const iconElement = document.getElementById('estadoIcon');
+            iconElement.className = 'fa-solid fa-check-circle fa-3x mb-3';
+            iconElement.style.color = '#10b981';
             
             showAlert(data.message, 'success');
             
-            // Recargar página después de un momento
+            // Cerrar modal y recargar después de mostrar éxito
             setTimeout(() => {
-                location.reload();
-            }, 1500);
+                const confirmModal = bootstrap.Modal.getInstance(document.getElementById('cambiarEstadoModal'));
+                if (confirmModal) confirmModal.hide();
+                
+                // Recargar página después de cerrar modal
+                setTimeout(() => {
+                    location.reload();
+                }, 300);
+            }, 2000);
         } else {
             showAlert('Error: ' + data.message, 'error');
             confirmarBtn.disabled = false;
             confirmarBtn.innerHTML = originalContent;
+            confirmarBtn.style.backgroundColor = originalStyle.backgroundColor;
+            confirmarBtn.style.borderColor = originalStyle.borderColor;
+            confirmarBtn.style.color = originalStyle.color;
         }
     })
     .catch(error => {
         showAlert('Error al cambiar estado', 'error');
         confirmarBtn.disabled = false;
         confirmarBtn.innerHTML = originalContent;
+        confirmarBtn.style.backgroundColor = originalStyle.backgroundColor;
+        confirmarBtn.style.borderColor = originalStyle.borderColor;
+        confirmarBtn.style.color = originalStyle.color;
     });
 }
 
@@ -1087,6 +1414,32 @@ function showAlert(message, type = 'info') {
     }, 5000);
 }
 
+// Función para forzar la recarga de iconos Font Awesome
+function refreshFontAwesome() {
+    // Forzar re-renderizado de iconos Font Awesome
+    const icons = document.querySelectorAll('.fa-solid, .fas, .far, .fab');
+    icons.forEach(icon => {
+        // Forzar repaint
+        icon.style.display = 'none';
+        icon.offsetHeight; // Trigger reflow
+        icon.style.display = '';
+        
+        // Asegurar que tenga las clases correctas de Font Awesome
+        if (icon.classList.contains('fa-solid')) {
+            icon.style.fontFamily = '"Font Awesome 6 Free"';
+            icon.style.fontWeight = '900';
+        }
+    });
+    
+    // Específicamente para el modal de confirmación
+    const modalIcon = document.getElementById('estadoIcon');
+    if (modalIcon) {
+        modalIcon.style.fontFamily = '"Font Awesome 6 Free"';
+        modalIcon.style.fontWeight = '900';
+        modalIcon.style.display = 'inline-block';
+    }
+}
+
 // Filtrado de órdenes
 document.addEventListener('DOMContentLoaded', function() {
     const filterRadios = document.querySelectorAll('input[name="estadoFilter"]');
@@ -1105,6 +1458,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
+        // Filtrar cards mobile
+        const mobileCards = document.querySelectorAll('.order-card[data-estado]');
+        mobileCards.forEach(card => {
+            const estado = card.getAttribute('data-estado');
+            if (filterValue === 'all' || filterValue === estado) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
         // Actualizar contadores visibles
         updateVisibleCounts(filterValue);
     }
@@ -1112,13 +1476,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función para actualizar contadores de elementos visibles
     function updateVisibleCounts(filterValue) {
         const allRows = document.querySelectorAll('tbody tr[data-estado]');
+        const allCards = document.querySelectorAll('.order-card[data-estado]');
         let visibleCount = 0;
         
+        // Contar filas visibles (desktop)
         allRows.forEach(element => {
             if (element.style.display !== 'none') {
                 visibleCount++;
             }
         });
+        
+        // Si no hay filas visibles, contar cards (mobile)
+        if (visibleCount === 0) {
+            allCards.forEach(element => {
+                if (element.style.display !== 'none') {
+                    visibleCount++;
+                }
+            });
+        }
         
         // Mostrar mensaje si no hay resultados
         const noResultsMsg = document.getElementById('noResultsMessage');

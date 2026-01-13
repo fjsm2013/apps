@@ -1,1 +1,1 @@
-mysqldump  --single-transaction -h localhost --port=3306 -C -u fmorgan -p4sf7xnah froshlav_8 > tenant01.sql
+mysqldump  --single-transaction -h localhost --port=3306 -C -u fmorgan -p4sf7xnah froshlav_8 > tenant.sql

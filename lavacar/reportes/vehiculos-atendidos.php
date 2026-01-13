@@ -54,7 +54,7 @@ $vehiculosPorCategoria = CrearConsulta($conn,
         AVG(o.Monto) as ticket_promedio
      FROM {$dbName}.ordenes o
      LEFT JOIN {$dbName}.vehiculos v ON v.ID = o.VehiculoID
-     LEFT JOIN {$dbName}.categoriaservicio cs ON cs.ID = o.Categoria
+     LEFT JOIN {$dbName}.categoriaservicios cs ON cs.ID = o.Categoria
      WHERE DATE(o.FechaIngreso) BETWEEN ? AND ?
      AND o.Estado >= 3
      GROUP BY 
@@ -91,7 +91,7 @@ $topVehiculos = CrearConsulta($conn,
         MIN(o.FechaIngreso) as primera_visita
      FROM {$dbName}.ordenes o
      LEFT JOIN {$dbName}.vehiculos v ON v.ID = o.VehiculoID
-     LEFT JOIN {$dbName}.categoriaservicio cs ON cs.ID = o.Categoria
+     LEFT JOIN {$dbName}.categoriaservicios cs ON cs.ID = o.Categoria
      LEFT JOIN {$dbName}.clientes c ON c.ID = COALESCE(v.ClienteID, o.ClienteID)
      WHERE DATE(o.FechaIngreso) BETWEEN ? AND ?
      AND o.Estado >= 3

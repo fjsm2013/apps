@@ -84,13 +84,15 @@ require 'lavacar/partials/header.php';
     <!-- Header con estadísticas -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                <div class="header-info">
                     <h2><i class="fa-solid fa-users me-2"></i>Gestión de Clientes</h2>
                     <p class="text-muted mb-0">Administra la información de tus clientes y sus vehículos</p>
                 </div>
-                <button class="btn btn-frosh-dark btn-lg" onclick="openCreate()">
-                    <i class="fa fa-user-plus me-2"></i> Nuevo Cliente
+                <button class="btn btn-frosh-dark btn-lg new-client-btn" onclick="openCreate()">
+                    <i class="fa fa-user-plus me-2"></i> 
+                    <span class="d-none d-sm-inline">Nuevo Cliente</span>
+                    <span class="d-sm-none">Nuevo</span>
                 </button>
             </div>
 
@@ -184,7 +186,7 @@ require 'lavacar/partials/header.php';
                     </div>
                     <?php else: ?>
                     <!-- Vista Desktop -->
-                    <div class="table-responsive">
+                    <div class="table-responsive">>
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-dark">
                                 <tr>
@@ -286,81 +288,101 @@ require 'lavacar/partials/header.php';
                         </table>
                     </div>
 
-                    <!-- Vista Mobile (OCULTA TEMPORALMENTE) -->
-                    <div class="d-none">
-                        <?php foreach ($clientes as $c): ?>
-                        <div class="client-card">
-                            <div class="client-card-header">
-                                <div class="client-main-info">
-                                    <h6><?= htmlspecialchars($c['NombreCompleto']) ?></h6>
-                                    <?php if ($c['Cedula']): ?>
-                                    <small class="text-muted">Cédula: <?= htmlspecialchars($c['Cedula']) ?></small>
-                                    <?php endif; ?>
-                                </div>
-                                <span class="badge <?= $c['active'] ? 'badge-frosh-dark' : 'badge-frosh-light' ?>">
-                                    <?= $c['active'] ? 'Activo' : 'Inactivo' ?>
-                                </span>
-                            </div>
-
-                            <div class="client-card-body">
-                                <?php if ($c['Correo'] || $c['Telefono']): ?>
-                                <div class="contact-row">
-                                    <?php if ($c['Correo']): ?>
-                                    <span><i
-                                            class="fa-solid fa-envelope me-1"></i><?= htmlspecialchars($c['Correo']) ?></span>
-                                    <?php endif; ?>
-                                    <?php if ($c['Telefono']): ?>
-                                    <span><i
-                                            class="fa-solid fa-phone me-1"></i><?= htmlspecialchars($c['Telefono']) ?></span>
-                                    <?php endif; ?>
-                                </div>
-                                <?php endif; ?>
-
-                                <div class="vehicles-row">
-                                    <?php if ($c['total_vehiculos'] > 0): ?>
-                                    <span class="badge badge-frosh-dark">
-                                        <i class="fa-solid fa-car me-1"></i><?= $c['total_vehiculos'] ?> vehículo(s)
+                    <!-- Vista Mobile -->
+                    <div class="d-md-none">
+                        <div class="mobile-clients-container p-3">
+                            <?php foreach ($clientes as $c): ?>
+                            <div class="client-card mb-3">
+                                <div class="client-card-header">
+                                    <div class="client-main-info">
+                                        <h6 class="mb-1"><?= htmlspecialchars($c['NombreCompleto']) ?></h6>
+                                        <?php if ($c['Cedula']): ?>
+                                        <small class="text-muted d-block">Cédula: <?= htmlspecialchars($c['Cedula']) ?></small>
+                                        <?php endif; ?>
+                                        <?php if ($c['Empresa']): ?>
+                                        <small class="text-muted d-block">Empresa: <?= htmlspecialchars($c['Empresa']) ?></small>
+                                        <?php endif; ?>
+                                    </div>
+                                    <span class="badge <?= $c['active'] ? 'badge-frosh-dark' : 'badge-frosh-light' ?>">
+                                        <?= $c['active'] ? 'Activo' : 'Inactivo' ?>
                                     </span>
-                                    <?php else: ?>
-                                    <span class="text-muted">Sin vehículos</span>
-                                    <?php endif; ?>
-
-                                    <?php if ($c['ultima_visita']): ?>
-                                    <small class="text-success">
-                                        Última visita: <?= formatDate($c['ultima_visita']) ?>
-                                    </small>
-                                    <?php endif; ?>
                                 </div>
-                            </div>
 
-                            <div class="client-card-actions">
-                                <button class="btn btn-sm btn-frosh-dark edit-btn"
-                                    data-client='<?= htmlspecialchars(json_encode($c), ENT_QUOTES, 'UTF-8') ?>'>
-                                    <i class="fa fa-edit me-1"></i>Editar
-                                </button>
-                                <button class="btn btn-sm btn-frosh-gray vehicles-btn"
-                                    data-client-id="<?= $c['ID'] ?>"
-                                    data-client-name="<?= htmlspecialchars($c['NombreCompleto']) ?>">
-                                    <i class="fa fa-car me-1"></i>Vehículos
-                                </button>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-outline-frosh-gray dropdown-toggle"
-                                        data-bs-toggle="dropdown">
-                                        <i class="fa fa-ellipsis-v"></i>
+                                <div class="client-card-body">
+                                    <?php if ($c['Correo'] || $c['Telefono']): ?>
+                                    <div class="contact-row mb-3">
+                                        <?php if ($c['Correo']): ?>
+                                        <div class="contact-item">
+                                            <i class="fa-solid fa-envelope me-2 text-muted"></i>
+                                            <span><?= htmlspecialchars($c['Correo']) ?></span>
+                                        </div>
+                                        <?php endif; ?>
+                                        <?php if ($c['Telefono']): ?>
+                                        <div class="contact-item">
+                                            <i class="fa-solid fa-phone me-2 text-muted"></i>
+                                            <span><?= htmlspecialchars($c['Telefono']) ?></span>
+                                        </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php endif; ?>
+
+                                    <div class="vehicles-row">
+                                        <div class="vehicles-info">
+                                            <?php if ($c['total_vehiculos'] > 0): ?>
+                                            <span class="badge badge-frosh-dark">
+                                                <i class="fa-solid fa-car me-1"></i><?= $c['total_vehiculos'] ?> vehículo(s)
+                                            </span>
+                                            <?php if ($c['vehiculos_principales']): ?>
+                                            <small class="d-block text-muted mt-1">
+                                                <?= htmlspecialchars($c['vehiculos_principales']) ?>
+                                            </small>
+                                            <?php endif; ?>
+                                            <?php else: ?>
+                                            <span class="text-muted">Sin vehículos</span>
+                                            <?php endif; ?>
+                                        </div>
+                                        
+                                        <?php if ($c['ultima_visita']): ?>
+                                        <div class="last-visit">
+                                            <small class="text-success">
+                                                <i class="fa-solid fa-calendar me-1"></i>
+                                                <?= formatDate($c['ultima_visita']) ?>
+                                            </small>
+                                        </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
+                                <div class="client-card-actions">
+                                    <button class="btn btn-sm btn-frosh-dark edit-btn"
+                                        data-client='<?= htmlspecialchars(json_encode($c), ENT_QUOTES, 'UTF-8') ?>'>
+                                        <i class="fa fa-edit me-1"></i>Editar
                                     </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="?action=toggle&id=<?= $c['ID'] ?>">
-                                                <i class="fa fa-power-off me-2"></i>Cambiar estado
-                                            </a></li>
-                                        <li><a class="dropdown-item text-danger delete-btn" href="#"
-                                                data-client-id="<?= $c['ID'] ?>">
-                                                <i class="fa fa-trash me-2"></i>Eliminar
-                                            </a></li>
-                                    </ul>
+                                    <button class="btn btn-sm btn-frosh-gray vehicles-btn"
+                                        data-client-id="<?= $c['ID'] ?>"
+                                        data-client-name="<?= htmlspecialchars($c['NombreCompleto']) ?>">
+                                        <i class="fa fa-car me-1"></i>Vehículos
+                                    </button>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="?action=toggle&id=<?= $c['ID'] ?>">
+                                                    <i class="fa fa-power-off me-2"></i>Cambiar estado
+                                                </a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger delete-btn" href="#"
+                                                    data-client-id="<?= $c['ID'] ?>">
+                                                    <i class="fa fa-trash me-2"></i>Eliminar
+                                                </a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
+                            <?php endforeach; ?>
                         </div>
-                        <?php endforeach; ?>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -599,6 +621,17 @@ require 'lavacar/partials/header.php';
     padding: 0;
 }
 
+/* Ocultar tabla en mobile, mostrar en desktop */
+.table-responsive {
+    display: block;
+}
+
+@media (max-width: 767px) {
+    .table-responsive {
+        display: none !important;
+    }
+}
+
 /* ===== CLIENT INFO STYLES ===== */
 .client-info strong {
     color: #1e293b;
@@ -623,12 +656,30 @@ require 'lavacar/partials/header.php';
 }
 
 /* ===== MOBILE CLIENT CARDS ===== */
+.mobile-clients-container {
+    background: transparent;
+    display: none; /* Oculto por defecto */
+}
+
+/* Mostrar solo en mobile */
+@media (max-width: 767px) {
+    .mobile-clients-container {
+        display: block !important;
+    }
+}
+
 .client-card {
     border: 1px solid #e2e8f0;
     border-radius: 12px;
-    margin-bottom: 16px;
     background: white;
     overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+}
+
+.client-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
 }
 
 .client-card-header {
@@ -636,18 +687,24 @@ require 'lavacar/partials/header.php';
     background: #f8fafc;
     border-bottom: 1px solid #e2e8f0;
     display: flex;
-    justify-content: between;
+    justify-content: space-between;
     align-items: flex-start;
+}
+
+.client-main-info {
+    flex: 1;
 }
 
 .client-main-info h6 {
     margin: 0;
     color: #1e293b;
     font-weight: 600;
+    font-size: 1rem;
 }
 
 .client-main-info small {
     font-size: 0.8rem;
+    color: #64748b;
 }
 
 .client-card-body {
@@ -655,24 +712,51 @@ require 'lavacar/partials/header.php';
 }
 
 .contact-row {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-bottom: 12px;
-    font-size: 0.85rem;
+    margin-bottom: 0;
 }
 
-.contact-row i {
+.contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    color: #374151;
+}
+
+.contact-item:last-child {
+    margin-bottom: 0;
+}
+
+.contact-item i {
     color: #64748b;
     width: 16px;
+    flex-shrink: 0;
 }
 
 .vehicles-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
     gap: 8px;
+}
+
+.vehicles-info {
+    flex: 1;
+}
+
+.vehicles-info .badge {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+}
+
+.last-visit {
+    text-align: right;
+}
+
+.last-visit small {
+    font-size: 0.75rem;
+    white-space: nowrap;
 }
 
 .client-card-actions {
@@ -684,8 +768,40 @@ require 'lavacar/partials/header.php';
     align-items: center;
 }
 
-/* ===== RESPONSIVE ===== */
+.client-card-actions .btn {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.client-card-actions .dropdown-toggle {
+    padding: 6px 8px;
+    min-width: auto;
+}
+
+/* ===== RESPONSIVE IMPROVEMENTS ===== */
 @media (max-width: 768px) {
+    .container.container-fluid {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    
+    /* Header mobile improvements */
+    .header-info h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .header-info p {
+        font-size: 0.85rem;
+    }
+    
+    .new-client-btn {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+    
     .stats-card {
         padding: 16px;
     }
@@ -702,6 +818,53 @@ require 'lavacar/partials/header.php';
 
     .filter-card {
         padding: 16px;
+    }
+    
+    .table-card .card-header {
+        padding: 16px;
+    }
+    
+    .table-card .card-header h5 {
+        font-size: 1.1rem;
+    }
+    
+    /* Mejorar el layout del header en mobile */
+    .d-flex.justify-content-between.align-items-center.mb-3.flex-wrap {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .header-info {
+        width: 100%;
+    }
+    
+    .new-client-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .client-card-actions {
+        flex-wrap: wrap;
+    }
+    
+    .client-card-actions .btn:not(.dropdown-toggle) {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .vehicles-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .last-visit {
+        text-align: left;
+        width: 100%;
     }
 }
 </style>

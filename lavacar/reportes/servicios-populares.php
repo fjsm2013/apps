@@ -168,7 +168,7 @@ $categorias = CrearConsulta($conn,
         COUNT(DISTINCT o.ID) as ordenes,
         SUM(o.Monto) as ingresos
      FROM {$dbName}.ordenes o
-     JOIN {$dbName}.categoriaservicio cs ON o.Categoria = cs.ID
+     JOIN {$dbName}.categoriaservicios cs ON o.Categoria = cs.ID
      WHERE DATE(o.FechaIngreso) BETWEEN ? AND ? 
      AND o.Estado >= 3
      GROUP BY cs.Descripcion

@@ -100,16 +100,16 @@ require 'lavacar/partials/header.php';
     <!-- Header con estadísticas -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                <div class="header-info">
                     <h2><i class="fa-solid fa-car me-2"></i>Gestión de Vehículos</h2>
                     <p class="text-muted mb-0">Administra los vehículos registrados en el sistema</p>
                 </div>
-                <?php /* Comentado temporalmente
-                <button class="btn btn-frosh-primary btn-lg" onclick="openCreate()">
-                    <i class="fa fa-plus me-2"></i> Nuevo Vehículo
+                <button class="btn btn-frosh-primary btn-lg new-vehicle-btn" onclick="openCreate()">
+                    <i class="fa fa-plus me-2"></i> 
+                    <span class="d-none d-sm-inline">Nuevo Vehículo</span>
+                    <span class="d-sm-none">Nuevo</span>
                 </button>
-                */ ?>
             </div>
 
             <?php /* Comentado temporalmente - Estadísticas de vehículos
@@ -303,70 +303,101 @@ require 'lavacar/partials/header.php';
                             </table>
                         </div>
 
-                        <!-- Vista Mobile (OCULTA TEMPORALMENTE) -->
-                        <div class="d-none">
-                            <?php foreach ($vehiculos as $v): ?>
-                                <div class="mobile-card">
-                                    <div class="mobile-card-header">
+                        <!-- Vista Mobile -->
+                        <div class="d-md-none">
+                            <div class="mobile-vehicles-container p-3">
+                                <?php foreach ($vehiculos as $v): ?>
+                                <div class="vehicle-card mb-3">
+                                    <div class="vehicle-card-header">
                                         <div class="vehicle-main-info">
-                                            <h6><?= safe_htmlspecialchars($v['Placa']) ?></h6>
-                                            <small class="text-muted">
+                                            <h6 class="mb-1"><?= safe_htmlspecialchars($v['Placa']) ?></h6>
+                                            <small class="text-muted d-block">
                                                 <?= safe_htmlspecialchars($v['Marca']) ?> <?= safe_htmlspecialchars($v['Modelo']) ?>
                                                 <?= $v['Year'] ? ' ' . $v['Year'] : '' ?>
                                             </small>
+                                            <?php if ($v['Color']): ?>
+                                            <small class="text-muted d-block">
+                                                <i class="fa-solid fa-palette me-1"></i><?= safe_htmlspecialchars($v['Color']) ?>
+                                            </small>
+                                            <?php endif; ?>
                                         </div>
                                         <?= generateStatusBadge($v['active'] ? 'active' : 'inactive') ?>
                                     </div>
-                                    
-                                    <div class="mobile-card-body">
+
+                                    <div class="vehicle-card-body">
                                         <?php if ($v['cliente_nombre']): ?>
-                                            <div class="owner-row mb-2">
-                                                <i class="fa-solid fa-user me-2"></i>
+                                        <div class="owner-row mb-3">
+                                            <div class="owner-item">
+                                                <i class="fa-solid fa-user me-2 text-muted"></i>
                                                 <span><?= safe_htmlspecialchars($v['cliente_nombre']) ?></span>
                                             </div>
-                                        <?php endif; ?>
-                                        
-                                        <?php if ($v['categoria_nombre']): ?>
-                                            <div class="category-row mb-2">
-                                                <i class="fa-solid fa-tag me-2"></i>
-                                                <span><?= safe_htmlspecialchars($v['categoria_nombre']) ?></span>
+                                            <?php if ($v['cliente_telefono']): ?>
+                                            <div class="owner-item">
+                                                <i class="fa-solid fa-phone me-2 text-muted"></i>
+                                                <span><?= safe_htmlspecialchars($v['cliente_telefono']) ?></span>
                                             </div>
+                                            <?php endif; ?>
+                                        </div>
                                         <?php endif; ?>
-                                        
-                                        <?php if ($v['total_ordenes'] > 0): ?>
-                                            <div class="history-row">
-                                                <span class="badge badge-frosh-dark me-2"><?= $v['total_ordenes'] ?> órdenes</span>
-                                                <small class="text-success"><?= formatCurrency($v['total_gastado']) ?></small>
+
+                                        <div class="vehicle-details-row">
+                                            <?php if ($v['categoria_nombre']): ?>
+                                            <div class="category-info">
+                                                <span class="badge badge-frosh-gray">
+                                                    <i class="fa-solid fa-tag me-1"></i><?= safe_htmlspecialchars($v['categoria_nombre']) ?>
+                                                </span>
                                             </div>
-                                        <?php endif; ?>
+                                            <?php endif; ?>
+                                            
+                                            <?php if ($v['total_ordenes'] > 0): ?>
+                                            <div class="history-info">
+                                                <span class="badge badge-frosh-dark"><?= $v['total_ordenes'] ?> orden(es)</span>
+                                                <small class="d-block text-success mt-1">
+                                                    <i class="fa-solid fa-coins me-1"></i><?= formatCurrency($v['total_gastado']) ?>
+                                                </small>
+                                                <?php if ($v['ultima_orden']): ?>
+                                                <small class="d-block text-muted">
+                                                    <i class="fa-solid fa-calendar me-1"></i><?= formatDate($v['ultima_orden']) ?>
+                                                </small>
+                                                <?php endif; ?>
+                                            </div>
+                                            <?php else: ?>
+                                            <div class="history-info">
+                                                <span class="text-muted">Sin historial</span>
+                                            </div>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
-                                    
-                                    <div class="mobile-card-actions">
-                                        <button class="btn btn-sm btn-frosh-dark edit-btn" 
-                                                data-vehicle='<?= htmlspecialchars(json_encode($v), ENT_QUOTES, 'UTF-8') ?>'>
+
+                                    <div class="vehicle-card-actions">
+                                        <button class="btn btn-sm btn-frosh-dark edit-btn"
+                                            data-vehicle='<?= htmlspecialchars(json_encode($v), ENT_QUOTES, 'UTF-8') ?>'>
                                             <i class="fa fa-edit me-1"></i>Editar
                                         </button>
                                         <?php if ($v['total_ordenes'] > 0): ?>
-                                            <button class="btn btn-sm btn-frosh-gray" onclick='viewHistory(<?= $v['ID'] ?>, "<?= safe_htmlspecialchars($v['Placa']) ?>")'>
-                                                <i class="fa fa-history me-1"></i>Historial
-                                            </button>
+                                        <button class="btn btn-sm btn-frosh-gray" onclick='viewHistory(<?= $v['ID'] ?>, "<?= safe_htmlspecialchars($v['Placa']) ?>")'>
+                                            <i class="fa fa-history me-1"></i>Historial
+                                        </button>
                                         <?php endif; ?>
                                         <div class="dropdown">
-                                            <button class="btn btn-sm btn-outline-frosh-gray dropdown-toggle" data-bs-toggle="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
                                                 <i class="fa fa-ellipsis-v"></i>
                                             </button>
-                                            <ul class="dropdown-menu">
+                                            <ul class="dropdown-menu dropdown-menu-end">
                                                 <li><a class="dropdown-item" href="?action=toggle&id=<?= $v['ID'] ?>">
-                                                    <i class="fa fa-power-off me-2"></i>Cambiar estado
-                                                </a></li>
+                                                        <i class="fa fa-power-off me-2"></i>Cambiar estado
+                                                    </a></li>
+                                                <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item text-danger" href="#" onclick="confirmDelete(<?= $v['ID'] ?>)">
-                                                    <i class="fa fa-trash me-2"></i>Desactivar
-                                                </a></li>
+                                                        <i class="fa fa-trash me-2"></i>Desactivar
+                                                    </a></li>
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -710,6 +741,213 @@ require 'lavacar/partials/header.php';
 .btn-outline-frosh-gray:disabled {
     opacity: 0.5;
     transform: none;
+}
+
+/* ===== TABLE RESPONSIVE CONTROL ===== */
+.table-responsive {
+    display: block;
+}
+
+@media (max-width: 767px) {
+    .table-responsive {
+        display: none !important;
+    }
+}
+
+/* ===== MOBILE VEHICLE CARDS ===== */
+.mobile-vehicles-container {
+    background: transparent;
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .mobile-vehicles-container {
+        display: block !important;
+    }
+}
+
+.vehicle-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+}
+
+.vehicle-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.vehicle-card-header {
+    padding: 16px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.vehicle-main-info {
+    flex: 1;
+}
+
+.vehicle-main-info h6 {
+    margin: 0;
+    color: #1e293b;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.vehicle-main-info small {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.vehicle-card-body {
+    padding: 16px;
+}
+
+.owner-row {
+    margin-bottom: 0;
+}
+
+.owner-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    color: #374151;
+}
+
+.owner-item:last-child {
+    margin-bottom: 0;
+}
+
+.owner-item i {
+    color: #64748b;
+    width: 16px;
+    flex-shrink: 0;
+}
+
+.vehicle-details-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.category-info .badge {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+}
+
+.history-info {
+    text-align: right;
+}
+
+.history-info .badge {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+}
+
+.history-info small {
+    font-size: 0.75rem;
+}
+
+.vehicle-card-actions {
+    padding: 12px 16px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.vehicle-card-actions .btn {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.vehicle-card-actions .dropdown-toggle {
+    padding: 6px 8px;
+    min-width: auto;
+}
+
+/* ===== RESPONSIVE IMPROVEMENTS ===== */
+@media (max-width: 768px) {
+    .container.container-fluid {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    
+    /* Header mobile improvements */
+    .header-info h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .header-info p {
+        font-size: 0.85rem;
+    }
+    
+    .new-vehicle-btn {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+    
+    /* Mejorar el layout del header en mobile */
+    .d-flex.justify-content-between.align-items-center.mb-3.flex-wrap {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .header-info {
+        width: 100%;
+    }
+    
+    .new-vehicle-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .vehicle-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+    
+    .history-info {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .vehicle-card-actions {
+        flex-wrap: wrap;
+    }
+    
+    .vehicle-card-actions .btn:not(.dropdown-toggle) {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .vehicle-details-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .history-info {
+        text-align: left;
+        width: 100%;
+    }
 }
 </style>
 

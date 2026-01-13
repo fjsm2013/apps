@@ -10,8 +10,7 @@ while (ob_get_level()) {
     ob_end_clean();
 }
 
-$database = new Database();
-$conn = $database->getConnection();
+// Use MySQLi connection (same as the rest of the system)
 $resetManager = new PasswordResetManager($conn);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -35,13 +34,23 @@ if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
-/*
- * IMPORTANT:
- * Always return success message to avoid account enumeration
- */
-$resetManager->createResetRequest($email);
-
-echo json_encode([
-    'success' => true,
-    'message' => 'Hemos enviado un enlace de recuperación a tu email.'
-]);
+try {
+    /*
+     * IMPORTANT:
+     * Always return success message to avoid account enumeration
+     */
+    $result = $resetManager->createResetRequest($email);
+    
+    echo json_encode([
+        'success' => true,
+        'message' => 'Si el email existe en nuestro sistema, hemos enviado un enlace de recuperación.'
+    ]);
+    
+} catch (Exception $e) {
+    error_log("Error en reset de contraseña: " . $e->getMessage());
+    
+    echo json_encode([
+        'success' => true, // Always return success for security
+        'message' => 'Si el email existe en nuestro sistema, hemos enviado un enlace de recuperación.'
+    ]);
+}
