@@ -1,4 +1,7 @@
 <?php
+// Auto-setup: Check and create master database if needed
+require_once __DIR__ . '/check-setup.php';
+
 include 'handler.php';
 include 'constants.php';
 class Database

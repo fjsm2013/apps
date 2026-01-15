@@ -4,9 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  
   <!-- Primary Meta Tags -->
   <title>FROSH LavaCar App | Sistema de Gestión para Lavaderos de Autos</title>
   <meta name="description" content="Sistema de gestión especializado para lavaderos de autos. Organiza turnos, controla estados de lavado y envía notificaciones automáticas a clientes. Mejora la eficiencia operativa y la satisfacción del cliente." />
@@ -247,22 +244,6 @@
       padding: 40px 0;
     }
     
-    footer h5, footer h6 {
-      color: #fff !important;
-    }
-    
-    footer .text-muted {
-      color: #adb5bd !important;
-    }
-    
-    footer .text-white {
-      color: #fff !important;
-    }
-    
-    footer a.text-muted:hover {
-      color: #fff !important;
-    }
-    
     .back-to-top {
       position: fixed;
       bottom: 20px;
@@ -301,28 +282,7 @@
 </a>
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="#">FROSH LavaCar App</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="menu">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="#problema">Problema</a></li>
-        <li class="nav-item"><a class="nav-link" href="#funciona">Cómo funciona</a></li>
-        <li class="nav-item"><a class="nav-link" href="#pasos">Estados</a></li>
-        <li class="nav-item"><a class="nav-link" href="#beneficios">Beneficios</a></li>
-        <li class="nav-item">
-          <a class="btn btn-outline-light ms-lg-3 px-3" href="login.php">Iniciar Sesión</a>
-        </li>
-        <li class="nav-item">
-          <a class="btn btn-primary ms-2 px-3" href="register.php">Registrarse</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+  <?php include_once "menu-frosh-lavacarpp.php" ?>
 
 <!-- HERO -->
 <section class="hero text-center">
@@ -336,7 +296,7 @@
     </p>
     <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
       <a href="#contacto" class="btn btn-light btn-lg fw-semibold px-5 py-3">
-        <i class="fas fa-play-circle me-2"></i>Ver Demo
+        <i class="fas fa-play-circle me-2"></i>Solicitar demo gratuita
       </a>
       <a href="#funciona" class="btn btn-outline-light btn-lg fw-semibold px-5 py-3">
         <i class="fas fa-info-circle me-2"></i>Ver cómo funciona
@@ -486,7 +446,7 @@
           </div>
           <h4 class="fw-bold">Notificaciones Automáticas</h4>
           <p>
-            El cliente recibe <strong>avisos automáticos</strong> por Correo Electronico(Email) cuando su vehículo avanza o finaliza. Sin intervención manual.
+            El cliente recibe <strong>avisos automáticos</strong> por SMS o WhatsApp cuando su vehículo avanza o finaliza. Sin intervención manual.
           </p>
           <div class="mt-3">
             <span class="badge bg-primary">Automático</span>
@@ -675,14 +635,14 @@
               </p>
             </div>
 
-            <form id="demoForm" method="post">
+            <form action="#" method="post" id="demoForm">
               <div class="row">
                 <!-- Nombre -->
                 <div class="col-md-6 mb-3">
                   <label class="form-label required">Nombre completo</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-user"></i></span>
-                    <input type="text" name="nombre" class="form-control" placeholder="Juan Pérez" required aria-label="Nombre completo">
+                    <input type="text" class="form-control" placeholder="Juan Pérez" required aria-label="Nombre completo">
                   </div>
                 </div>
 
@@ -691,7 +651,7 @@
                   <label class="form-label required">Nombre del lavadero/empresa</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-building"></i></span>
-                    <input type="text" name="empresa" class="form-control" placeholder="Ej: AutoLimpio Express" required aria-label="Nombre de empresa">
+                    <input type="text" class="form-control" placeholder="Ej: AutoLimpio Express" required aria-label="Nombre de empresa">
                   </div>
                 </div>
 
@@ -700,7 +660,7 @@
                   <label class="form-label required">Correo electrónico</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                    <input type="email" name="email" class="form-control" placeholder="correo@empresa.com" required aria-label="Correo electrónico">
+                    <input type="email" class="form-control" placeholder="correo@empresa.com" required aria-label="Correo electrónico">
                   </div>
                 </div>
 
@@ -709,7 +669,7 @@
                   <label class="form-label required">Teléfono</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                    <input type="tel" name="telefono" class="form-control" placeholder="+506 8888 8888" required aria-label="Teléfono">
+                    <input type="tel" class="form-control" placeholder="+506 8888 8888" required aria-label="Teléfono">
                   </div>
                 </div>
 
@@ -718,7 +678,7 @@
                   <label class="form-label required">Tipo de negocio</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-car"></i></span>
-                    <select name="tipo_negocio" class="form-select" required aria-label="Tipo de negocio">
+                    <select class="form-select" required aria-label="Tipo de negocio">
                       <option value="">Seleccionar</option>
                       <option>Lavacar tradicional</option>
                       <option>Lavadero premium/detallado</option>
@@ -735,7 +695,7 @@
                   <label class="form-label required">Vehículos diarios promedio</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-chart-bar"></i></span>
-                    <select name="vehiculos_diarios" class="form-select" required aria-label="Vehículos diarios">
+                    <select class="form-select" required aria-label="Vehículos diarios">
                       <option value="">Seleccionar</option>
                       <option>1-10 vehículos</option>
                       <option>11-25 vehículos</option>
@@ -751,25 +711,14 @@
                   <label class="form-label">¿Qué desafíos específicos enfrentas en tu lavadero?</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-comment-dots"></i></span>
-                    <textarea name="mensaje" class="form-control" rows="4" placeholder="Cuéntanos sobre los principales problemas que quieres resolver en tu operación..." aria-label="Mensaje"></textarea>
+                    <textarea class="form-control" rows="4" placeholder="Cuéntanos sobre los principales problemas que quieres resolver en tu operación..." aria-label="Mensaje"></textarea>
                   </div>
-                </div>
-
-                <!-- Captcha -->
-                <div class="col-12 mb-4">
-                  <label class="form-label required">Pregunta de seguridad</label>
-                  <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-shield-alt"></i></span>
-                    <input type="text" readonly class="form-control" id="captchaQuestion" value="Cargando..." style="background: #f8f9fa;">
-                    <input type="number" name="captcha_answer" class="form-control" placeholder="Tu respuesta" required aria-label="Respuesta captcha" style="max-width: 150px;">
-                  </div>
-                  <small class="text-muted">Esta pregunta nos ayuda a prevenir spam</small>
                 </div>
 
                 <!-- Botón -->
                 <div class="col-12">
                   <div class="d-grid">
-                    <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold" id="submitBtn">
+                    <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold">
                       <i class="fas fa-calendar-check me-2"></i> Solicitar Demo Personalizada
                     </button>
                   </div>
@@ -787,133 +736,15 @@
 </section>
 
 <!-- FOOTER -->
-<!-- Success Modal -->
-<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-success text-white">
-        <h5 class="modal-title" id="successModalLabel">
-          <i class="fas fa-check-circle me-2"></i>¡Solicitud Enviada!
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body text-center py-4">
-        <i class="fas fa-check-circle text-success" style="font-size: 4rem; margin-bottom: 1rem;"></i>
-        <h4 class="mb-3">¡Gracias por tu interés!</h4>
-        <p class="mb-0" id="successMessage">
-          Nos pondremos en contacto contigo en las próximas 24 horas para coordinar tu demo personalizada.
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Entendido</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Error Modal -->
-<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="errorModalLabel">
-          <i class="fas fa-exclamation-circle me-2"></i>Error
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body text-center py-4">
-        <i class="fas fa-exclamation-triangle text-danger" style="font-size: 4rem; margin-bottom: 1rem;"></i>
-        <p class="mb-0" id="errorMessage">
-          Ocurrió un error al procesar tu solicitud.
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <footer class="py-5">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-4 mb-4">
-        <h4 class="fw-bold text-white mb-4">
-          <i class="fas fa-car me-2"></i>FROSH LavaCar App
-        </h4>
-        <p>Solución de gestión especializada para Centros de Lavado de autos. Optimizamos tu operación y mejoramos la experiencia de tus clientes.</p>
-
-      </div>
-      
-      <div class="col-lg-4 mb-4">
-        <h5 class="text-white fw-bold mb-4">Enlaces rápidos</h5>
-        <ul class="list-unstyled">
-          <li class="mb-2"><a href="#problema" class="text-decoration-none text-light">Problemas que resolvemos</a></li>
-          <li class="mb-2"><a href="#funciona" class="text-decoration-none text-light">Cómo funciona</a></li>
-          <li class="mb-2"><a href="#beneficios" class="text-decoration-none text-light">Beneficios</a></li>
-          <li class="mb-2"><a href="#contacto" class="text-decoration-none text-light">Solicitar demo</a></li>
-        </ul>
-      </div>
-      
-      <div class="col-lg-4 mb-4">
-        <h5 class="text-white fw-bold mb-4">Contacto</h5>
-
-               <!-- <div class="d-flex gap-3 mt-4">
-          <a href="#" class="text-white" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-          <a href="#" class="text-white" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="text-white" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-          <a href="https://wa.me/50663957241" class="text-white" aria-label="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i></a>
-        </div>-->
-        <ul class="list-unstyled"><li class="mb-3">
-            <a href="https://wa.me/50663957241" class="text-white text-decoration-none" aria-label="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a>
-
-          </li>
-          <li class="mb-3">
-            <i class="fas fa-envelope me-2"></i>
-            froshsystems@gmail.com
-          </li>
-          <!--<li class="mb-3">
-            <i class="fas fa-phone me-2"></i>
-            <a href="tel:+50663957241" class="text-decoration-none text-light">+506 63957241</a>
-          </li>-->
-          <li>
-            <i class="fas fa-map-marker-alt me-2"></i>
-            <span class="text-light">Alajuela, Costa Rica</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-    
-    <hr class="my-4 border-secondary">
-    
-    <div class="text-center">
-      <p class="mb-2">© <?php echo date('Y');?> <strong>Frosh Systems</strong> - Sistema de Gestión para Centros de Lavado de Autos</p>
-      <small class="text-muted">Optimiza tu operación, mejora la satisfacción de tus clientes y haz crecer tu negocio</small>
-    </div>
-  </div>
+  <?php include_once "footer-frosh-lavacar-app.php" ?>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <script>
-  // Load captcha on page load
-  function loadCaptcha() {
-    fetch('generate-captcha.php')
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('captchaQuestion').value = data.question;
-      })
-      .catch(error => {
-        console.error('Error loading captcha:', error);
-        document.getElementById('captchaQuestion').value = 'Error al cargar pregunta';
-      });
-  }
-  
   // Back to top button functionality
   document.addEventListener('DOMContentLoaded', function() {
-    // Load captcha
-    loadCaptcha();
-    
     const backToTopButton = document.getElementById('backToTop');
     
     window.addEventListener('scroll', function() {
@@ -952,60 +783,46 @@
       });
     });
     
-    // Form submission with AJAX
+    // Form submission
     const demoForm = document.getElementById('demoForm');
-    const submitBtn = document.getElementById('submitBtn');
-    
     if (demoForm) {
       demoForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Disable submit button
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Enviando...';
+        // Simple validation
+        let isValid = true;
+        const requiredFields = demoForm.querySelectorAll('[required]');
         
-        // Get form data
-        const formData = new FormData(demoForm);
-        
-        // Send request
-        fetch('process-demo-request.php', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            // Show success modal
-            document.getElementById('successMessage').textContent = data.message;
-            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-            successModal.show();
-            // Reset form
-            demoForm.reset();
-            // Reload captcha
-            loadCaptcha();
+        requiredFields.forEach(field => {
+          if (!field.value.trim()) {
+            isValid = false;
+            field.classList.add('is-invalid');
           } else {
-            // Show error modal
-            document.getElementById('errorMessage').textContent = data.message;
-            const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-            errorModal.show();
-            // Reload captcha on error
-            loadCaptcha();
+            field.classList.remove('is-invalid');
           }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          document.getElementById('errorMessage').textContent = 'Ocurrió un error al enviar el formulario. Por favor, intenta de nuevo.';
-          const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-          errorModal.show();
-          loadCaptcha();
-        })
-        .finally(() => {
-          // Re-enable submit button
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = '<i class="fas fa-calendar-check me-2"></i> Solicitar Demo Personalizada';
         });
+        
+        if (isValid) {
+          // In a real implementation, you would send the form data to a server
+          alert('¡Gracias por tu interés! Nos pondremos en contacto contigo en las próximas 24 horas para coordinar tu demo personalizada.');
+          demoForm.reset();
+        } else {
+          alert('Por favor, completa todos los campos requeridos marcados con *.');
+        }
       });
     }
+    
+    // Add Bootstrap validation styling
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
   });
 </script>
 </body>

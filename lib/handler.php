@@ -149,6 +149,11 @@ function EnviarEmail($subject, $message, $row, $emailAttachment = '')
         $mail->Host = $smtp_ses_host; // sets the SMTP server
         $mail->Username = $smtp_access_key; // SMTP username
         $mail->Password = $smtp_secret_key; // SMTP password
+        
+        // Set charset to UTF-8 for proper encoding
+        $mail->CharSet = 'UTF-8';
+        $mail->Encoding = 'base64';
+        
         $mail->SetFrom($smtp_se_email, 'Frosh Systems'); //Email from
 
         $mail->AddAddress($row[0], $row[1]);

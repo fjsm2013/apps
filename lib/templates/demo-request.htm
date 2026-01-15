@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FROSH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style type="text/css">
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            line-height: 1.6;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55);
+        }
+        
+        h1 {
+            color: linear-gradient(135deg, #000000 0%, #111827 100%);
+            padding: 30px 20px;
+            text-align: center;
+            margin: 0;
+            font-size: 40px;
+            font-weight: 650;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Body Content */
+        .email-body {
+            padding: 30px 40px;
+            margin: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 6px;
+        }
+        .email-body h2 {
+            color: #1e40af;
+            margin: 0 0 20px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .email-body p {
+            font-size: 15px;
+            margin: 0 0 16px;
+            color: #4b5563;
+        }
+        .info-box {
+            background-color: #f8fafc;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 6px;
+            border-left: 4px solid #3b82f6;
+        }
+        .info-box p {
+            margin: 8px 0;
+        }
+        
+        /* Highlight Box */
+        .highlight-box {
+            background-color: #d1fae5;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 6px;
+            border-left: 4px solid #10b981;
+        }
+        .highlight-box h3 {
+            color: #065f46;
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+        .highlight-box p {
+            margin: 8px 0;
+            color: #065f46;
+        }
+        
+        /* Button Styles */
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .button {
+            background: linear-gradient(135deg, #000000 0%, #374151 100%);
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 6px;
+            display: inline-block;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        /* Footer Section */
+        .email-footer {
+            padding: 20px;
+            background-color: #f8fafc;
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        /* Responsive Adjustments */
+        @media only screen and (max-width: 640px) {
+            .email-container {
+                margin: 0;
+                border-radius: 0;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            .email-body {
+                padding: 24px 20px;
+                margin: 15px;
+            }
+            .email-body h2 {
+                font-size: 18px;
+            }
+            .button {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <h1>FROSH LavaCar App</h1>
+        
+        <div class="email-body">
+            <h2>[EMAIL_TITLE]</h2>            
+            [EMAIL_CONTENT]
+        </div>
+        
+        <div class="email-footer">
+            <p><strong>FROSH LavaCar App</strong> - Sistema de Gestión para Lavaderos de Autos</p>
+            <p>📧 froshsystems@gmail.com | 📱 +506 6395 7241</p>
+            <p style="margin-top: 15px;">© [CURRENT_YEAR] FROSH. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

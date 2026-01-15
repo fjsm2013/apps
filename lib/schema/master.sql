@@ -212,6 +212,36 @@ LOCK TABLES `consumo_recursos` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `demo_requests`
+--
+
+DROP TABLE IF EXISTS `demo_requests`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `demo_requests` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `nombre_completo` varchar(150) NOT NULL,
+  `empresa` varchar(150) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `telefono` varchar(50) NOT NULL,
+  `tipo_negocio` varchar(100) NOT NULL,
+  `vehiculos_diarios` varchar(50) NOT NULL,
+  `mensaje` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `demo_requests`
+--
+
+LOCK TABLES `demo_requests` WRITE;
+/*!40000 ALTER TABLE `demo_requests` DISABLE KEYS */;
+/*!40000 ALTER TABLE `demo_requests` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `empresas`
 --
 
@@ -233,7 +263,7 @@ CREATE TABLE `empresas` (
   PRIMARY KEY (`id_empresa`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `nombre_base_datos` (`nombre_base_datos`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -242,7 +272,7 @@ CREATE TABLE `empresas` (
 
 LOCK TABLES `empresas` WRITE;
 /*!40000 ALTER TABLE `empresas` DISABLE KEYS */;
-INSERT INTO `empresas` VALUES (2,'Lavacar Guatuso','000000000000','55555555555','info@lavacarguatuso.com','Costa Rica','Guatuso','froshlav_2','activo','2025-12-20 16:47:05','2025-12-24 18:12:11'),(3,'URBANO CARWASH','00000000000','5555555555','contact@carcarecenter.com','Costa Rica','Puerto Jimenez','froshlav_3','activo','2025-12-20 16:47:05','2025-12-24 18:12:11'),(4,'Mega Wash Center','1234567890004',NULL,'admin@megawash.com','Colombia','Bogotá','froshlav_4','activo','2025-12-20 16:47:05','2025-12-24 18:12:11'),(8,'Interpal','310010000','+50683239015','jsaavedra@docusend.biz','Costa Rica','Doral','froshlav_8','activo','2026-01-09 19:06:54','2026-01-09 19:50:38');
+INSERT INTO `empresas` VALUES (2,'Lavacar Guatuso','000000000000','55555555555','info@lavacarguatuso.com','Costa Rica','Guatuso','froshlav_2','activo','2025-12-20 16:47:05','2025-12-24 18:12:11'),(3,'URBANO CARWASH','00000000000','5555555555','contact@carcarecenter.com','Costa Rica','Puerto Jimenez','froshlav_3','activo','2025-12-20 16:47:05','2025-12-24 18:12:11'),(4,'Mega Wash Center','1234567890004',NULL,'admin@megawash.com','Colombia','Bogotá','froshlav_4','activo','2025-12-20 16:47:05','2025-12-24 18:12:11'),(10,'FSM','1111111111111','+5066666666666','myinterpal@gmail.com','Costa Rica','Doral','froshlav_10','activo','2026-01-13 18:38:48','2026-01-13 18:52:43'),(9,'Nueva01','1111111111111','+5066666666666','myinterpal01@gmail.com','Costa Rica','Doral','froshlav_1768328886','pendiente','2026-01-13 18:28:06','2026-01-13 18:38:42'),(8,'Interpal S.A','310010000','+50683239015','jsaavedra@docusend.biz','Costa Rica','Doral','froshlav_8','activo','2026-01-09 19:06:54','2026-01-13 18:05:54');
 /*!40000 ALTER TABLE `empresas` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -316,7 +346,7 @@ CREATE TABLE `password_reset_tokens` (
   KEY `user_id` (`user_id`),
   KEY `idx_token` (`token`),
   KEY `idx_expires` (`expires_at`)
-) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -325,7 +355,7 @@ CREATE TABLE `password_reset_tokens` (
 
 LOCK TABLES `password_reset_tokens` WRITE;
 /*!40000 ALTER TABLE `password_reset_tokens` DISABLE KEYS */;
-INSERT INTO `password_reset_tokens` VALUES (31,7,'9c62d62e5ba406938c7c4a664cca996c06721fee08fbdf4edbb2887e1322cb24','2025-12-30 15:36:02',0,'2025-12-30 20:36:02');
+INSERT INTO `password_reset_tokens` VALUES (31,7,'9c62d62e5ba406938c7c4a664cca996c06721fee08fbdf4edbb2887e1322cb24','2025-12-30 15:36:02',0,'2025-12-30 20:36:02'),(32,8,'7df5df849b3c73e35a107982177f9f9d4808cca3444b41008c7b2733c5174586','2026-01-13 13:13:59',1,'2026-01-13 18:13:59'),(34,10,'3c3d1f1fd22899b6bc1a92f8509d8822effef129cfdbcc6e0b64204f5fe42c72','2026-01-13 15:39:53',0,'2026-01-13 20:39:53');
 /*!40000 ALTER TABLE `password_reset_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -450,15 +480,7 @@ CREATE TABLE `sistema_logs` (
 ) ENGINE=MyISAM AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `sistema_logs`
---
 
-LOCK TABLES `sistema_logs` WRITE;
-/*!40000 ALTER TABLE `sistema_logs` DISABLE KEYS */;
-INSERT INTO `sistema_logs` VALUES (1,'',2,NULL,'Cierre de sesión','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-20 16:30:09'),(2,'login',NULL,NULL,'Inicio de sesión exitoso','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-20 16:37:35'),(3,'login',NULL,NULL,'Inicio de sesión exitoso',NULL,NULL,'2025-12-11 16:47:05'),(4,'empresa_creada',NULL,NULL,'Nueva empresa registrada: Lavado Express',NULL,NULL,'2025-12-19 16:47:05'),(5,'suscripcion_cambiada',NULL,NULL,'Plan actualizado a Oro',NULL,NULL,'2025-12-13 16:47:05'),(6,'admin_creado',NULL,NULL,'Nuevo administrador creado',NULL,NULL,'2025-12-17 16:47:05'),(7,'',2,1,'Empresa eliminada: Lavado Express','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-20 17:39:50'),(8,'',2,5,'Empresa eliminada: Premium Detailing','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-20 17:40:22'),(9,'empresa_actualizada',2,2,'Empresa actualizada: Lavacar Guatuso','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-21 15:17:24'),(10,'empresa_actualizada',2,2,'Empresa actualizada: Lavacar Guatuso','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-21 15:17:34'),(11,'empresa_actualizada',2,2,'Empresa actualizada: Lavacar Guatuso','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-21 15:17:53'),(12,'empresa_actualizada',2,2,'Empresa actualizada: Lavacar Guatuso','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-21 15:18:03'),(13,'empresa_actualizada',2,2,'Empresa actualizada: Lavacar Guatuso','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-21 15:18:18'),(14,'empresa_actualizada',2,3,'Empresa actualizada: Car Care Center','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-21 15:20:28'),(15,'empresa_actualizada',2,3,'Empresa actualizada: URBANO CARWASH','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-21 15:35:19'),(16,'',2,NULL,'Cierre de sesión','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-22 20:58:06'),(17,'',NULL,NULL,'Intento de login fallido para: myinterpal@gmail.com','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-23 13:16:12'),(18,'',NULL,NULL,'Intento de login fallido para: myinterpal@gmail.com','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-27 13:51:24'),(19,'',NULL,NULL,'Intento de login fallido para: myinterpal@gmail.com','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-27 13:51:37'),(20,'',NULL,NULL,'Intento de login fallido para: myinterpal@gmail.com','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-27 13:51:51'),(21,'login',NULL,NULL,'Inicio de sesión exitoso','::1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36','2025-12-27 13:52:03');
-/*!40000 ALTER TABLE `sistema_logs` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `suscripciones`
@@ -484,7 +506,7 @@ CREATE TABLE `suscripciones` (
   KEY `id_plan` (`id_plan`),
   KEY `idx_fecha_fin` (`fecha_fin`),
   KEY `idx_estado` (`estado`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -493,7 +515,7 @@ CREATE TABLE `suscripciones` (
 
 LOCK TABLES `suscripciones` WRITE;
 /*!40000 ALTER TABLE `suscripciones` DISABLE KEYS */;
-INSERT INTO `suscripciones` VALUES (2,2,2,'mensual','2025-12-20','2026-01-20',NULL,'activa',NULL,79.99,1),(3,3,1,'mensual','2025-12-20','2026-01-20',NULL,'activa',NULL,29.99,1),(4,4,1,'mensual','2025-12-20','2026-01-20',NULL,'activa',NULL,29.99,1),(6,8,1,'mensual','2026-01-09','2026-02-08',NULL,'activa',NULL,0.00,1);
+INSERT INTO `suscripciones` VALUES (7,10,1,'mensual','2026-01-13','2026-02-12',NULL,'activa',NULL,0.00,1),(2,2,2,'mensual','2025-12-20','2026-01-20',NULL,'activa',NULL,79.99,1),(3,3,1,'mensual','2025-12-20','2026-01-20',NULL,'activa',NULL,29.99,1),(4,4,1,'mensual','2025-12-20','2026-01-20',NULL,'activa',NULL,29.99,1),(6,8,1,'mensual','2026-01-09','2026-02-08',NULL,'activa',NULL,0.00,1);
 /*!40000 ALTER TABLE `suscripciones` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -603,7 +625,7 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `email_empresa` (`email`,`id_empresa`),
   UNIQUE KEY `email_UNIQUE` (`email`),
   KEY `idx_empresa` (`id_empresa`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -612,7 +634,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,3,'Frederick','amidestino@gmail.com','jsaavedra','$2y$10$KjCD2B9b8UbsWzbXb9HNGu/iKsMuCcXSpMeSE9s21.GfImzb/GJMG',1,0,3,NULL,NULL,NULL,'activo','2025-12-22 20:33:58','2025-12-24 16:26:22',NULL,1,0),(7,3,'Javier Saavedra','myinterpal@gmail.com','','$2y$10$zFjg6nvcgVbVDcb/FpnXkeov7XM41/hky4lGJ7jRnvtayiArN3UpG',1,0,0,NULL,'2026-01-09 12:36:27','::1','activo','2025-12-23 21:03:29','2026-01-09 18:36:27',NULL,1,0),(8,8,'Javier Saavedra','jsaavedra@docusend.biz','javiersaavedra','$2y$10$UWJqr4UUgz8oRfQFBSBgJu18HXno/z5n7jmLKU0apF3QDe6EGbeEm',1,0,0,NULL,'2026-01-12 13:36:11','::1','activo','2026-01-09 19:13:32','2026-01-12 19:36:11',NULL,1,0),(9,8,'Omar','omar@amidestino.com','omar','$2y$10$nDTZ1WbAbeZjCxxrMWovteMFgigTRCKNC4IcXE0heV4IeuTPeT6o2',2,0,0,NULL,NULL,NULL,'activo','2026-01-09 20:04:14','2026-01-09 20:12:04',NULL,1,0);
+INSERT INTO `usuarios` VALUES (1,3,'Frederick','amidestino@gmail.com','jsaavedra','$2y$10$KjCD2B9b8UbsWzbXb9HNGu/iKsMuCcXSpMeSE9s21.GfImzb/GJMG',1,0,3,NULL,NULL,NULL,'activo','2025-12-22 20:33:58','2025-12-24 16:26:22',NULL,1,0),(7,3,'Javier Saavedra','myinterpal01@gmail.com','','$2y$10$zFjg6nvcgVbVDcb/FpnXkeov7XM41/hky4lGJ7jRnvtayiArN3UpG',1,0,0,NULL,'2026-01-09 12:36:27','::1','activo','2025-12-23 21:03:29','2026-01-13 18:27:35',NULL,1,0),(8,8,'Javier Saavedra','jsaavedra@docusend.biz','javiersaavedra','$2y$10$sN89wFYaEePZPwCD4ytZYeIRjNfE6nn34EARfHV99Cj3GAn2uZbAi',1,0,0,NULL,'2026-01-13 12:17:53','::1','activo','2026-01-09 19:13:32','2026-01-13 18:17:53',NULL,1,0),(9,8,'Omar Monestel','omar@amidestino.com','omar','$2y$10$nDTZ1WbAbeZjCxxrMWovteMFgigTRCKNC4IcXE0heV4IeuTPeT6o2',2,0,0,NULL,NULL,NULL,'activo','2026-01-09 20:04:14','2026-01-13 17:58:42',NULL,1,0),(10,10,'Frederick Saavedra','myinterpal@gmail.com','fsaavedra','$2y$10$XwiEWLfxjnWtzPQmReEpoO2SAMaTg/RXqYeaD9MZ2ZDHH8qnfusGi',1,0,0,NULL,'2026-01-14 10:40:56','::1','activo','2026-01-13 18:39:42','2026-01-14 16:40:56',NULL,1,0);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -625,4 +647,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-13 11:45:46
+-- Dump completed on 2026-01-14 13:34:20

@@ -4,10 +4,10 @@ require_once 'lib/config.php';
 require_once 'lib/Auth.php';
 
 // Redirect if already logged in
-if (isLoggedIn()) {
+/*if (isLoggedIn()) {
     header("Location: lavacar/dashboard.php");
     exit;
-}
+}*/
 
 $error = '';
 $success = '';
