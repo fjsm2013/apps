@@ -2,15 +2,18 @@
 session_start();
 require_once '../../lib/config.php';
 require_once 'lib/Auth.php';
+require_once 'lavacar/middleware/setup-check.php';
 
-autoLoginFromCookie();
 if (!isLoggedIn()) {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit;
 }
 
 $user = userInfo();
 $dbName = $user['company']['db'];
+
+// Verificar configuración inicial antes de permitir crear órdenes
+requireSetupCompletion($conn, $dbName, 'crear órdenes');
 
 require 'lavacar/partials/header.php';
 ?>

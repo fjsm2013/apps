@@ -54,51 +54,29 @@ class AutoSetup {
                 throw new Exception("Error creating database: " . $this->conn->error);
             }
             
+            error_log("FROSH Auto-Setup: Database {$this->masterDbName} created or already exists");
+            
             // Select the database
-            $this->conn->select_db($this->masterDbName);
-            
-            // Read and execute schema
-            $schemaFile = __DIR__ . '/schema/master.sql';
-            if (!file_exists($schemaFile)) {
-                throw new Exception("Schema file not found: {$schemaFile}");
+            if (!$this->conn->select_db($this->masterDbName)) {
+                throw new Exception("Error selecting database: " . $this->conn->error);
             }
             
-            $schema = file_get_contents($schemaFile);
+            error_log("FROSH Auto-Setup: Database selected successfully");
             
-            // Remove MySQL dump comments and settings
-            $schema = preg_replace('/^\/\*!.*?\*\/;?\s*$/m', '', $schema);
-            $schema = preg_replace('/^--.*$/m', '', $schema);
-            $schema = preg_replace('/^LOCK TABLES.*?UNLOCK TABLES;/ms', '', $schema);
-            
-            // Split into individual statements
-            $statements = array_filter(
-                array_map('trim', explode(';', $schema)),
-                function($stmt) {
-                    return !empty($stmt) && 
-                           !preg_match('/^(SET|DELIMITER|\/\*|DROP TABLE IF EXISTS)/i', $stmt);
-                }
-            );
-            
-            // Execute each statement
-            foreach ($statements as $statement) {
-                if (!empty(trim($statement))) {
-                    if (!$this->conn->query($statement)) {
-                        // Log error but continue (some statements might fail if tables exist)
-                        error_log("Warning executing statement: " . $this->conn->error);
-                    }
-                }
-            }
-            
-            // Create essential tables if they don't exist
+            // Create essential tables (don't rely on schema file)
             $this->createEssentialTables();
+            
+            error_log("FROSH Auto-Setup: Essential tables created");
             
             // Mark setup as complete
             $this->markSetupComplete();
             
+            error_log("FROSH Auto-Setup: Setup marked as complete");
+            
             return true;
             
         } catch (Exception $e) {
-            error_log("Auto-setup error: " . $e->getMessage());
+            error_log("FROSH Auto-setup error in createMasterDatabase: " . $e->getMessage());
             throw $e;
         }
     }

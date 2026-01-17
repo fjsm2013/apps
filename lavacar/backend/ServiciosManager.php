@@ -18,7 +18,7 @@ class ServiciosManager
     {
         return CrearConsulta(
             $this->db,
-            "SELECT ID, Descripcion
+            "SELECT ID, Descripcion, Detalles
              FROM {$this->dbName}.servicios
              ORDER BY ID ASC"
         )->fetch_all(MYSQLI_ASSOC);
@@ -31,7 +31,7 @@ class ServiciosManager
     {
         return ObtenerPrimerRegistro(
             $this->db,
-            "SELECT ID, Descripcion
+            "SELECT ID, Descripcion, Detalles
              FROM {$this->dbName}.servicios
              WHERE ID = ?",
             [$id]
@@ -41,27 +41,27 @@ class ServiciosManager
     /* =========================
        CREATE
     ========================= */
-    public function create(string $descripcion): int
+    public function create(string $descripcion, string $detalles = ''): int
     {
         return EjecutarSQL(
             $this->db,
-            "INSERT INTO {$this->dbName}.servicios (Descripcion)
-             VALUES (?)",
-            [$descripcion]
+            "INSERT INTO {$this->dbName}.servicios (Descripcion, Detalles)
+             VALUES (?, ?)",
+            [$descripcion, $detalles]
         );
     }
 
     /* =========================
        UPDATE
     ========================= */
-    public function update(int $id, string $descripcion): void
+    public function update(int $id, string $descripcion, string $detalles = ''): void
     {
         EjecutarSQL(
             $this->db,
             "UPDATE {$this->dbName}.servicios
-             SET Descripcion = ?
+             SET Descripcion = ?, Detalles = ?
              WHERE ID = ?",
-            [$descripcion, $id]
+            [$descripcion, $detalles, $id]
         );
     }
 
@@ -83,6 +83,7 @@ class ServiciosManager
             $this->db,
             "SELECT s.ID,
                 s.Descripcion,
+                s.Detalles,
                 COALESCE(p.Precio, 0) AS Precio
          FROM {$this->dbName}.servicios s
          LEFT JOIN {$this->dbName}.precios p
@@ -99,6 +100,7 @@ class ServiciosManager
             "SELECT 
             s.ID,
             s.Descripcion,
+            s.Detalles,
             IFNULL(p.Precio, 0) AS Precio
          FROM {$this->dbName}.servicios s
          LEFT JOIN {$this->dbName}.precios p

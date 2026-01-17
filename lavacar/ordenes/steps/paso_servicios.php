@@ -13,8 +13,6 @@
             </thead>
 
             <tbody id="services-body">
-                Cargando...
-            </tbody>
 
             <tfoot>
                 <tr>

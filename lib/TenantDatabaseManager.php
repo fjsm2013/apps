@@ -136,32 +136,31 @@ class TenantDatabaseManager
         // Insert default categories for vehicle types
         $defaultCategories = [
             'Sedán',
-            'SUV',
+            'SUV', 
             'Pickup',
-            'Hatchback',
-            'Motocicleta',
-            'Camión'
+            'Minibus',
+            'Moto'
         ];
         
-        $stmt = $tenantConn->prepare("INSERT INTO categoriavehiculo (TipoVehiculo) VALUES (?)");
+        $stmt = $tenantConn->prepare("INSERT INTO categoriavehiculo (TipoVehiculo, Estado, Orden) VALUES (?, 1, ?)");
         if ($stmt) {
+            $orden = 1;
             foreach ($defaultCategories as $category) {
-                $stmt->bind_param("s", $category);
+                $stmt->bind_param("si", $category, $orden);
                 $stmt->execute();
+                $orden++;
             }
             $stmt->close();
         }
         
-        // Insert default service categories
+        // Insert default services (precargados)
         $defaultServices = [
-            ['Lavado Básico', 'Lavado exterior básico'],
-            ['Lavado Completo', 'Lavado exterior e interior'],
-            ['Encerado', 'Aplicación de cera protectora'],
-            ['Aspirado', 'Limpieza interior con aspiradora'],
-            ['Detallado', 'Limpieza profunda y detallada']
+            ['Lavado Exterior', 'Lavado de la carrocería externa'],
+            ['Limpieza Interior', 'Limpieza completa del interior del vehículo'],
+            ['Lavado Chasis', 'Limpieza del chasis y bajos del vehículo']
         ];
         
-        $stmt = $tenantConn->prepare("INSERT INTO categoriaservicios (Descripcion, Detalle) VALUES (?, ?)");
+        $stmt = $tenantConn->prepare("INSERT INTO servicios (Descripcion, Detalles, CategoriaServicioID) VALUES (?, ?, 1)");
         if ($stmt) {
             foreach ($defaultServices as $service) {
                 $stmt->bind_param("ss", $service[0], $service[1]);

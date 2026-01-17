@@ -70,6 +70,7 @@ if ($action === 'delete' && $id) {
 ========================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $descripcion = trim($_POST['descripcion'] ?? '');
+    $detalles = trim($_POST['detalles'] ?? '');
     $id = (int)($_POST['id'] ?? 0);
 
     if (empty($descripcion)) {
@@ -82,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['form_data'] = [
             'id' => $id,
             'descripcion' => $descripcion,
+            'detalles' => $detalles,
             'is_edit' => $id > 0
         ];
 
@@ -91,13 +93,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($id) {
-            $manager->update($id, $descripcion);
+            $manager->update($id, $descripcion, $detalles);
             $_SESSION['flash_message'] = [
                 'type' => 'success',
                 'text' => '✅ Servicio actualizado correctamente'
             ];
         } else {
-            $manager->create($descripcion);
+            $manager->create($descripcion, $detalles);
             $_SESSION['flash_message'] = [
                 'type' => 'success',
                 'text' => '✅ Servicio creado correctamente'
@@ -116,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['form_data'] = [
             'id' => $id,
             'descripcion' => $descripcion,
+            'detalles' => $detalles,
             'is_edit' => $id > 0
         ];
     }
@@ -167,7 +170,7 @@ require 'lavacar/partials/header.php';
             <p class="text-muted mb-0">Gestión de servicios de lavado</p>
         </div>
         <button type="button" class="btn btn-frosh-primary" onclick="openCreateModal()">
-            <i class="bi bi-plus-circle me-1"></i> Nuevo Servicio
+            <i class="fa fa-plus-circle me-1"></i> Nuevo Servicio
         </button>
     </div>
 
@@ -198,18 +201,26 @@ require 'lavacar/partials/header.php';
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Descripción</th>
+                            <th>Servicio</th>
+                            <th>Detalles</th>
                             <th width="120" class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($servicios as $s): ?>
                         <tr>
-                            <td><?= htmlspecialchars($s['Descripcion']) ?></td>
+                            <td>
+                                <strong><?= htmlspecialchars($s['Descripcion']) ?></strong>
+                            </td>
+                            <td>
+                                <small class="text-muted">
+                                    <?= !empty($s['Detalles']) ? htmlspecialchars($s['Detalles']) : 'Sin detalles' ?>
+                                </small>
+                            </td>
                             <td class="text-center">
                                 <div class="btn-group btn-group-sm" role="group">
                                     <button type="button" class="btn btn-frosh-dark"
-                                        onclick="openEditModal(<?= $s['ID'] ?>, '<?= htmlspecialchars(addslashes($s['Descripcion'])) ?>')">
+                                        onclick="openEditModal(<?= $s['ID'] ?>, '<?= htmlspecialchars(addslashes($s['Descripcion'])) ?>', '<?= htmlspecialchars(addslashes($s['Detalles'] ?? '')) ?>')">
                                         <i class="fa-solid fa-pen-to-square"></i> Editar
                                     </button>
                                     <button type="button" class="btn btn-outline-danger"
@@ -252,10 +263,19 @@ require 'lavacar/partials/header.php';
                         <h6>Paso 1 de 3</h6>
                         <div class="mb-3">
                             <label class="form-label">
-                                Descripción <span class="text-danger">*</span>
+                                Nombre del Servicio <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control" id="descripcion" placeholder="Ej. Lavado Interior"
                                 required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Detalles del Servicio
+                            </label>
+                            <textarea class="form-control" id="detalles" rows="3" 
+                                placeholder="Descripción detallada del servicio (opcional)"></textarea>
+                            <div class="form-text">Proporciona una descripción más detallada de lo que incluye este servicio</div>
                         </div>
                     </div>
 
@@ -291,9 +311,16 @@ require 'lavacar/partials/header.php';
                         <h6>Paso 3 de 3</h6>
                         <h6 class="mb-3">Confirmación</h6>
 
-                        <p><strong>Servicio:</strong> <span id="confirmServicio"></span></p>
+                        <div class="mb-3">
+                            <strong>Servicio:</strong> <span id="confirmServicio"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Detalles:</strong> <span id="confirmDetalles" class="text-muted"></span>
+                        </div>
 
-                        <ul class="list-group" id="confirmPrecios"></ul>
+                        <strong>Precios por categoría:</strong>
+                        <ul class="list-group mt-2" id="confirmPrecios"></ul>
                     </div>
 
                 </div>
@@ -398,6 +425,7 @@ function openCreateModal() {
     document.getElementById('modalTitle').textContent = 'Nuevo Servicio';
     document.getElementById('serviceId').value = 0;
     document.getElementById('descripcion').value = '';
+    document.getElementById('detalles').value = '';
 
     prices = {};
     document.querySelectorAll('.price-input').forEach(i => {
@@ -421,13 +449,14 @@ function openCreateModal() {
     }, 100);
 }
 
-function openEditModal(id, descripcion) {
+function openEditModal(id, descripcion, detalles = '') {
     // Ensure no overlay conflicts
     document.body.classList.add('modal-open');
     
     document.getElementById('modalTitle').textContent = 'Editar Servicio';
     document.getElementById('serviceId').value = id;
     document.getElementById('descripcion').value = descripcion;
+    document.getElementById('detalles').value = detalles;
 
     prices = {};
     document.querySelectorAll('.price-input').forEach(i => {
@@ -556,6 +585,10 @@ function buildConfirmation() {
 
     document.getElementById('confirmServicio').textContent =
         document.getElementById('descripcion').value;
+        
+    const detalles = document.getElementById('detalles').value.trim();
+    document.getElementById('confirmDetalles').textContent = 
+        detalles || 'Sin detalles especificados';
 
     const ul = document.getElementById('confirmPrecios');
     ul.innerHTML = '';
@@ -590,6 +623,7 @@ function formatPrice(amount) {
 function guardarServicio() {
 
     const descripcion = document.getElementById('descripcion').value.trim();
+    const detalles = document.getElementById('detalles').value.trim();
     const serviceId = document.getElementById('serviceId').value;
 
     const precios = [];
@@ -608,6 +642,7 @@ function guardarServicio() {
             body: JSON.stringify({
                 id: serviceId,
                 descripcion: descripcion,
+                detalles: detalles,
                 precios: precios
             })
         })

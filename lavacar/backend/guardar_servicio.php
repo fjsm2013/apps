@@ -28,7 +28,7 @@ if ($debug) {
     $dbName = $user['company']['db'];
 }
 log_debug('RAW INPUT', $data);
-if (!$data || empty($data['descripcion']) || empty($data['precios'])) {
+if (!$data || empty($data['descripcion'])) {
     echo json_encode(['ok' => false, 'error' => 'Datos incompletos']);
     exit;
 }
@@ -40,45 +40,49 @@ $manager = new ServiciosManager($conn, $dbName);
 /* =========================
    CREATE / UPDATE SERVICE
 ========================= */
+$detalles = $data['detalles'] ?? '';
+
 if (empty($data['id']) || $data['id'] == 0) {
-    $serviceID = $manager->create($data['descripcion']);
-    log_debug('CREATING SERVICE', $data['descripcion'] . "|" . $serviceID);
+    $serviceID = $manager->create($data['descripcion'], $detalles);
+    log_debug('CREATING SERVICE', $data['descripcion'] . "|" . $detalles . "|" . $serviceID);
 } else {
     $serviceID = (int)$data['id'];
     log_debug('UPDATING SERVICE', $serviceID);
-    $manager->update($serviceID, $data['descripcion']);
+    $manager->update($serviceID, $data['descripcion'], $detalles);
 }
 
 /* =========================
    SAVE PRICES
 ========================= */
-foreach ($data['precios'] as $p) {
-    log_debug(
-        'SERVICE ID',
-        "INSERT INTO {$dbName}.precios
-            (ServicioID, TipoCategoriaID, Precio)
-         VALUES (?, ?, ?)
-         ON DUPLICATE KEY UPDATE
-            Precio = VALUES(Precio)",
-        [
-            $serviceID,
-            (int)$p['categoria_id'],
-            (float)$p['precio']
-        ]
-    );
-    EjecutarSQL(
-        $conn,
-        "INSERT INTO {$dbName}.precios
-            (ServicioID, TipoCategoriaID, Precio)
-         VALUES (?, ?, ?)
-         ON DUPLICATE KEY UPDATE
-            Precio = VALUES(Precio)",
-        [
-            $serviceID,
-            (int)$p['categoria_id'],
-            (float)$p['precio']
-        ]
-    );
+if (!empty($data['precios'])) {
+    foreach ($data['precios'] as $p) {
+        log_debug(
+            'SERVICE ID',
+            "INSERT INTO {$dbName}.precios
+                (ServicioID, TipoCategoriaID, Precio)
+             VALUES (?, ?, ?)
+             ON DUPLICATE KEY UPDATE
+                Precio = VALUES(Precio)",
+            [
+                $serviceID,
+                (int)$p['categoria_id'],
+                (float)$p['precio']
+            ]
+        );
+        EjecutarSQL(
+            $conn,
+            "INSERT INTO {$dbName}.precios
+                (ServicioID, TipoCategoriaID, Precio)
+             VALUES (?, ?, ?)
+             ON DUPLICATE KEY UPDATE
+                Precio = VALUES(Precio)",
+            [
+                $serviceID,
+                (int)$p['categoria_id'],
+                (float)$p['precio']
+            ]
+        );
+    }
 }
 
 echo json_encode(['ok' => true]);

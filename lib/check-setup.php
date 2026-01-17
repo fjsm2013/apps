@@ -15,10 +15,10 @@ if (!file_exists($setupCheckFile)) {
         // Include auto-setup class
         require_once __DIR__ . '/auto-setup.php';
         
-        // Get database credentials from environment or defaults
-        $dbHost = getenv('DB_HOST') ?: 'localhost';
-        $dbUser = getenv('DB_USER') ?: 'root';
-        $dbPass = getenv('DB_PASS') ?: '';
+        // Get database credentials from config.php globals
+        $dbHost = $DB_HOST ?? 'localhost';
+        $dbUser = $DB_USER ?? 'root';
+        $dbPass = $DB_PASS ?? '';
         
         // Create auto-setup instance
         $autoSetup = new AutoSetup($dbHost, $dbUser, $dbPass);
@@ -39,8 +39,9 @@ if (!file_exists($setupCheckFile)) {
     } catch (Exception $e) {
         // Log error but don't stop execution
         error_log("FROSH Auto-Setup Error: " . $e->getMessage());
+        error_log("FROSH Auto-Setup Stack Trace: " . $e->getTraceAsString());
         
         // Create a flag file to prevent repeated attempts
-        file_put_contents(__DIR__ . '/.setup_error', date('Y-m-d H:i:s') . ': ' . $e->getMessage());
+        file_put_contents(__DIR__ . '/.setup_error', date('Y-m-d H:i:s') . ': ' . $e->getMessage() . "\n" . $e->getTraceAsString());
     }
 }

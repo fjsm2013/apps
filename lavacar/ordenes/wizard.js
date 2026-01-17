@@ -18,7 +18,10 @@ const wizardState = {
         subtotal: 0,
         iva: 0,
         total: 0
-    }
+    },
+    
+    // Para detectar cambios de categoría
+    lastCategoriaId: null
 };
 
 /* =========================
@@ -276,6 +279,30 @@ function marcarCategoriaSeleccionada(catId) {
    STEP 2 – SERVICIOS
 ========================= */
 function cargarServicios() {
+    
+    // Verificar si cambió la categoría del vehículo
+    const categoriaActual = wizardState.vehiculo.categoria_id;
+    const categoriaAnterior = wizardState.lastCategoriaId;
+    
+    console.log('🔍 Verificando categoría:', {
+        actual: categoriaActual,
+        anterior: categoriaAnterior,
+        serviciosActuales: wizardState.servicios.length
+    });
+    
+    // Si cambió la categoría, limpiar servicios seleccionados
+    if (categoriaAnterior && categoriaAnterior !== categoriaActual) {
+        console.log('🔄 Categoría cambió, limpiando servicios seleccionados');
+        wizardState.servicios = [];
+        
+        showAlert({
+            type: 'info',
+            message: 'Categoría de vehículo cambió. Seleccione nuevamente los servicios.'
+        });
+    }
+    
+    // Guardar la categoría actual para futuras comparaciones
+    wizardState.lastCategoriaId = categoriaActual;
 
     fetch('get_servicios_por_categoria.php', {
         method: 'POST',
@@ -302,6 +329,11 @@ function renderServicios(servicios) {
     tbody.innerHTML = '';
 
     servicios.forEach(s => {
+        // Verificar si este servicio ya está seleccionado
+        const servicioSeleccionado = wizardState.servicios.find(sel => sel.id === parseInt(s.ID));
+        const isChecked = servicioSeleccionado ? 'checked' : '';
+        const precioMostrar = servicioSeleccionado ? servicioSeleccionado.precio : 0;
+        
         tbody.innerHTML += `
             <tr>
                 <td>${s.Descripcion}</td>
@@ -311,16 +343,20 @@ function renderServicios(servicios) {
                             data-id="${s.ID}"
                             data-precio="${s.Precio}"
                             data-nombre="${s.Descripcion}"
-                            onchange="toggleServicio(this)">
+                            onchange="toggleServicio(this)"
+                            ${isChecked}>
                         <span class="slider"></span>
                     </label>
                 </td>
                 <td class="text-end" id="price-${s.ID}">
-                    ₡0.00
+                    ${formatCurrency(precioMostrar)}
                 </td>
             </tr>
         `;
     });
+    
+    // Recalcular totales después de renderizar
+    recalcularTotales();
 }
 
 
@@ -331,14 +367,25 @@ function toggleServicio(el) {
     const nombre = el.dataset.nombre;
 
     if (el.checked) {
-        wizardState.servicios.push({ 
-            id: servicioId, 
-            precio: precio,
-            nombre: nombre 
-        });
+        // Verificar si ya existe para evitar duplicados
+        const existeIndex = wizardState.servicios.findIndex(s => s.id === servicioId);
+        
+        if (existeIndex === -1) {
+            // No existe, agregarlo
+            wizardState.servicios.push({ 
+                id: servicioId, 
+                precio: precio,
+                nombre: nombre 
+            });
+        } else {
+            // Ya existe, actualizar precio por si acaso
+            wizardState.servicios[existeIndex].precio = precio;
+        }
+        
         document.getElementById(`price-${servicioId}`)
             .textContent = formatCurrency(precio);
     } else {
+        // Remover del estado
         wizardState.servicios =
             wizardState.servicios.filter(s => s.id !== servicioId);
 
@@ -346,6 +393,7 @@ function toggleServicio(el) {
             .textContent = formatCurrency(0);
     }
 
+    console.log('🔄 Servicios actualizados:', wizardState.servicios);
     recalcularTotales();
 }
 
@@ -1008,6 +1056,7 @@ function resetWizard() {
         iva: 0,
         total: 0
     };
+    wizardState.lastCategoriaId = null;
     
     // Limpiar formularios
     const forms = document.querySelectorAll('form');
