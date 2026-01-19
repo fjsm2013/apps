@@ -105,11 +105,13 @@ require 'lavacar/partials/header.php';
                     <h2><i class="fa-solid fa-car me-2"></i>Gestión de Vehículos</h2>
                     <p class="text-muted mb-0">Administra los vehículos registrados en el sistema</p>
                 </div>
+                <?php /* Comentado temporalmente - Botón Nuevo Vehículo
                 <button class="btn btn-frosh-primary btn-lg new-vehicle-btn" onclick="openCreate()">
                     <i class="fa fa-plus me-2"></i> 
                     <span class="d-none d-sm-inline">Nuevo Vehículo</span>
                     <span class="d-sm-none">Nuevo</span>
                 </button>
+                */ ?>
             </div>
 
             <?php /* Comentado temporalmente - Estadísticas de vehículos
@@ -194,11 +196,13 @@ require 'lavacar/partials/header.php';
                             <p class="text-muted">
                                 <?= $search ? "No hay vehículos que coincidan con '{$search}'" : 'No hay vehículos registrados' ?>
                             </p>
-                            <?php if (!$search): ?>
+                            <?php /* Comentado temporalmente - Botón Registrar primer vehículo
+                            if (!$search): ?>
                                 <button class="btn btn-frosh-primary" onclick="openCreate()">
                                     <i class="fa fa-plus me-2"></i> Registrar primer vehículo
                                 </button>
-                            <?php endif; ?>
+                            <?php endif;
+                            */ ?>
                         </div>
                     <?php else: ?>
                         <!-- Vista Desktop -->
