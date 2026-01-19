@@ -512,28 +512,77 @@ function formatCurrency(value) {
 function showAlert({ type, message }) {
     // Remove any existing alerts
     const existingAlert = document.querySelector('.alert-custom');
+    const existingOverlay = document.querySelector('.alert-overlay');
     if (existingAlert) {
         existingAlert.remove();
     }
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+    
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'alert-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 9998;
+        backdrop-filter: blur(2px);
+    `;
     
     // Create alert element
     const alertDiv = document.createElement('div');
     alertDiv.className = `alert alert-${getBootstrapAlertType(type)} alert-dismissible fade show alert-custom`;
-    alertDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    alertDiv.style.cssText = `
+        position: fixed; 
+        top: 50%; 
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+        z-index: 9999; 
+        min-width: 320px; 
+        max-width: 500px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        border-radius: 12px;
+        padding: 24px 28px;
+        font-size: 16px;
+        font-weight: 500;
+        border: none;
+    `;
     
     alertDiv.innerHTML = `
-        <i class="fa-solid ${getAlertIcon(type)} me-2"></i>
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div style="margin-bottom: 8px;">
+            <i class="fa-solid ${getAlertIcon(type)} me-2" style="font-size: 1.2em;"></i>
+            ${message}
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" style="position: absolute; top: 12px; right: 12px; opacity: 0.7;"></button>
     `;
     
     // Add to page
+    document.body.appendChild(overlay);
     document.body.appendChild(alertDiv);
+    
+    // Close on overlay click
+    overlay.addEventListener('click', () => {
+        if (alertDiv && alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+        if (overlay && overlay.parentNode) {
+            overlay.remove();
+        }
+    });
     
     // Auto-remove after 5 seconds
     setTimeout(() => {
         if (alertDiv && alertDiv.parentNode) {
             alertDiv.remove();
+        }
+        if (overlay && overlay.parentNode) {
+            overlay.remove();
         }
     }, 5000);
 }

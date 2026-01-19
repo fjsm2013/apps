@@ -5,7 +5,7 @@ require_once 'lib/Auth.php';
 require_once 'lavacar/middleware/setup-check.php';
 
 if (!isLoggedIn()) {
-    header("Location: ../login.php");
+    header("Location: ../../login.php");
     exit;
 }
 
@@ -41,27 +41,61 @@ require 'lavacar/partials/header.php';
     justify-content: center;
     margin: 0 auto 6px;
     font-size: 16px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.wizard-step .circle i {
+    color: inherit;
 }
 
 .wizard-step span {
     font-size: 13px;
     color: #6b7280;
     font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .wizard-step.active .circle {
-    background: #4facfe;
-    color: #fff;
+    background: #274AB3 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(39, 74, 179, 0.2);
+    transform: scale(1.05);
+}
+
+.wizard-step.active .circle i {
+    color: #ffffff !important;
+}
+
+/* Remover hover effects para pasos activos */
+.wizard-step.active .circle:hover {
+    background: #274AB3 !important;
+    color: #ffffff !important;
+    transform: scale(1.05);
+    box-shadow: 0 0 0 3px rgba(39, 74, 179, 0.2);
 }
 
 .wizard-step.completed .circle {
-    background: #10b981;
-    color: #fff;
+    background: #10b981 !important;
+    color: #ffffff !important;
+    border-color: #10b981;
+}
+
+.wizard-step.completed .circle i {
+    color: #ffffff !important;
+}
+
+/* Remover hover effects para pasos completados */
+.wizard-step.completed .circle:hover {
+    background: #10b981 !important;
+    color: #ffffff !important;
+    transform: none;
 }
 
 .wizard-step.active span,
 .wizard-step.completed span {
-    color: #111827;
+    color: #111827 !important;
+    font-weight: 600;
 }
 
 .line {
@@ -69,36 +103,105 @@ require 'lavacar/partials/header.php';
     height: 2px;
     background: #e5e7eb;
     margin: 0 6px;
+    transition: all 0.3s ease;
 }
 
 .line.completed {
-    background: #10b981;
+    background: #10b981 !important;
 }
 
 .vehicle-card {
     border: 1px solid #e5e7eb;
     border-radius: 12px;
-    transition: all .2s ease;
+    transition: all .3s ease;
     cursor: pointer;
+    background: white;
 }
 
 .vehicle-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 18px rgba(0, 0, 0, .06);
+    border-color: #d1d5db;
 }
 
 .vehicle-card.active {
-    border-color: #111827;
+    border-color: #274AB3 !important;
     box-shadow:
-        0 0 0 2px rgba(17, 24, 39, .25),
-        0 8px 20px rgba(0, 0, 0, .12);
+        0 0 0 2px rgba(39, 74, 179, .25),
+        0 8px 20px rgba(39, 74, 179, .12);
+    background: rgba(39, 74, 179, 0.02);
 }
 
 .vehicle-card.active i {
-    color: #111827;
+    color: #274AB3 !important;
 }
 
 /*Button Slider fro CheckBox */
+
+/* ===== WIZARD RESPONSIVE IMPROVEMENTS ===== */
+@media (max-width: 768px) {
+    .wizard-progress {
+        padding: 0 10px;
+    }
+    
+    .wizard-step .circle {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+    
+    .wizard-step span {
+        font-size: 11px;
+    }
+    
+    .line {
+        margin: 0 4px;
+    }
+}
+
+@media (max-width: 576px) {
+    .wizard-step span {
+        display: none;
+    }
+    
+    .wizard-step .circle {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+        margin-bottom: 0;
+    }
+    
+    .line {
+        margin: 0 2px;
+    }
+}
+
+/* ===== WIZARD STEP HOVER EFFECTS (solo para pasos inactivos) ===== */
+.wizard-step:not(.active):not(.completed) .circle:hover {
+    background: #d1d5db !important;
+    color: #374151 !important;
+    transform: scale(1.02);
+}
+
+.wizard-step:not(.active):not(.completed) .circle:hover i {
+    color: #374151 !important;
+}
+
+/* ===== WIZARD ANIMATIONS ===== */
+.wizard-step-content {
+    animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 </style>
 <main class="container my-5">
 
