@@ -1,0 +1,68 @@
+RewriteEngine On
+ErrorDocument 404 https://froshsystems.com/notfound.php
+ErrorDocument 403 https://froshsystems.com/error.php
+RewriteRule ^/?index.html$ https://froshsystems.com [L,R=301,NC]
+
+
+#RewriteCond %{HTTP_HOST} ^www.froshsystems.com [NC]
+#RewriteRule ^(.*)$ https://froshsystems.com/$1 [L,R=301]
+
+
+# Redirect requests with query strings longer than 300 characters
+RewriteCond %{REQUEST_URI} ^(.{120,})$
+RewriteRule ^ - [F,L]
+
+<FilesMatch "\.(env|ini|log)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+Options -Indexes
+<IfModule mod_rewrite.c>	
+	RewriteCond %{THE_REQUEST} !^[A-Z]{3,9}\ [a-zA-Z0-9\.\%\@\+_/\-\:\?\=\&]+\ HTTP/ [NC]
+    RewriteRule ^(.*)$ https://froshsystems.com/$1 [R=403,L]
+	
+	#*************************************************
+	#DO not allow Javascript code to execute from URL
+	#*************************************************
+	RewriteCond %{QUERY_STRING} (\<|%3C|%22).*script.*(\>|%3E|%27) [NC,OR]
+	RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+	RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+	RewriteRule ^(.*)$ /notfound.php? [R=301,L]
+	#RewriteRule .* index.php [F,L]
+	
+	RewriteCond %{HTTP_HOST} !^([a-zA-Z0-9-_]{1,20}.){0,3}froshsystems.com$
+    RewriteRule ^(.*)$ https://froshsystems.com/ [R=301,L]	
+</IfModule>
+ # DISABLE CACHING 
+<IfModule mod_headers.c>
+    Header unset ETag
+    Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "Wed, 12 Jan 1980 05:00:00 GMT" 
+	Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+	Header set Content-Security-Policy "frame-ancestors 'self'; img-src 'self' data: *.gstatic.com *.googletagmanager.com t.co vumbnail.com *.google.com analytics.twitter.com *.facebook.com *.google.co.cr *.vumbnail.com *.ytimg.com *.vimeocdn.com; object-src 'self'; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.google.com *.gstatic.com *.clickdesk.com *.cloudfront.net *.amazonaws.com *.appspot.com *.pusherapp.com *.pusher.com *.capterra.com crozdesk.com sourceforge.net *.securitymetrics.com *.googletagmanager.com *.google-analytics.com *.doubleclick.net *.griffithind.com *.mfinw.com seal.networksolutions.com ws.pusherapp.com *.youtube.com *.vimeo.com *.moz.com *.youtube-nocookie.com lite-vimeo-embed.now.sh i.ytimg.com lite-vimeo-embed.vercel.app i.vimeocdn.com *.google.co.cr connect.facebook.net *.facebook.com static.ctctcdn.com cdnjs.cloudflare.com listgrowth.ctctcdn.com b.sf-syn.com *.froshsystems.com www.googleadservices.com pagead2.googlesyndication.com fonts.googleapis.com code.jquery.com static.ads-twitter.com t.co analytics.twitter.com cdn.jsdelivr.net *.fontawesome.com"
+
+	Header set X-Frame-Options: SAMEORIGIN
+    # Prevent browsers from incorrectly detecting non-scripts as scripts
+    #Header set X-Content-Type-Options: nosniff
+	Header set X-XSS-Protection "1; mode=block"
+	Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+	#Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure;SameSite=Strict
+</IfModule>
+<IfModule mod_deflate.c>
+<FilesMatch "\.(ico|jpg|jpeg|png|svg|gif|js|css|webp)$">
+SetOutputFilter DEFLATE
+</FilesMatch>
+</IfModule>
+<IfModule mod_expires.c>
+  <FilesMatch "\.(jpe?g|png|svg|gif|js|css|ico|webp)$">
+	  ExpiresActive On
+	  ExpiresDefault "access plus 1 week"
+  </FilesMatch>
+</IfModule>
+
+
+<RequireAll>
+    Require all granted
+</RequireAll>

@@ -79,6 +79,7 @@
       border-radius: 20px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.1);
       border: 1px solid #eaeaea;
+      margin: 0 auto;
     }
     
     .error-icon {
@@ -308,7 +309,7 @@
 <div class="error-container">
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-12">
+      <div class="col-12 col-lg-10 col-xl-8">
         <div class="error-content">
           <i class="fas fa-search error-icon"></i>
           
@@ -349,13 +350,13 @@
                 </a>
               </div>
               <div class="col-md-6">
-                <a href="index.php#contacto" class="link-item">
-                  <i class="fas fa-envelope"></i>
-                  Solicitar Demo
-                </a>
                 <a href="index.php#funciona" class="link-item">
                   <i class="fas fa-info-circle"></i>
                   Cómo Funciona
+                </a>
+                <a href="index.php#beneficios" class="link-item">
+                  <i class="fas fa-star"></i>
+                  Beneficios
                 </a>
                 <a href="https://wa.me/50663957241" class="link-item" target="_blank">
                   <i class="fab fa-whatsapp"></i>
@@ -387,7 +388,7 @@
           <li class="mb-2"><a href="index.php#problema" class="text-decoration-none text-light">Problemas que resolvemos</a></li>
           <li class="mb-2"><a href="index.php#funciona" class="text-decoration-none text-light">Cómo funciona</a></li>
           <li class="mb-2"><a href="index.php#beneficios" class="text-decoration-none text-light">Beneficios</a></li>
-          <li class="mb-2"><a href="index.php#contacto" class="text-decoration-none text-light">Solicitar demo</a></li>
+          <li class="mb-2"><a href="register.php" class="text-decoration-none text-light">Crear cuenta</a></li>
         </ul>
       </div>
       
