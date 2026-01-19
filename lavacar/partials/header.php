@@ -506,6 +506,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         gap: 16px;
         font-weight: 600;
         cursor: pointer;
@@ -513,6 +514,7 @@
         min-height: 160px;
         position: relative;
         border: 1px solid var(--frosh-gray-200);
+        text-align: center;
     }
 
     .dash-card:hover {
@@ -563,6 +565,10 @@
         font-weight: 700;
         text-transform: uppercase;
         color: var(--frosh-gray-800);
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        max-width: 100%;
     }
 
     /* Badge counter for active orders */
@@ -708,23 +714,35 @@
     /* ---------- MOBILE ---------- */
     @media (max-width: 576px) {
         .dash-card {
-            padding: 35px 12px;
-            min-height: 140px;
+            padding: 30px 10px;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
         
         .dash-card i {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
+            margin-bottom: 8px;
         }
         
         .dash-card span {
-            font-size: 1rem;
-            letter-spacing: 0.6px;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            word-wrap: break-word;
+            hyphens: auto;
+            max-width: 100%;
         }
         
         .badge-counter {
-            width: 28px;
-            height: 28px;
-            font-size: 0.8rem;
+            width: 26px;
+            height: 26px;
+            font-size: 0.75rem;
+            top: 10px;
+            right: 10px;
         }
 
         /* Mobile header adjustments */
@@ -749,6 +767,21 @@
         .dropdown-item {
             padding: 8px 12px;
         }
+        
+        /* Ensure equal height cards on mobile */
+        #dashboardCards .col-6 {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        #dashboardCards .col-6 a {
+            width: 100%;
+        }
+        
+        #dashboardCards .dash-card {
+            width: 100%;
+            height: 130px;
+        }
     }
 
     @media (max-width: 768px) {
@@ -763,6 +796,28 @@
 
         .logo {
             height: 38px;
+        }
+        
+        /* Tablet specific adjustments */
+        .dash-card {
+            padding: 35px 15px;
+            min-height: 145px;
+        }
+        
+        .dash-card span {
+            font-size: 0.95rem;
+            letter-spacing: 0.6px;
+            line-height: 1.3;
+        }
+        
+        /* Ensure consistent grid spacing */
+        #dashboardCards {
+            margin: 0 -10px;
+        }
+        
+        #dashboardCards .col-6 {
+            padding: 0 10px;
+            margin-bottom: 20px;
         }
     }
 
@@ -788,6 +843,50 @@
         .dash-card:active {
             transform: scale(0.98);
             transition: transform 0.1s ease;
+        }
+    }
+    
+    /* Extra small screens - better text handling */
+    @media (max-width: 480px) {
+        .dash-card {
+            padding: 25px 8px;
+            min-height: 120px;
+        }
+        
+        .dash-card i {
+            font-size: 2.2rem;
+            margin-bottom: 6px;
+        }
+        
+        .dash-card span {
+            font-size: 0.8rem;
+            letter-spacing: 0.4px;
+            line-height: 1.1;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        /* Specific fix for long text like "ADMINISTRACIÓN" */
+        .admin span {
+            font-size: 0.75rem;
+        }
+        
+        .badge-counter {
+            width: 24px;
+            height: 24px;
+            font-size: 0.7rem;
+            top: 8px;
+            right: 8px;
+        }
+        
+        /* Tighter grid spacing */
+        #dashboardCards {
+            margin: 0 -5px;
+        }
+        
+        #dashboardCards .col-6 {
+            padding: 0 5px;
+            margin-bottom: 10px;
         }
     }
 
