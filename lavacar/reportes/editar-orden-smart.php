@@ -1,0 +1,412 @@
+<?php
+session_start();
+require_once '../../lib/config.php';
+require_once 'lib/Auth.php';
+
+autoLoginFromCookie();
+if (!isLoggedIn()) {
+    header("Location: ../../login.php");
+    exit;
+}
+
+$user = userInfo();
+$dbName = $user['company']['db'];
+
+// Obtener ID de la orden
+$ordenId = $_GET['id'] ?? null;
+if (!$ordenId) {
+    header("Location: ordenes-activas.php");
+    exit;
+}
+
+// Handle form submission with smart update (don't delete all services)
+if ($_POST && isset($_POST['action']) && $_POST['action'] === 'save') {
+    try {
+        $conn->begin_transaction();
+        
+        // Get current services from database
+        $stmt = $conn->prepare("SELECT ID, ServicioID, Precio, ServicioPersonalizado FROM `{$dbName}`.orden_servicios WHERE OrdenID = ?");
+        $stmt->bind_param("i", $ordenId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $currentServices = [];
+        while ($row = $result->fetch_assoc()) {
+            $currentServices[$row['ID']] = $row;
+        }
+        
+        $subtotal = 0;
+        $serviciosJson = [];
+        $processedServiceIds = [];
+        
+        // Process submitted services
+        if (isset($_POST['servicios']) && is_array($_POST['servicios'])) {
+            foreach ($_POST['servicios'] as $index => $servicio) {
+                $nombre = trim($servicio['nombre'] ?? '');
+                $precio = floatval($servicio['precio'] ?? 0);
+                $serviceDbId = intval($servicio['db_id'] ?? 0); // Hidden field with database ID
+                
+                if ($nombre && $precio > 0) {
+                    $subtotal += $precio;
+                    
+                    $serviciosJson[] = [
+                        'id' => $serviceDbId ?: 'custom_' . uniqid(),
+                        'nombre' => $nombre,
+                        'precio' => $precio,
+                        'personalizado' => true
+                    ];
+                    
+                    if ($serviceDbId && isset($currentServices[$serviceDbId])) {
+                        // Update existing service
+                        $stmt = $conn->prepare("
+                            UPDATE `{$dbName}`.orden_servicios 
+                            SET Precio = ?, ServicioPersonalizado = ?, Subtotal = ?
+                            WHERE ID = ? AND OrdenID = ?
+                        ");
+                        $stmt->bind_param("dssii", $precio, $nombre, $precio, $serviceDbId, $ordenId);
+                        $stmt->execute();
+                        $processedServiceIds[] = $serviceDbId;
+                    } else {
+                        // Insert new service
+                        $stmt = $conn->prepare("
+                            INSERT INTO `{$dbName}`.orden_servicios 
+                            (OrdenID, ServicioID, Precio, ServicioPersonalizado, Subtotal, Cantidad) 
+                            VALUES (?, NULL, ?, ?, ?, 1)
+                        ");
+                        $stmt->bind_param("idss", $ordenId, $precio, $nombre, $precio);
+                        $stmt->execute();
+                        $processedServiceIds[] = $conn->insert_id;
+                    }
+                }
+            }
+        }
+        
+        // Delete services that were removed (not in the submitted list)
+        // CRITICAL: Only delete services for THIS specific order
+        if (!empty($currentServices)) {
+            $servicesToDelete = array_diff(array_keys($currentServices), $processedServiceIds);
+            if (!empty($servicesToDelete)) {
+                foreach ($servicesToDelete as $serviceId) {
+                    // Delete one by one with explicit OrdenID check for safety
+                    $stmt = $conn->prepare("DELETE FROM `{$dbName}`.orden_servicios WHERE ID = ? AND OrdenID = ?");
+                    $stmt->bind_param("ii", $serviceId, $ordenId);
+                    $stmt->execute();
+                }
+            }
+        }
+        
+        // Update order
+        $observaciones = trim($_POST['observaciones'] ?? '');
+        $serviciosJsonStr = json_encode($serviciosJson);
+        
+        $stmt = $conn->prepare("
+            UPDATE `{$dbName}`.ordenes 
+            SET Observaciones = ?, ServiciosJson = ?
+            WHERE ID = ?
+        ");
+        $stmt->bind_param("ssi", $observaciones, $serviciosJsonStr, $ordenId);
+        $stmt->execute();
+        
+        $conn->commit();
+        
+        $_SESSION['success'] = 'Orden actualizada exitosamente';
+        header("Location: ordenes-activas.php");
+        exit;
+        
+    } catch (Exception $e) {
+        $conn->rollback();
+        $_SESSION['error'] = 'Error al actualizar la orden: ' . $e->getMessage();
+    }
+}
+
+// Obtener datos de la orden
+$stmt = $conn->prepare("
+    SELECT o.*, 
+           c.NombreCompleto as ClienteNombre,
+           c.Correo as ClienteCorreo,
+           v.Placa, v.Marca, v.Modelo, v.Year, v.Color,
+           cv.TipoVehiculo
+    FROM `{$dbName}`.ordenes o
+    LEFT JOIN `{$dbName}`.clientes c ON o.ClienteID = c.ID
+    LEFT JOIN `{$dbName}`.vehiculos v ON o.VehiculoID = v.ID
+    LEFT JOIN `{$dbName}`.categoriavehiculo cv ON v.CategoriaVehiculo = cv.ID
+    WHERE o.ID = ?
+");
+
+$stmt->bind_param("i", $ordenId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 0) {
+    header("Location: ordenes-activas.php");
+    exit;
+}
+
+$orden = $result->fetch_assoc();
+
+// Verificar que la orden no esté cerrada
+if ($orden['Estado'] == 4) {
+    $_SESSION['error'] = 'No se puede editar una orden cerrada';
+    header("Location: ordenes-activas.php");
+    exit;
+}
+
+// Obtener servicios de la orden
+$stmt = $conn->prepare("
+    SELECT os.ID as DbID, os.*, s.Descripcion as ServicioNombre
+    FROM `{$dbName}`.orden_servicios os
+    LEFT JOIN `{$dbName}`.servicios s ON os.ServicioID = s.ID
+    WHERE os.OrdenID = ?
+    ORDER BY os.ID
+");
+
+$stmt->bind_param("i", $ordenId);
+$stmt->execute();
+$serviciosResult = $stmt->get_result();
+
+$servicios = [];
+while ($servicio = $serviciosResult->fetch_assoc()) {
+    $servicios[] = [
+        'db_id' => $servicio['DbID'], // Database ID for updates
+        'nombre' => ($servicio['ServicioPersonalizado'] ?? '') ?: $servicio['ServicioNombre'],
+        'precio' => floatval($servicio['Precio']),
+        'personalizado' => !empty($servicio['ServicioPersonalizado'] ?? '')
+    ];
+}
+
+require 'lavacar/partials/header.php';
+?>
+
+<main class="container my-4">
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+    <?php endif; ?>
+    
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success"><?= $_SESSION['success']; unset($_SESSION['success']); ?></div>
+    <?php endif; ?>
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="fa-solid fa-edit me-2"></i>Editar Orden #<?= $orden['ID'] ?> (SMART)</h2>
+            <p class="text-muted mb-0">Modificar servicios sin eliminar todos los registros</p>
+        </div>
+        <div>
+            <a href="ordenes-activas.php" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-arrow-left me-1"></i>Volver
+            </a>
+        </div>
+    </div>
+
+    <form method="POST" id="editForm">
+        <input type="hidden" name="action" value="save">
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fa-solid fa-info-circle me-2"></i>Información de la Orden</h6>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Cliente:</strong><br><?= htmlspecialchars($orden['ClienteNombre']) ?></p>
+                        <p><strong>Vehículo:</strong><br><?= htmlspecialchars($orden['Placa']) ?> - <?= htmlspecialchars($orden['Marca']) ?> <?= htmlspecialchars($orden['Modelo']) ?></p>
+                        <p><strong>Estado:</strong><br>
+                            <?php
+                            $estados = [1 => 'Pendiente', 2 => 'En Proceso', 3 => 'Terminado', 4 => 'Cerrado'];
+                            echo $estados[$orden['Estado']] ?? 'Desconocido';
+                            ?>
+                        </p>
+                        <p><strong>Fecha:</strong><br><?= date('d/m/Y H:i', strtotime($orden['FechaIngreso'])) ?></p>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fa-solid fa-comment me-2"></i>Observaciones</h6>
+                    </div>
+                    <div class="card-body">
+                        <textarea class="form-control" name="observaciones" rows="4" placeholder="Observaciones adicionales"><?= htmlspecialchars($orden['Observaciones'] ?? '') ?></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0"><i class="fa-solid fa-list me-2"></i>Servicios</h6>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="agregarServicio()">
+                            <i class="fa-solid fa-plus me-1"></i>
+                            Agregar Servicio
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="servicios-container">
+                            <?php foreach ($servicios as $index => $servicio): ?>
+                            <div class="row mb-3 servicio-row">
+                                <input type="hidden" name="servicios[<?= $index ?>][db_id]" value="<?= $servicio['db_id'] ?>">
+                                <div class="col-md-6">
+                                    <label class="form-label">Servicio</label>
+                                    <input type="text" class="form-control" name="servicios[<?= $index ?>][nombre]" 
+                                           value="<?= htmlspecialchars($servicio['nombre']) ?>" required>
+                                    <?php if ($servicio['personalizado']): ?>
+                                    <small class="text-success"><i class="fa-solid fa-star"></i> Personalizado</small>
+                                    <?php endif; ?>
+                                    <small class="text-muted">DB ID: <?= $servicio['db_id'] ?></small>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Precio</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">₡</span>
+                                        <input type="number" class="form-control precio-input" name="servicios[<?= $index ?>][precio]" 
+                                               value="<?= $servicio['precio'] ?>" min="0" step="0.01" required onchange="recalcularTotales()">
+                                    </div>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="eliminarServicio(this)">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-8"></div>
+                            <div class="col-md-4">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Subtotal:</strong></td>
+                                        <td class="text-end"><strong id="subtotal">₡0.00</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>IVA (13%):</strong></td>
+                                        <td class="text-end"><strong id="iva">₡0.00</strong></td>
+                                    </tr>
+                                    <tr class="table-success">
+                                        <td><strong>Total:</strong></td>
+                                        <td class="text-end"><strong id="total">₡0.00</strong></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <a href="ordenes-activas.php" class="btn btn-outline-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-save me-1"></i>
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</main>
+
+<script>
+let contadorServicios = <?= count($servicios) ?>;
+
+function agregarServicio() {
+    const container = document.getElementById('servicios-container');
+    const index = contadorServicios++;
+    
+    const div = document.createElement('div');
+    div.className = 'row mb-3 servicio-row';
+    div.innerHTML = `
+        <input type="hidden" name="servicios[${index}][db_id]" value="0">
+        <div class="col-md-6">
+            <label class="form-label">Servicio</label>
+            <input type="text" class="form-control" name="servicios[${index}][nombre]" 
+                   placeholder="Nombre del servicio personalizado" required>
+            <small class="text-success"><i class="fa-solid fa-star"></i> Personalizado</small>
+            <small class="text-muted">Nuevo servicio</small>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Precio</label>
+            <div class="input-group">
+                <span class="input-group-text">₡</span>
+                <input type="number" class="form-control precio-input" name="servicios[${index}][precio]" 
+                       value="0" min="0" step="0.01" required onchange="recalcularTotales()">
+            </div>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="eliminarServicio(this)">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+    `;
+    
+    container.appendChild(div);
+    
+    // Focus en el nombre del nuevo servicio
+    div.querySelector('input[type="text"]').focus();
+    recalcularTotales();
+}
+
+function eliminarServicio(btn) {
+    if (confirm('¿Está seguro de eliminar este servicio?')) {
+        btn.closest('.servicio-row').remove();
+        recalcularTotales();
+    }
+}
+
+function recalcularTotales() {
+    let subtotal = 0;
+    
+    // Sumar todos los precios
+    const precios = document.querySelectorAll('.precio-input');
+    precios.forEach(input => {
+        subtotal += parseFloat(input.value) || 0;
+    });
+    
+    const iva = subtotal * 0.13;
+    const total = subtotal + iva;
+    
+    // Actualizar UI
+    document.getElementById('subtotal').textContent = formatCurrency(subtotal);
+    document.getElementById('iva').textContent = formatCurrency(iva);
+    document.getElementById('total').textContent = formatCurrency(total);
+}
+
+function formatCurrency(value) {
+    return value.toLocaleString('es-CR', {
+        style: 'currency',
+        currency: 'CRC'
+    });
+}
+
+// Calcular totales iniciales
+document.addEventListener('DOMContentLoaded', function() {
+    recalcularTotales();
+});
+
+// Form validation
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    const servicios = document.querySelectorAll('.servicio-row');
+    if (servicios.length === 0) {
+        e.preventDefault();
+        alert('Debe agregar al menos un servicio');
+        return false;
+    }
+    
+    // Check if all services have name and price
+    let valid = true;
+    servicios.forEach(row => {
+        const nombre = row.querySelector('input[type="text"]').value.trim();
+        const precio = parseFloat(row.querySelector('.precio-input').value) || 0;
+        
+        if (!nombre || precio <= 0) {
+            valid = false;
+        }
+    });
+    
+    if (!valid) {
+        e.preventDefault();
+        alert('Todos los servicios deben tener nombre y precio válido');
+        return false;
+    }
+});
+</script>
+
+<?php require 'lavacar/partials/footer.php'; ?>

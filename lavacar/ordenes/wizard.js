@@ -295,6 +295,14 @@ function cargarServicios() {
         console.log('🔄 Categoría cambió, limpiando servicios seleccionados');
         wizardState.servicios = [];
         
+        // También limpiar servicios personalizados
+        serviciosPersonalizados = [];
+        contadorServiciosPersonalizados = 0;
+        
+        // Limpiar las filas de servicios personalizados de la tabla
+        const serviciosPersonalizadosExistentes = document.querySelectorAll('.servicio-personalizado-row');
+        serviciosPersonalizadosExistentes.forEach(row => row.remove());
+        
         showAlert({
             type: 'info',
             message: 'Categoría de vehículo cambió. Seleccione nuevamente los servicios.'
@@ -512,79 +520,89 @@ function formatCurrency(value) {
 function showAlert({ type, message }) {
     // Remove any existing alerts
     const existingAlert = document.querySelector('.alert-custom');
-    const existingOverlay = document.querySelector('.alert-overlay');
     if (existingAlert) {
         existingAlert.remove();
     }
-    if (existingOverlay) {
-        existingOverlay.remove();
-    }
     
-    // Create overlay
-    const overlay = document.createElement('div');
-    overlay.className = 'alert-overlay';
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.4);
-        z-index: 9998;
-        backdrop-filter: blur(2px);
-    `;
-    
-    // Create alert element
+    // Create alert element (toast style in top-right corner)
     const alertDiv = document.createElement('div');
     alertDiv.className = `alert alert-${getBootstrapAlertType(type)} alert-dismissible fade show alert-custom`;
     alertDiv.style.cssText = `
         position: fixed; 
-        top: 50%; 
-        left: 50%; 
-        transform: translate(-50%, -50%); 
+        top: 20px; 
+        right: 20px; 
         z-index: 9999; 
         min-width: 320px; 
-        max-width: 500px;
-        text-align: center;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        border-radius: 12px;
-        padding: 24px 28px;
-        font-size: 16px;
-        font-weight: 500;
+        max-width: 400px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
         border: none;
+        font-weight: 500;
+        animation: slideInRight 0.3s ease-out;
     `;
     
     alertDiv.innerHTML = `
-        <div style="margin-bottom: 8px;">
-            <i class="fa-solid ${getAlertIcon(type)} me-2" style="font-size: 1.2em;"></i>
-            ${message}
+        <div class="d-flex align-items-center">
+            <i class="fa-solid ${getAlertIcon(type)} me-2" style="font-size: 1.1em;"></i>
+            <span class="flex-grow-1">${message}</span>
+            <button type="button" class="btn-close ms-2" data-bs-dismiss="alert"></button>
         </div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" style="position: absolute; top: 12px; right: 12px; opacity: 0.7;"></button>
     `;
     
+    // Add CSS animation keyframes if not already added
+    if (!document.querySelector('#toast-animations')) {
+        const style = document.createElement('style');
+        style.id = 'toast-animations';
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
     // Add to page
-    document.body.appendChild(overlay);
     document.body.appendChild(alertDiv);
     
-    // Close on overlay click
-    overlay.addEventListener('click', () => {
+    // Fast close on close button click
+    const closeBtn = alertDiv.querySelector('.btn-close');
+    closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (alertDiv && alertDiv.parentNode) {
-            alertDiv.remove();
-        }
-        if (overlay && overlay.parentNode) {
-            overlay.remove();
+            alertDiv.style.animation = 'slideOutRight 0.2s ease-in';
+            setTimeout(() => {
+                if (alertDiv && alertDiv.parentNode) alertDiv.remove();
+            }, 200);
         }
     });
     
-    // Auto-remove after 5 seconds
+    // Auto-remove after 3 seconds with slide-out animation
     setTimeout(() => {
         if (alertDiv && alertDiv.parentNode) {
-            alertDiv.remove();
+            alertDiv.style.animation = 'slideOutRight 0.3s ease-in';
+            setTimeout(() => {
+                if (alertDiv && alertDiv.parentNode) alertDiv.remove();
+            }, 300);
         }
-        if (overlay && overlay.parentNode) {
-            overlay.remove();
-        }
-    }, 5000);
+    }, 3000);
 }
 
 function getBootstrapAlertType(type) {
@@ -1032,7 +1050,9 @@ function guardarOrden() {
         },
         servicios: wizardState.servicios.map(s => ({
             id: s.id,
-            precio: s.precio
+            precio: s.precio,
+            nombre: s.nombre || null,
+            personalizado: s.personalizado || false
         })),
         observaciones: document.getElementById('observaciones').value.trim()
     };
@@ -1125,3 +1145,217 @@ function resetWizard() {
     // Volver al paso 1
     goToStep(1);
 }
+
+/* =========================
+   SERVICIOS PERSONALIZADOS
+========================= */
+
+// Array para almacenar servicios personalizados
+let serviciosPersonalizados = [];
+let contadorServiciosPersonalizados = 0;
+
+function mostrarFormularioServicioPersonalizado() {
+    const formulario = document.getElementById('formulario-servicio-personalizado');
+    formulario.style.display = 'block';
+    
+    // Limpiar campos
+    document.getElementById('servicio-personalizado-nombre').value = '';
+    document.getElementById('servicio-personalizado-precio').value = '';
+    
+    // Focus en el campo nombre
+    document.getElementById('servicio-personalizado-nombre').focus();
+}
+
+function cancelarServicioPersonalizado() {
+    const formulario = document.getElementById('formulario-servicio-personalizado');
+    formulario.style.display = 'none';
+    
+    // Limpiar campos
+    document.getElementById('servicio-personalizado-nombre').value = '';
+    document.getElementById('servicio-personalizado-precio').value = '';
+}
+
+function agregarServicioPersonalizado() {
+    const nombre = document.getElementById('servicio-personalizado-nombre').value.trim();
+    const precio = parseFloat(document.getElementById('servicio-personalizado-precio').value) || 0;
+    
+    // Validaciones
+    if (!nombre) {
+        showAlert({
+            type: 'warning',
+            message: 'Ingrese el nombre del servicio personalizado'
+        });
+        document.getElementById('servicio-personalizado-nombre').focus();
+        return;
+    }
+    
+    if (precio <= 0) {
+        showAlert({
+            type: 'warning',
+            message: 'Ingrese un precio válido mayor a 0'
+        });
+        document.getElementById('servicio-personalizado-precio').focus();
+        return;
+    }
+    
+    // Crear servicio personalizado
+    contadorServiciosPersonalizados++;
+    const servicioPersonalizado = {
+        id: `custom_${contadorServiciosPersonalizados}`,
+        nombre: nombre,
+        precio: precio,
+        personalizado: true
+    };
+    
+    // Agregar al array
+    serviciosPersonalizados.push(servicioPersonalizado);
+    
+    // Agregar al estado del wizard
+    wizardState.servicios.push({
+        id: servicioPersonalizado.id,
+        nombre: servicioPersonalizado.nombre,
+        precio: servicioPersonalizado.precio,
+        personalizado: true
+    });
+    
+    // Renderizar la lista
+    renderServiciosPersonalizados();
+    
+    // Actualizar totales
+    recalcularTotales();
+    
+    // Ocultar formulario
+    cancelarServicioPersonalizado();
+    
+    // Mostrar mensaje de éxito
+    showAlert({
+        type: 'success',
+        message: `Servicio "${nombre}" agregado exitosamente`
+    });
+}
+
+function renderServiciosPersonalizados() {
+    // Limpiar servicios personalizados existentes de la tabla
+    const serviciosPersonalizadosExistentes = document.querySelectorAll('.servicio-personalizado-row');
+    serviciosPersonalizadosExistentes.forEach(row => row.remove());
+    
+    // Si no hay servicios personalizados, no hacer nada
+    if (serviciosPersonalizados.length === 0) {
+        return;
+    }
+    
+    // Obtener el tbody de la tabla de servicios
+    const tbody = document.getElementById('services-body');
+    
+    // Agregar cada servicio personalizado como una fila en la tabla
+    serviciosPersonalizados.forEach(servicio => {
+        const row = document.createElement('tr');
+        row.className = 'servicio-personalizado-row';
+        row.innerHTML = `
+            <td>
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-star text-warning me-2"></i>
+                    <div>
+                        <strong>${servicio.nombre}</strong>
+                        <br>
+                        <small class="text-muted">
+                            <span class="badge bg-success">Personalizado</span>
+                        </small>
+                    </div>
+                </div>
+            </td>
+            <td class="text-center">
+                <div class="d-flex align-items-center justify-content-center">
+                    <i class="fa-solid fa-check-circle text-success me-2"></i>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarServicioPersonalizado('${servicio.id}')" title="Eliminar servicio personalizado">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+            <td class="text-end">
+                <strong class="text-success">₡${servicio.precio.toLocaleString('es-CR', {minimumFractionDigits: 2})}</strong>
+            </td>
+        `;
+        
+        // Insertar la fila antes del tfoot (antes de los totales)
+        tbody.appendChild(row);
+    });
+}
+
+function eliminarServicioPersonalizado(servicioId) {
+    // Confirmar eliminación
+    if (!confirm('¿Está seguro de eliminar este servicio personalizado?')) {
+        return;
+    }
+    
+    // Encontrar el servicio
+    const servicioIndex = serviciosPersonalizados.findIndex(s => s.id === servicioId);
+    if (servicioIndex === -1) return;
+    
+    const servicio = serviciosPersonalizados[servicioIndex];
+    
+    // Eliminar del array de servicios personalizados
+    serviciosPersonalizados.splice(servicioIndex, 1);
+    
+    // Eliminar del estado del wizard
+    const wizardServiceIndex = wizardState.servicios.findIndex(s => s.id === servicioId);
+    if (wizardServiceIndex !== -1) {
+        wizardState.servicios.splice(wizardServiceIndex, 1);
+    }
+    
+    // Re-renderizar la lista
+    renderServiciosPersonalizados();
+    
+    // Actualizar totales
+    recalcularTotales();
+    
+    // Mostrar mensaje
+    showAlert({
+        type: 'info',
+        message: `Servicio "${servicio.nombre}" eliminado`
+    });
+}
+
+// Modificar la función resetWizard para limpiar servicios personalizados
+function resetWizardWithCustomServices() {
+    // Limpiar servicios personalizados
+    serviciosPersonalizados = [];
+    contadorServiciosPersonalizados = 0;
+    
+    // Limpiar las filas de servicios personalizados de la tabla
+    const serviciosPersonalizadosExistentes = document.querySelectorAll('.servicio-personalizado-row');
+    serviciosPersonalizadosExistentes.forEach(row => row.remove());
+    
+    // Ocultar formulario si está visible
+    const formulario = document.getElementById('formulario-servicio-personalizado');
+    if (formulario) {
+        formulario.style.display = 'none';
+    }
+    
+    // Llamar al reset original
+    resetWizard();
+}
+
+// Agregar event listeners para Enter en los campos del formulario
+document.addEventListener('DOMContentLoaded', function() {
+    const nombreInput = document.getElementById('servicio-personalizado-nombre');
+    const precioInput = document.getElementById('servicio-personalizado-precio');
+    
+    if (nombreInput) {
+        nombreInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                precioInput.focus();
+            }
+        });
+    }
+    
+    if (precioInput) {
+        precioInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                agregarServicioPersonalizado();
+            }
+        });
+    }
+});

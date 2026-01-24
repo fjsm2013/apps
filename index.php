@@ -8,16 +8,16 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   
   <!-- Primary Meta Tags -->
-  <title>FROSH LavaCar App | Sistema de Gestión para Lavaderos de Autos</title>
-  <meta name="description" content="Sistema de gestión especializado para lavaderos de autos. Organiza turnos, controla estados de lavado y envía notificaciones automáticas a clientes. Mejora la eficiencia operativa y la satisfacción del cliente." />
-  <meta name="keywords" content="app para lavacar, sistema gestión lavaderos, software lavado de autos, turnos lavacar, notificaciones automáticas lavado, gestión de clientes lavaderos, app lavado vehículos" />
+  <title>FROSH LavaCar App | Sistema de Gestión para Autolavados</title>
+  <meta name="description" content="Sistema de gestión especializado para autolavados. Organiza turnos, controla estados de lavado y envía notificaciones automáticas a clientes. Mejora la eficiencia operativa y la satisfacción del cliente." />
+  <meta name="keywords" content="app para lavacar, sistema gestión autolavados, software lavado de autos, turnos lavacar, notificaciones automáticas lavado, gestión de clientes autolavados, app lavado vehículos" />
   <meta name="robots" content="index, follow" />
   <meta name="author" content="FROSH LavaCar App" />
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="FROSH LavaCar App | Sistema de Gestión para Lavaderos de Autos" />
-  <meta property="og:description" content="Solución completa para gestionar tu lavadero de autos eficientemente" />
+  <meta property="og:title" content="FROSH LavaCar App | Sistema de Gestión para Autolavados" />
+  <meta property="og:description" content="Solución completa para gestionar tu autolavado eficientemente" />
   <meta property="og:image" content="https://ejemplo.com/og-image.jpg" />
   <meta property="og:url" content="https://frosh-lavacar.com" />
   <meta property="og:site_name" content="FROSH LavaCar App" />
@@ -25,7 +25,7 @@
   
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="FROSH LavaCar App | Sistema de Gestión para Lavaderos" />
+  <meta name="twitter:title" content="FROSH LavaCar App | Sistema de Gestión para Autolavados" />
   <meta name="twitter:description" content="Gestión inteligente para tu negocio de lavado de autos" />
   <meta name="twitter:image" content="https://ejemplo.com/twitter-image.jpg" />
   
@@ -37,7 +37,7 @@
     "name": "FROSH LavaCar App",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web, iOS, Android",
-    "description": "Sistema de gestión especializado para lavaderos de autos que optimiza turnos y comunicación con clientes",
+    "description": "Sistema de gestión especializado para autolavados que optimiza turnos y comunicación con clientes",
     "offers": {
       "@type": "Offer",
       "price": "0",
@@ -290,6 +290,67 @@
       padding: 3px 8px;
       border-radius: 4px;
     }
+    
+    /* CTA Flotante para móviles */
+    .mobile-cta-float {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: none;
+      width: calc(100% - 40px);
+      max-width: 350px;
+      background: linear-gradient(135deg, #274AB3, #0dcaf0);
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from {
+        transform: translateX(-50%) translateY(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    .mobile-cta-float.visible {
+      display: block;
+    }
+    
+    .mobile-cta-float .btn {
+      border-radius: 10px;
+      font-weight: 600;
+      padding: 10px 20px;
+    }
+    
+    .mobile-cta-close {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      opacity: 0.7;
+    }
+    
+    .mobile-cta-close:hover {
+      opacity: 1;
+    }
+    
+    /* Solo mostrar en móviles */
+    @media (min-width: 768px) {
+      .mobile-cta-float {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 
@@ -299,6 +360,22 @@
 <a href="#" id="backToTop" class="back-to-top">
   <i class="fas fa-chevron-up"></i>
 </a>
+
+<!-- CTA Flotante para móviles -->
+<div id="mobileCTA" class="mobile-cta-float">
+  <button class="mobile-cta-close" onclick="hideMobileCTA()">×</button>
+  <div class="text-center text-white">
+    <h6 class="fw-bold mb-2">¡Optimiza tu autolavado!</h6>
+    <div class="d-flex gap-2">
+      <a href="register.php" class="btn btn-light flex-fill">
+        <i class="fas fa-rocket me-1"></i>Registrarse
+      </a>
+      <a href="login.php" class="btn btn-outline-light flex-fill">
+        <i class="fas fa-user me-1"></i>Entrar
+      </a>
+    </div>
+  </div>
+</div>
 
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -328,15 +405,20 @@
 <section class="hero text-center">
   <div class="container position-relative">
     <h1 class="display-5 fw-bold mb-4">
-      Software de Gestión para <span class="highlight">Lavaderos de Autos</span>
+      Software de Gestión para <span class="highlight">Autolavados</span>
     </h1>
     <p class="lead mb-4">
       <strong>FROSH LavaCar App</strong> organiza turnos, controla cada etapa del lavado y envía notificaciones automáticas en tiempo real. 
       <br>Reduce el desorden operativo y aumenta la satisfacción de tus clientes.
     </p>
     <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+      <?php /* Comentado temporalmente - Botón Ver Demo
       <a href="#contacto" class="btn btn-light btn-lg fw-semibold px-5 py-3">
         <i class="fas fa-play-circle me-2"></i>Ver Demo
+      </a>
+      */ ?>
+      <a href="register.php" class="btn btn-light btn-lg fw-semibold px-5 py-3">
+        <i class="fas fa-rocket me-2"></i>Probar Ahora
       </a>
       <a href="#funciona" class="btn btn-outline-light btn-lg fw-semibold px-5 py-3">
         <i class="fas fa-info-circle me-2"></i>Ver cómo funciona
@@ -347,8 +429,8 @@
     <div class="row mt-5 pt-4">
       <div class="col-md-3 col-6 mb-3">
         <div class="text-white">
-          <h3 class="fw-bold">+500</h3>
-          <p class="mb-0">Lavaderos</p>
+          <h3 class="fw-bold">100%</h3>
+          <p class="mb-0">Enfocado en autolavados</p>
         </div>
       </div>
       <div class="col-md-3 col-6 mb-3">
@@ -366,7 +448,7 @@
       <div class="col-md-3 col-6 mb-3">
         <div class="text-white">
           <h3 class="fw-bold">24/7</h3>
-          <p class="mb-0">Soporte</p>
+          <p class="mb-0">Plataforma disponible</p>
         </div>
       </div>
     </div>
@@ -377,8 +459,8 @@
 <section id="problema" class="section-padding">
   <div class="container">
     <div class="text-center mb-5">
-      <h2 class="fw-bold">¿Estás enfrentando estos problemas en tu lavadero?</h2>
-      <p class="text-muted lead">Identificamos los desafíos comunes que afectan la productividad de los lavaderos de autos</p>
+      <h2 class="fw-bold">¿Estás enfrentando estos problemas en tu autolavado?</h2>
+      <p class="text-muted lead">Identificamos los desafíos comunes que afectan la productividad de los autolavados</p>
     </div>
 
     <div class="row g-4">
@@ -431,6 +513,28 @@
             <h5 class="fw-bold">Solución Integral FROSH</h5>
             <p class="mb-0"><strong>FROSH LavaCar App elimina estos problemas</strong> con un sistema automatizado de gestión.</p>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA ESTRATÉGICO 1 - Después de problemas -->
+<section class="py-4 bg-primary">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-8 text-center text-md-start">
+        <h4 class="text-white fw-bold mb-2">¿Reconoces estos problemas en tu autolavado?</h4>
+        <p class="text-white-50 mb-0">FROSH LavaCar App los resuelve todos automáticamente</p>
+      </div>
+      <div class="col-md-4 text-center mt-3 mt-md-0">
+        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center justify-content-md-end">
+          <a href="register.php" class="btn btn-light fw-semibold px-4">
+            <i class="fas fa-rocket me-2"></i>Registrarse
+          </a>
+          <a href="login.php" class="btn btn-outline-light fw-semibold px-4">
+            <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+          </a>
         </div>
       </div>
     </div>
@@ -492,6 +596,28 @@
             <span class="badge bg-primary">Automático</span>
             <span class="badge bg-secondary ms-2">Multiplataforma</span>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA ESTRATÉGICO 2 - Después de "Cómo funciona" -->
+<section class="py-5 bg-light border-top border-bottom">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-8 text-center text-md-start">
+        <h3 class="fw-bold mb-2">¿Listo para automatizar tu autolavado?</h3>
+        <p class="text-muted mb-0">Comienza en menos de 5 minutos. Sin instalaciones complicadas.</p>
+      </div>
+      <div class="col-md-4 text-center mt-3 mt-md-0">
+        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center justify-content-md-end">
+          <a href="register.php" class="btn btn-primary fw-semibold px-4 py-2">
+            <i class="fas fa-play-circle me-2"></i>Empezar Ahora
+          </a>
+          <a href="login.php" class="btn btn-outline-primary fw-semibold px-4 py-2">
+            <i class="fas fa-user me-2"></i>Ya tengo cuenta
+          </a>
         </div>
       </div>
     </div>
@@ -611,7 +737,7 @@
               <div class="benefit-icon"><i class="fas fa-check-circle"></i></div>
               <div>
                 <h6 class="fw-bold">Imagen moderna y profesional</h6>
-                <p class="mb-0">Tecnología que diferencia tu lavadero de la competencia tradicional.</p>
+                <p class="mb-0">Tecnología que diferencia tu autolavado de la competencia tradicional.</p>
               </div>
             </div>
             <div class="benefit-item">
@@ -660,6 +786,366 @@
   </div>
 </section>
 
+<!-- TABLA COMPARATIVA - Antes vs Con FROSH -->
+<section class="section-padding bg-light">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">Antes vs Con FROSH LavaCar App</h2>
+      <p class="text-muted lead">La diferencia es evidente: transforma tu operación completamente</p>
+    </div>
+
+    <!-- Versión Desktop -->
+    <div class="d-none d-md-block">
+      <div class="table-responsive">
+        <table class="table table-borderless comparison-table">
+          <thead>
+            <tr>
+              <th class="text-center py-4" style="width: 40%;">
+                <div class="comparison-header before">
+                  <i class="fas fa-times-circle fa-2x mb-2 text-danger"></i>
+                  <h3 class="fw-bold">Sin FROSH</h3>
+                  <p class="mb-0 text-muted">Operación tradicional</p>
+                </div>
+              </th>
+              <th style="width: 20%;"></th>
+              <th class="text-center py-4" style="width: 40%;">
+                <div class="comparison-header after">
+                  <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
+                  <h3 class="fw-bold">Con FROSH</h3>
+                  <p class="mb-0 text-muted">Operación automatizada</p>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="comparison-cell before">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
+                  <i class="fas fa-phone-slash text-danger me-2"></i>
+                  <strong>Clientes preguntando constantemente</strong><br>
+                  <small class="text-muted">"¿Ya está mi carro?" interrumpe el flujo de trabajo</small>
+                </div>
+              </td>
+              <td class="text-center align-middle">
+                <i class="fas fa-arrow-right text-primary fa-lg"></i>
+              </td>
+              <td class="comparison-cell after">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
+                  <i class="fas fa-bell text-success me-2"></i>
+                  <strong>Notificaciones automáticas</strong><br>
+                  <small class="text-muted">Cliente informado en cada etapa sin intervención</small>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="comparison-cell before">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
+                  <i class="fas fa-question-circle text-danger me-2"></i>
+                  <strong>Desorganización en la fila</strong><br>
+                  <small class="text-muted">Confusión sobre prioridades y tiempos</small>
+                </div>
+              </td>
+              <td class="text-center align-middle">
+                <i class="fas fa-arrow-right text-primary fa-lg"></i>
+              </td>
+              <td class="comparison-cell after">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
+                  <i class="fas fa-list-ol text-success me-2"></i>
+                  <strong>Organización clara de turnos</strong><br>
+                  <small class="text-muted">Sistema automatizado con tiempos estimados</small>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="comparison-cell before">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
+                  <i class="fas fa-eye-slash text-danger me-2"></i>
+                  <strong>Falta de control del proceso</strong><br>
+                  <small class="text-muted">No saber en qué etapa está cada vehículo</small>
+                </div>
+              </td>
+              <td class="text-center align-middle">
+                <i class="fas fa-arrow-right text-primary fa-lg"></i>
+              </td>
+              <td class="comparison-cell after">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
+                  <i class="fas fa-tasks text-success me-2"></i>
+                  <strong>Control total en tiempo real</strong><br>
+                  <small class="text-muted">Visualización completa del progreso</small>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="comparison-cell before">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
+                  <i class="fas fa-angry text-danger me-2"></i>
+                  <strong>Reclamos por tiempos de espera</strong><br>
+                  <small class="text-muted">Clientes insatisfechos por falta de información</small>
+                </div>
+              </td>
+              <td class="text-center align-middle">
+                <i class="fas fa-arrow-right text-primary fa-lg"></i>
+              </td>
+              <td class="comparison-cell after">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
+                  <i class="fas fa-smile text-success me-2"></i>
+                  <strong>+35% satisfacción del cliente</strong><br>
+                  <small class="text-muted">Transparencia total y comunicación proactiva</small>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="comparison-cell before">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
+                  <i class="fas fa-clock text-danger me-2"></i>
+                  <strong>Pérdida de eficiencia operativa</strong><br>
+                  <small class="text-muted">Tiempo desperdiciado en coordinación manual</small>
+                </div>
+              </td>
+              <td class="text-center align-middle">
+                <i class="fas fa-arrow-right text-primary fa-lg"></i>
+              </td>
+              <td class="comparison-cell after">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
+                  <i class="fas fa-rocket text-success me-2"></i>
+                  <strong>+40% eficiencia operativa</strong><br>
+                  <small class="text-muted">Automatización completa del flujo de trabajo</small>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Versión Mobile -->
+    <div class="d-md-none">
+      <div class="comparison-mobile">
+        <!-- Item 1 -->
+        <div class="comparison-item mb-4">
+          <div class="comparison-before mb-3">
+            <div class="card border-danger border-2">
+              <div class="card-body">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-times-circle text-danger me-3 mt-1 fa-lg"></i>
+                  <div>
+                    <h6 class="fw-bold mb-1 text-danger">Sin FROSH</h6>
+                    <p class="mb-1"><strong>Clientes preguntando constantemente</strong></p>
+                    <small class="text-muted">"¿Ya está mi carro?" interrumpe el flujo de trabajo</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mb-3">
+            <i class="fas fa-arrow-down text-primary fa-2x"></i>
+          </div>
+          <div class="comparison-after">
+            <div class="card border-success border-2">
+              <div class="card-body">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-check-circle text-success me-3 mt-1 fa-lg"></i>
+                  <div>
+                    <h6 class="fw-bold mb-1 text-success">Con FROSH</h6>
+                    <p class="mb-1"><strong>Notificaciones automáticas</strong></p>
+                    <small class="text-muted">Cliente informado en cada etapa sin intervención</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="comparison-item mb-4">
+          <div class="comparison-before mb-3">
+            <div class="card border-danger border-2">
+              <div class="card-body">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-times-circle text-danger me-3 mt-1 fa-lg"></i>
+                  <div>
+                    <h6 class="fw-bold mb-1 text-danger">Sin FROSH</h6>
+                    <p class="mb-1"><strong>Desorganización en la fila</strong></p>
+                    <small class="text-muted">Confusión sobre prioridades y tiempos</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mb-3">
+            <i class="fas fa-arrow-down text-primary fa-2x"></i>
+          </div>
+          <div class="comparison-after">
+            <div class="card border-success border-2">
+              <div class="card-body">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-check-circle text-success me-3 mt-1 fa-lg"></i>
+                  <div>
+                    <h6 class="fw-bold mb-1 text-success">Con FROSH</h6>
+                    <p class="mb-1"><strong>Organización clara de turnos</strong></p>
+                    <small class="text-muted">Sistema automatizado con tiempos estimados</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="comparison-item mb-4">
+          <div class="comparison-before mb-3">
+            <div class="card border-danger border-2">
+              <div class="card-body">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-times-circle text-danger me-3 mt-1 fa-lg"></i>
+                  <div>
+                    <h6 class="fw-bold mb-1 text-danger">Sin FROSH</h6>
+                    <p class="mb-1"><strong>Falta de control del proceso</strong></p>
+                    <small class="text-muted">No saber en qué etapa está cada vehículo</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mb-3">
+            <i class="fas fa-arrow-down text-primary fa-2x"></i>
+          </div>
+          <div class="comparison-after">
+            <div class="card border-success border-2">
+              <div class="card-body">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-check-circle text-success me-3 mt-1 fa-lg"></i>
+                  <div>
+                    <h6 class="fw-bold mb-1 text-success">Con FROSH</h6>
+                    <p class="mb-1"><strong>Control total en tiempo real</strong></p>
+                    <small class="text-muted">Visualización completa del progreso</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="comparison-item mb-4">
+          <div class="comparison-before mb-3">
+            <div class="card border-danger border-2">
+              <div class="card-body">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-times-circle text-danger me-3 mt-1 fa-lg"></i>
+                  <div>
+                    <h6 class="fw-bold mb-1 text-danger">Sin FROSH</h6>
+                    <p class="mb-1"><strong>Reclamos por tiempos de espera</strong></p>
+                    <small class="text-muted">Clientes insatisfechos por falta de información</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mb-3">
+            <i class="fas fa-arrow-down text-primary fa-2x"></i>
+          </div>
+          <div class="comparison-after">
+            <div class="card border-success border-2">
+              <div class="card-body">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-check-circle text-success me-3 mt-1 fa-lg"></i>
+                  <div>
+                    <h6 class="fw-bold mb-1 text-success">Con FROSH</h6>
+                    <p class="mb-1"><strong>+35% satisfacción del cliente</strong></p>
+                    <small class="text-muted">Transparencia total y comunicación proactiva</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 5 -->
+        <div class="comparison-item mb-4">
+          <div class="comparison-before mb-3">
+            <div class="card border-danger border-2">
+              <div class="card-body">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-times-circle text-danger me-3 mt-1 fa-lg"></i>
+                  <div>
+                    <h6 class="fw-bold mb-1 text-danger">Sin FROSH</h6>
+                    <p class="mb-1"><strong>Pérdida de eficiencia operativa</strong></p>
+                    <small class="text-muted">Tiempo desperdiciado en coordinación manual</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mb-3">
+            <i class="fas fa-arrow-down text-primary fa-2x"></i>
+          </div>
+          <div class="comparison-after">
+            <div class="card border-success border-2">
+              <div class="card-body">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-check-circle text-success me-3 mt-1 fa-lg"></i>
+                  <div>
+                    <h6 class="fw-bold mb-1 text-success">Con FROSH</h6>
+                    <p class="mb-1"><strong>+40% eficiencia operativa</strong></p>
+                    <small class="text-muted">Automatización completa del flujo de trabajo</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA al final de la comparación -->
+    <div class="text-center mt-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card border-primary border-2 shadow-sm">
+            <div class="card-body p-4">
+              <h4 class="fw-bold text-primary mb-3">
+                <i class="fas fa-lightbulb me-2"></i>¿Por qué seguir con los problemas del pasado?
+              </h4>
+              <p class="mb-4">Haz la transición a una operación moderna y eficiente. Tus clientes y tu equipo te lo agradecerán.</p>
+              <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                <a href="register.php" class="btn btn-primary btn-lg fw-semibold px-4">
+                  <i class="fas fa-arrow-right me-2"></i>Hacer el Cambio Ahora
+                </a>
+                <a href="login.php" class="btn btn-outline-primary btn-lg fw-semibold px-4">
+                  <i class="fas fa-user me-2"></i>Ya soy usuario
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA ESTRATÉGICO 3 - Después de beneficios -->
+<section class="py-5" style="background: linear-gradient(135deg, #274AB3, #0dcaf0);">
+  <div class="container">
+    <div class="text-center text-white">
+      <h2 class="fw-bold mb-3 text-white">¡Transforma tu autolavado hoy mismo!</h2>
+      <p class="lead mb-4 text-white">Únete a cientos de autolavados que ya optimizaron su operación</p>
+      <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+        <a href="register.php" class="btn btn-light btn-lg fw-semibold px-5 py-3">
+          <i class="fas fa-rocket me-2"></i>Crear Cuenta Gratis
+        </a>
+        <a href="login.php" class="btn btn-outline-light btn-lg fw-semibold px-5 py-3">
+          <i class="fas fa-sign-in-alt me-2"></i>Acceder a mi cuenta
+        </a>
+      </div>
+      <p class="mt-3 mb-0 small text-white">
+        <i class="fas fa-shield-alt me-1"></i>Sin tarjeta de crédito • Configuración en 5 minutos
+      </p>
+    </div>
+  </div>
+</section>
+
+<?php /* Comentado temporalmente - Formulario de Demo
 <!-- FORM -->
 <section id="contacto" class="section-padding cta-section">
   <div class="container position-relative">
@@ -670,7 +1156,7 @@
             <div class="text-center mb-4">
               <h2 class="fw-bold demo-title">Solicita Tu Demo Gratuita</h2>
               <p class="text-muted">
-                Descubre cómo FROSH LavaCar App puede transformar la gestión de tu lavadero. 
+                Descubre cómo FROSH LavaCar App puede transformar la gestión de tu autolavado. 
                 <strong>Sin compromiso, sin costo inicial.</strong>
               </p>
             </div>
@@ -688,7 +1174,7 @@
 
                 <!-- Empresa -->
                 <div class="col-md-6 mb-3">
-                  <label class="form-label required">Nombre del lavadero/empresa</label>
+                  <label class="form-label required">Nombre del autolavado/empresa</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-building"></i></span>
                     <input type="text" name="empresa" class="form-control" placeholder="Ej: AutoLimpio Express" required aria-label="Nombre de empresa">
@@ -720,8 +1206,8 @@
                     <span class="input-group-text"><i class="fas fa-car"></i></span>
                     <select name="tipo_negocio" class="form-select" required aria-label="Tipo de negocio">
                       <option value="">Seleccionar</option>
-                      <option>Lavacar tradicional</option>
-                      <option>Lavadero premium/detallado</option>
+                      <option>Autolavado tradicional</option>
+                      <option>Estación de lavado premium/detallado</option>
                       <option>Concesionario de autos</option>
                       <option>Flota empresarial</option>
                       <option>Centro de servicio múltiple</option>
@@ -748,7 +1234,7 @@
 
                 <!-- Mensaje -->
                 <div class="col-12 mb-4">
-                  <label class="form-label">¿Qué desafíos específicos enfrentas en tu lavadero?</label>
+                  <label class="form-label">¿Qué desafíos específicos enfrentas en tu autolavado?</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-comment-dots"></i></span>
                     <textarea name="mensaje" class="form-control" rows="4" placeholder="Cuéntanos sobre los principales problemas que quieres resolver en tu operación..." aria-label="Mensaje"></textarea>
@@ -785,6 +1271,7 @@
     </div>
   </div>
 </section>
+*/ ?>
 
 <!-- FOOTER -->
 <!-- Success Modal -->
@@ -841,7 +1328,7 @@
         <h4 class="fw-bold text-white mb-4">
           <i class="fas fa-car me-2"></i>FROSH LavaCar App
         </h4>
-        <p>Solución de gestión especializada para Centros de Lavado de autos. Optimizamos tu operación y mejoramos la experiencia de tus clientes.</p>
+        <p>Solución de gestión especializada para Autolavados. Optimizamos tu operación y mejoramos la experiencia de tus clientes.</p>
 
       </div>
       
@@ -851,7 +1338,7 @@
           <li class="mb-2"><a href="#problema" class="text-decoration-none text-light">Problemas que resolvemos</a></li>
           <li class="mb-2"><a href="#funciona" class="text-decoration-none text-light">Cómo funciona</a></li>
           <li class="mb-2"><a href="#beneficios" class="text-decoration-none text-light">Beneficios</a></li>
-          <li class="mb-2"><a href="#contacto" class="text-decoration-none text-light">Solicitar demo</a></li>
+          <li class="mb-2"><a href="register.php" class="text-decoration-none text-light">Registrarse</a></li>
         </ul>
       </div>
       
@@ -887,7 +1374,7 @@
     <hr class="my-4 border-secondary">
     
     <div class="text-center">
-      <p class="mb-2">© <?php echo date('Y');?> <strong>Frosh Systems</strong> - Sistema de Gestión para Centros de Lavado de Autos</p>
+      <p class="mb-2">© <?php echo date('Y');?> <strong>Frosh Systems</strong> - Sistema de Gestión para Autolavados</p>
       <small class="text-muted">Optimiza tu operación, mejora la satisfacción de tus clientes y haz crecer tu negocio</small>
     </div>
   </div>
@@ -911,16 +1398,35 @@
   
   // Back to top button functionality
   document.addEventListener('DOMContentLoaded', function() {
+    <?php /* Comentado temporalmente - Captcha para demo form
     // Load captcha
     loadCaptcha();
+    */ ?>
     
     const backToTopButton = document.getElementById('backToTop');
+    const mobileCTA = document.getElementById('mobileCTA');
+    let ctaShown = false;
+    let ctaHidden = false;
     
     window.addEventListener('scroll', function() {
+      // Back to top button
       if (window.scrollY > 300) {
         backToTopButton.classList.add('visible');
       } else {
         backToTopButton.classList.remove('visible');
+      }
+      
+      // Mobile CTA - mostrar después de scroll significativo
+      if (window.scrollY > 800 && !ctaShown && !ctaHidden && window.innerWidth < 768) {
+        mobileCTA.classList.add('visible');
+        ctaShown = true;
+        
+        // Auto-hide después de 10 segundos
+        setTimeout(() => {
+          if (!ctaHidden) {
+            hideMobileCTA();
+          }
+        }, 10000);
       }
     });
     
@@ -931,6 +1437,12 @@
         behavior: 'smooth'
       });
     });
+    
+    // Función global para ocultar CTA móvil
+    window.hideMobileCTA = function() {
+      mobileCTA.classList.remove('visible');
+      ctaHidden = true;
+    };
     
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -952,6 +1464,7 @@
       });
     });
     
+    <?php /* Comentado temporalmente - Form submission para demo
     // Form submission with AJAX
     const demoForm = document.getElementById('demoForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -1006,6 +1519,7 @@
         });
       });
     }
+    */ ?>
   });
 </script>
 </body>

@@ -3,6 +3,11 @@ session_start();
 require_once '../../../lib/config.php';
 require_once 'lib/Auth.php';
 
+// Enable error logging
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 // Verificar autenticación
 if (!isLoggedIn()) {
     http_response_code(401);
@@ -30,7 +35,15 @@ try {
         throw new Exception('Orden no encontrada');
     }
     
-    $servicios = $ordenManager->getServicios($ordenId);
+    // Try to get services with error handling
+    try {
+        $servicios = $ordenManager->getServicios($ordenId);
+    } catch (Exception $e) {
+        error_log("Error getting servicios for order {$ordenId}: " . $e->getMessage());
+        // Return empty array if there's an error
+        $servicios = [];
+    }
+    
     $totales = $ordenManager->getTotals($ordenId);
     
     // Formatear fechas
@@ -76,10 +89,13 @@ try {
     ]);
     
 } catch (Exception $e) {
+    error_log("Error in detalle-orden.php: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
     http_response_code(400);
     echo json_encode([
         'success' => false,
-        'message' => $e->getMessage()
+        'message' => $e->getMessage(),
+        'error_detail' => $e->getTraceAsString()
     ]);
 }
 ?>

@@ -61,6 +61,20 @@
             </a>
         </div>
 
+        <?php /* Comentado temporalmente - Panel de Trabajo
+        <div class="col-6 col-md-3" style="animation-delay: 0.4s;">
+            <a href="empleados/panel-trabajo.php" class="text-decoration-none">
+                <button class="dash-card work">
+                    <i class="fas fa-tv"></i>
+                    <span>PANEL TRABAJO</span>
+                    <?php if ($ordenesActivas > 0): ?>
+                        <div class="badge-counter"><?= $ordenesActivas ?></div>
+                    <?php endif; ?>
+                </button>
+            </a>
+        </div>
+        */ ?>
+
         <div class="col-6 col-md-3" style="animation-delay: 0.4s;">
             <a href="reportes/." class="text-decoration-none">
                 <button class="dash-card reports">

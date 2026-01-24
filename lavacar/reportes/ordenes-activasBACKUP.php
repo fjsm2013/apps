@@ -210,21 +210,10 @@ require 'lavacar/partials/header.php';
                                             <i class="fa-solid fa-eye"></i>
                                         </button>
                                         <?php if ($orden['Estado'] < 4): ?>
-                                        <a href="editar-orden-final.php?id=<?= $orden['ID'] ?>" class="btn btn-sm btn-outline-warning" title="Editar Orden">
-                                            <i class="fa-solid fa-edit"></i>
-                                        </a>
                                         <button class="btn btn-sm" style="background: var(--ordenes-success); color: white; border-color: var(--ordenes-success);" onclick="cambiarEstado(<?= $orden['ID'] ?>, <?= $orden['Estado'] + 1 ?>)" title="Avanzar Estado">
                                             <i class="fa-solid fa-arrow-right"></i>
                                         </button>
                                         <?php endif; ?>
-                                        <?php if ($orden['Estado'] == 3): ?>
-                                        <a href="calculadora-cierre-final.php?id=<?= $orden['ID'] ?>" class="btn btn-sm btn-warning" title="Calculadora de Cierre">
-                                            <i class="fa-solid fa-calculator"></i>
-                                        </a>
-                                        <?php endif; ?>
-                                        <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminarOrden(<?= $orden['ID'] ?>, '<?= safe_htmlspecialchars($orden['ClienteNombre'], 'Sin cliente') ?>')" title="Eliminar Orden">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -308,21 +297,10 @@ require 'lavacar/partials/header.php';
                                         <i class="fa-solid fa-eye me-1"></i>Ver
                                     </button>
                                     <?php if ($orden['Estado'] < 4): ?>
-                                    <a href="editar-orden-final.php?id=<?= $orden['ID'] ?>" class="btn btn-sm btn-outline-warning" title="Editar Orden">
-                                        <i class="fa-solid fa-edit me-1"></i>Editar
-                                    </a>
                                     <button class="btn btn-sm" style="background: var(--ordenes-success); color: white; border-color: var(--ordenes-success);" onclick="cambiarEstado(<?= $orden['ID'] ?>, <?= $orden['Estado'] + 1 ?>)" title="Avanzar Estado">
                                         <i class="fa-solid fa-arrow-right me-1"></i>Avanzar
                                     </button>
                                     <?php endif; ?>
-                                    <?php if ($orden['Estado'] == 3): ?>
-                                    <a href="calculadora-cierre-final.php?id=<?= $orden['ID'] ?>" class="btn btn-sm btn-warning" title="Calculadora de Cierre">
-                                        <i class="fa-solid fa-calculator me-1"></i>Calculadora
-                                    </a>
-                                    <?php endif; ?>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminarOrden(<?= $orden['ID'] ?>, '<?= safe_htmlspecialchars($orden['ClienteNombre'], 'Sin cliente') ?>')" title="Eliminar Orden">
-                                        <i class="fa-solid fa-trash me-1"></i>Eliminar
-                                    </button>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -392,39 +370,6 @@ require 'lavacar/partials/header.php';
                 <button type="button" class="btn btn-frosh-primary" id="confirmarCambioBtn">
                     <i class="fa-solid fa-check me-1"></i>
                     Confirmar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal de Confirmación de Eliminación -->
-<div class="modal fade" id="eliminarOrdenModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm" style="max-width:500px; margin:auto;">
-        <div class="modal-content">
-            <div class="modal-header" style="background: #dc3545; color: white; padding: 15px;">
-                <h6 class="modal-title mb-0">
-                    <i class="fa-solid fa-exclamation-triangle me-2"></i>Eliminar Orden
-                </h6>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center py-3">
-                <div class="mb-2">
-                    <i class="fa-solid fa-trash fa-2x" style="color: #dc3545;"></i>
-                </div>
-                <p class="mb-2"><strong>¿Eliminar esta orden?</strong></p>
-                <p class="text-muted small mb-2">Esta acción no se puede deshacer</p>
-                <div class="p-2 bg-light rounded">
-                    <small class="text-muted">Orden #<span id="deleteOrdenId"></span></small>
-                    <div id="deleteOrdenCliente" class="fw-bold"></div>
-                </div>
-            </div>
-            <div class="modal-footer" style="padding: 10px;">
-                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
-                    Cancelar
-                </button>
-                <button type="button" class="btn btn-sm btn-danger" id="confirmarEliminarBtn">
-                    <i class="fa-solid fa-trash me-1"></i>Eliminar
                 </button>
             </div>
         </div>
@@ -1081,45 +1026,24 @@ function verDetalleOrden(ordenId) {
     
     // Cargar detalles
     fetch(`ajax/detalle-orden.php?id=${ordenId}`)
-        .then(response => {
-            console.log('Response status:', response.status);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text(); // Get as text first
-        })
-        .then(text => {
-            console.log('Raw response:', text);
-            try {
-                const data = JSON.parse(text);
-                if (data.success) {
-                    mostrarDetalleOrden(data);
-                } else {
-                    document.getElementById('modalContent').innerHTML = `
-                        <div class="alert alert-danger">
-                            <i class="fa-solid fa-exclamation-triangle me-2"></i>
-                            Error: ${data.message}
-                            ${data.error_detail ? '<pre>' + data.error_detail + '</pre>' : ''}
-                        </div>
-                    `;
-                }
-            } catch (e) {
-                console.error('JSON parse error:', e);
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarDetalleOrden(data);
+            } else {
                 document.getElementById('modalContent').innerHTML = `
                     <div class="alert alert-danger">
                         <i class="fa-solid fa-exclamation-triangle me-2"></i>
-                        Error parsing response: ${e.message}
-                        <pre>${text}</pre>
+                        Error: ${data.message}
                     </div>
                 `;
             }
         })
         .catch(error => {
-            console.error('Fetch error:', error);
             document.getElementById('modalContent').innerHTML = `
                 <div class="alert alert-danger">
                     <i class="fa-solid fa-exclamation-triangle me-2"></i>
-                    Error al cargar los detalles de la orden: ${error.message}
+                    Error al cargar los detalles de la orden
                 </div>
             `;
         });
@@ -1622,64 +1546,6 @@ document.addEventListener('DOMContentLoaded', function() {
         aplicarFiltro(checkedRadio.value);
     }
 });
-
-// Función para confirmar eliminación de orden
-function confirmarEliminarOrden(ordenId, clienteNombre) {
-    document.getElementById('deleteOrdenId').textContent = ordenId;
-    document.getElementById('deleteOrdenCliente').textContent = clienteNombre;
-    
-    const modal = new bootstrap.Modal(document.getElementById('eliminarOrdenModal'));
-    modal.show();
-    
-    // Configurar botón de confirmación
-    const confirmarBtn = document.getElementById('confirmarEliminarBtn');
-    confirmarBtn.onclick = () => ejecutarEliminarOrden(ordenId);
-}
-
-// Función para ejecutar la eliminación
-function ejecutarEliminarOrden(ordenId) {
-    const confirmarBtn = document.getElementById('confirmarEliminarBtn');
-    const originalContent = confirmarBtn.innerHTML;
-    
-    // Mostrar loading
-    confirmarBtn.disabled = true;
-    confirmarBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Eliminando...';
-    
-    fetch('ajax/eliminar-orden.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orden_id: ordenId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Mostrar éxito
-            confirmarBtn.innerHTML = '<i class="fa-solid fa-check me-1"></i> ¡Eliminada!';
-            confirmarBtn.className = 'btn btn-sm btn-success';
-            
-            showAlert(data.message, 'success');
-            
-            // Cerrar modal y recargar
-            setTimeout(() => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('eliminarOrdenModal'));
-                if (modal) modal.hide();
-                
-                setTimeout(() => {
-                    location.reload();
-                }, 300);
-            }, 1500);
-        } else {
-            showAlert('Error: ' + data.message, 'error');
-            confirmarBtn.disabled = false;
-            confirmarBtn.innerHTML = originalContent;
-        }
-    })
-    .catch(error => {
-        showAlert('Error al eliminar la orden', 'error');
-        confirmarBtn.disabled = false;
-        confirmarBtn.innerHTML = originalContent;
-    });
-}
 </script>
 
 <?php require 'lavacar/partials/footer.php'; ?>

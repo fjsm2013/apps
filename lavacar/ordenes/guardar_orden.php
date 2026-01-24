@@ -128,17 +128,33 @@ try {
     // 3. Agregar servicios a la tabla orden_servicios (si existe) - para compatibilidad
     foreach ($data['servicios'] as $servicio) {
         try {
-            EjecutarSQL(
-                $conn,
-                "INSERT INTO {$dbName}.orden_servicios 
-                (OrdenID, ServicioID, Precio)
-                 VALUES (?, ?, ?)",
-                [
-                    $ordenId,
-                    $servicio['id'],
-                    $servicio['precio']
-                ]
-            );
+            if (isset($servicio['personalizado']) && $servicio['personalizado']) {
+                // Servicio personalizado
+                EjecutarSQL(
+                    $conn,
+                    "INSERT INTO {$dbName}.orden_servicios 
+                    (OrdenID, ServicioID, Precio, ServicioPersonalizado)
+                     VALUES (?, NULL, ?, ?)",
+                    [
+                        $ordenId,
+                        $servicio['precio'],
+                        $servicio['nombre']
+                    ]
+                );
+            } else {
+                // Servicio regular
+                EjecutarSQL(
+                    $conn,
+                    "INSERT INTO {$dbName}.orden_servicios 
+                    (OrdenID, ServicioID, Precio)
+                     VALUES (?, ?, ?)",
+                    [
+                        $ordenId,
+                        $servicio['id'],
+                        $servicio['precio']
+                    ]
+                );
+            }
         } catch (Exception $e) {
             // Si la tabla orden_servicios no existe, continuar
             // Los servicios ya están guardados en ServiciosJSON

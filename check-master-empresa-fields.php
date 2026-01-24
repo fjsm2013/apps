@@ -1,128 +1,118 @@
 <?php
 /**
- * Verificar campos disponibles en la tabla empresas de la base padre
+ * Script para verificar y agregar campos faltantes en las bases de datos de empresas
+ * Ejecuta automáticamente las actualizaciones necesarias en todas las bases de datos tenant
  */
 
-session_start();
 require_once 'lib/config.php';
-require_once 'lib/Auth.php';
 
-// Check if user is logged in
-if (!isLoggedIn()) {
-    echo "❌ Error: Usuario no autenticado. Inicia sesión primero.\n";
-    exit;
-}
-
-$user = userInfo();
-echo "🔍 Verificando estructura de la tabla 'empresas' en la base padre\n";
-echo "👤 Usuario: {$user['nombre']}\n";
-echo "🏢 Empresa ID: {$user['company']['id']}\n\n";
+echo "🔧 FROSH - Verificación y Actualización de Campos en Bases de Datos\n";
+echo "=" . str_repeat("=", 70) . "\n\n";
 
 try {
-    // Obtener estructura de la tabla empresas
-    echo "📋 Estructura de la tabla 'empresas':\n";
-    echo "=" . str_repeat("=", 50) . "\n";
+    // Obtener todas las empresas registradas
+    $empresasQuery = "SELECT id_empresa, nombre_empresa, nombre_base_datos FROM empresas WHERE nombre_base_datos IS NOT NULL";
+    $result = $conn->query($empresasQuery);
     
-    $result = $conn->query("DESCRIBE empresas");
-    if ($result) {
-        while ($row = $result->fetch_assoc()) {
-            $nullable = $row['Null'] === 'YES' ? '(nullable)' : '(required)';
-            $default = $row['Default'] ? " [default: {$row['Default']}]" : '';
-            echo sprintf("%-20s %-15s %s%s\n", 
-                $row['Field'], 
-                $row['Type'], 
-                $nullable,
-                $default
-            );
-        }
+    if (!$result) {
+        throw new Exception("Error al obtener empresas: " . $conn->error);
     }
     
-    echo "\n📊 Datos actuales de tu empresa:\n";
-    echo "=" . str_repeat("=", 50) . "\n";
+    $empresas = $result->fetch_all(MYSQLI_ASSOC);
+    echo "📊 Empresas encontradas: " . count($empresas) . "\n\n";
     
-    // Obtener datos actuales de la empresa
-    $stmt = $conn->prepare("SELECT * FROM empresas WHERE id_empresa = ?");
-    $stmt->bind_param("i", $user['company']['id']);
-    $stmt->execute();
-    $empresaData = $stmt->get_result()->fetch_assoc();
+    $actualizacionesRealizadas = 0;
+    $errores = [];
     
-    if ($empresaData) {
-        foreach ($empresaData as $campo => $valor) {
-            $valorMostrar = $valor ? $valor : '(vacío)';
-            if (strlen($valorMostrar) > 50) {
-                $valorMostrar = substr($valorMostrar, 0, 47) . '...';
+    foreach ($empresas as $empresa) {
+        $dbName = $empresa['nombre_base_datos'];
+        $nombreEmpresa = $empresa['nombre_empresa'];
+        
+        echo "🏢 Procesando: {$nombreEmpresa} (DB: {$dbName})\n";
+        
+        try {
+            // Verificar si la base de datos existe
+            $checkDb = $conn->query("SHOW DATABASES LIKE '{$dbName}'");
+            if ($checkDb->num_rows == 0) {
+                echo "   ⚠️  Base de datos no existe, saltando...\n";
+                continue;
             }
-            echo sprintf("%-20s: %s\n", $campo, $valorMostrar);
+            
+            // Conectar a la base de datos de la empresa
+            $tenantConn = new mysqli(DB_HOST, DB_USER, DB_PASS, $dbName);
+            if ($tenantConn->connect_error) {
+                throw new Exception("Error de conexión: " . $tenantConn->connect_error);
+            }
+            
+            // Verificar si la tabla servicios existe
+            $checkTable = $tenantConn->query("SHOW TABLES LIKE 'servicios'");
+            if ($checkTable->num_rows == 0) {
+                echo "   ⚠️  Tabla servicios no existe, saltando...\n";
+                $tenantConn->close();
+                continue;
+            }
+            
+            // Verificar si el campo Detalles ya existe
+            $checkColumn = $tenantConn->query("SHOW COLUMNS FROM servicios LIKE 'Detalles'");
+            
+            if ($checkColumn->num_rows == 0) {
+                // Agregar el campo Detalles
+                $alterQuery = "ALTER TABLE servicios ADD COLUMN Detalles TEXT NULL AFTER Descripcion";
+                
+                if ($tenantConn->query($alterQuery)) {
+                    echo "   ✅ Campo 'Detalles' agregado exitosamente\n";
+                    $actualizacionesRealizadas++;
+                } else {
+                    throw new Exception("Error al agregar campo Detalles: " . $tenantConn->error);
+                }
+            } else {
+                echo "   ℹ️  Campo 'Detalles' ya existe\n";
+            }
+            
+            // Verificar la estructura actualizada
+            $estructura = $tenantConn->query("DESCRIBE servicios");
+            echo "   📋 Estructura actual de servicios:\n";
+            while ($campo = $estructura->fetch_assoc()) {
+                echo "      - {$campo['Field']} ({$campo['Type']})\n";
+            }
+            
+            $tenantConn->close();
+            echo "   ✅ Procesamiento completado\n\n";
+            
+        } catch (Exception $e) {
+            $error = "Error en {$nombreEmpresa}: " . $e->getMessage();
+            $errores[] = $error;
+            echo "   ❌ {$error}\n\n";
         }
+    }
+    
+    // Resumen final
+    echo "=" . str_repeat("=", 70) . "\n";
+    echo "📊 RESUMEN DE ACTUALIZACIONES\n";
+    echo "=" . str_repeat("=", 70) . "\n";
+    echo "✅ Empresas procesadas: " . count($empresas) . "\n";
+    echo "🔧 Actualizaciones realizadas: {$actualizacionesRealizadas}\n";
+    echo "❌ Errores encontrados: " . count($errores) . "\n\n";
+    
+    if (!empty($errores)) {
+        echo "🚨 ERRORES DETALLADOS:\n";
+        foreach ($errores as $i => $error) {
+            echo ($i + 1) . ". {$error}\n";
+        }
+        echo "\n";
+    }
+    
+    if ($actualizacionesRealizadas > 0) {
+        echo "🎉 ¡Actualizaciones completadas exitosamente!\n";
+        echo "💡 Las bases de datos ahora tienen el campo 'Detalles' en la tabla servicios.\n";
     } else {
-        echo "❌ No se encontraron datos de la empresa\n";
+        echo "ℹ️  No se requirieron actualizaciones.\n";
     }
-    
-    echo "\n💡 Campos útiles para pre-llenar el wizard:\n";
-    echo "=" . str_repeat("=", 50) . "\n";
-    
-    $camposUtiles = [
-        // Información básica
-        'nombre' => 'Nombre del lavadero',
-        'telefono' => 'Teléfono principal', 
-        'email' => 'Email de contacto',
-        'ciudad' => 'Ciudad (para dirección)',
-        'pais' => 'País (para dirección)',
-        'ruc_identificacion' => 'RUC/Identificación',
-        // Campos operativos nuevos
-        'hora_apertura_default' => 'Hora de apertura por defecto',
-        'hora_cierre_default' => 'Hora de cierre por defecto',
-        'dias_laborales_default' => 'Días laborales por defecto',
-        'capacidad_maxima_default' => 'Capacidad máxima por defecto',
-        'tiempo_promedio_default' => 'Tiempo promedio por defecto',
-        'moneda_default' => 'Moneda por defecto',
-        'tipo_negocio' => 'Tipo de negocio'
-    ];
-    
-    foreach ($camposUtiles as $campo => $descripcion) {
-        $disponible = isset($empresaData[$campo]) && !empty($empresaData[$campo]);
-        $icono = $disponible ? '✅' : '❌';
-        $valor = $disponible ? " -> '{$empresaData[$campo]}'" : ' (no disponible)';
-        echo "{$icono} {$descripcion}: {$campo}{$valor}\n";
-    }
-    
-    echo "\n🎯 Recomendaciones:\n";
-    echo "=" . str_repeat("=", 50) . "\n";
-    
-    if (empty($empresaData['telefono'])) {
-        echo "📞 Considera agregar el campo 'telefono' a la tabla empresas\n";
-    }
-    
-    if (empty($empresaData['email'])) {
-        echo "📧 Considera agregar el campo 'email' a la tabla empresas\n";
-    }
-    
-    if (empty($empresaData['ciudad']) || empty($empresaData['pais'])) {
-        echo "🌍 Considera agregar campos 'ciudad' y 'pais' para ubicación\n";
-    }
-    
-    // Nuevas recomendaciones para campos operativos
-    if (empty($empresaData['hora_apertura_default'])) {
-        echo "🕐 Considera agregar 'hora_apertura_default' para horarios inteligentes\n";
-    }
-    
-    if (empty($empresaData['capacidad_maxima_default'])) {
-        echo "🚗 Considera agregar 'capacidad_maxima_default' para configuración automática\n";
-    }
-    
-    if (empty($empresaData['tipo_negocio'])) {
-        echo "🏢 Considera agregar 'tipo_negocio' para configuraciones inteligentes\n";
-    }
-    
-    echo "\n🎉 Beneficios de los campos operativos:\n";
-    echo "   ✅ Configuración más rápida de nuevos lavaderos\n";
-    echo "   ✅ Defaults inteligentes según tipo de negocio\n";
-    echo "   ✅ Consistencia entre lavaderos de la empresa\n";
-    echo "   ✅ Menos campos manuales que llenar\n";
-    
-    echo "\n✅ El wizard ya está configurado para usar todos los campos disponibles!\n";
     
 } catch (Exception $e) {
-    echo "❌ Error: " . $e->getMessage() . "\n";
+    echo "❌ Error crítico: " . $e->getMessage() . "\n";
+    exit(1);
 }
+
+echo "\n🏁 Proceso completado.\n";
 ?>

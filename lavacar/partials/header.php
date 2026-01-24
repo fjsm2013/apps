@@ -549,6 +549,10 @@
         color: var(--report-success, #10b981);
     }
 
+    .work i {
+        color: var(--report-warning, #D3AF37);
+    }
+
     .active i {
         color: var(--report-warning, #D3AF37);
     }
@@ -1133,6 +1137,9 @@
         <a href="<?= LAVACAR_BASE_URL ?>/reportes/ordenes-activas.php" class="fab-item" title="Órdenes Activas">
             <i class="fa-solid fa-list-check"></i>
         </a>
+        <a href="<?= LAVACAR_BASE_URL ?>/empleados/panel-trabajo.php" class="fab-item" title="Panel de Trabajo"  target="new">
+            <i class="fa-solid fa-tv"></i>
+        </a>
         <a href="<?= LAVACAR_BASE_URL ?>/reportes/index.php" class="fab-item" title="Reportes">
             <i class="fa-solid fa-chart-bar"></i>
         </a>
@@ -1253,6 +1260,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (currentPath.includes('/reportes/ordenes-activas.php')) {
             targetHref = '/reportes/ordenes-activas.php';
             console.log('Detected: ordenes-activas section');
+        } else if (currentPath.includes('/empleados/panel-trabajo.php')) {
+            targetHref = '/empleados/panel-trabajo.php';
+            console.log('Detected: panel-trabajo section');
         } else if (currentPath.includes('/reportes/')) {
             targetHref = '/reportes/index.php';
             console.log('Detected: reportes section');
@@ -1290,6 +1300,8 @@ document.addEventListener('DOMContentLoaded', function() {
             targetHref = '/ordenes/index.php';
         } else if (currentPath.includes('/reportes/ordenes-activas.php')) {
             targetHref = '/reportes/ordenes-activas.php';
+        } else if (currentPath.includes('/empleados/panel-trabajo.php')) {
+            targetHref = '/empleados/panel-trabajo.php';
         } else if (currentPath.includes('/reportes/')) {
             targetHref = '/reportes/index.php';
         } else if (currentPath.includes('/administracion/')) {
@@ -1365,6 +1377,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             <i class="fa-solid fa-list-check"></i>
                             <span>Órdenes</span>
                         </a>
+                        <a href="<?= LAVACAR_BASE_URL ?>/empleados/panel-trabajo.php" class="nav-btn" title="Panel de Trabajo">
+                            <i class="fa-solid fa-tv"></i>
+                            <span>Panel</span>
+                        </a>
                         <a href="<?= LAVACAR_BASE_URL ?>/reportes/index.php" class="nav-btn" title="Reportes">
                             <i class="fa-solid fa-chart-bar"></i>
                             <span>Reportes</span>
@@ -1388,6 +1404,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             </a></li>
                             <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/reportes/ordenes-activas.php">
                                 <i class="fa-solid fa-list-check me-2"></i>Órdenes Activas
+                            </a></li>
+                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/empleados/panel-trabajo.php">
+                                <i class="fa-solid fa-tv me-2"></i>Panel de Trabajo
                             </a></li>
                             <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/reportes/index.php">
                                 <i class="fa-solid fa-chart-bar me-2"></i>Reportes

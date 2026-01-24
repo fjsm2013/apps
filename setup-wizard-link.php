@@ -17,7 +17,7 @@
 <body>
     <div class="container">
         <h1>🎯 FROSH Setup Wizard</h1>
-        <p>Configura tu lavadero paso a paso</p>
+        <p>Configura tu autolavado paso a paso</p>
         
         <div>
             <a href="login.php" class="btn">🔐 Iniciar Sesión</a>

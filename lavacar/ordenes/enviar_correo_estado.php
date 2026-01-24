@@ -97,7 +97,7 @@ function generarContenidoEstado(array $orden, array $servicios, array $totales, 
             <div class='info-box' style='background-color: #d1fae5; border-left: 4px solid #10b981;'>
                 <p><strong>¡Su vehículo está listo!</strong></p>
                 <p>El servicio ha sido completado exitosamente. Puede pasar a recoger su vehículo en nuestras instalaciones.</p>
-                <p><strong>Horario de atención:</strong> Lunes a Viernes de 8:00 AM a 6:00 PM, Sábados de 8:00 AM a 4:00 PM</p>
+                <!-- <p><strong>Horario de atención:</strong> Lunes a Viernes de 8:00 AM a 6:00 PM, Sábados de 8:00 AM a 4:00 PM</p> -->
             </div>";
             break;
             

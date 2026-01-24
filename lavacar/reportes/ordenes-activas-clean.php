@@ -210,21 +210,18 @@ require 'lavacar/partials/header.php';
                                             <i class="fa-solid fa-eye"></i>
                                         </button>
                                         <?php if ($orden['Estado'] < 4): ?>
-                                        <a href="editar-orden-final.php?id=<?= $orden['ID'] ?>" class="btn btn-sm btn-outline-warning" title="Editar Orden">
+                                        <button class="btn btn-sm btn-outline-warning" onclick="editarOrden(<?= $orden['ID'] ?>)" title="Editar Orden">
                                             <i class="fa-solid fa-edit"></i>
-                                        </a>
+                                        </button>
                                         <button class="btn btn-sm" style="background: var(--ordenes-success); color: white; border-color: var(--ordenes-success);" onclick="cambiarEstado(<?= $orden['ID'] ?>, <?= $orden['Estado'] + 1 ?>)" title="Avanzar Estado">
                                             <i class="fa-solid fa-arrow-right"></i>
                                         </button>
                                         <?php endif; ?>
                                         <?php if ($orden['Estado'] == 3): ?>
-                                        <a href="calculadora-cierre-final.php?id=<?= $orden['ID'] ?>" class="btn btn-sm btn-warning" title="Calculadora de Cierre">
+                                        <button class="btn btn-sm btn-warning" onclick="mostrarCalculadoraCierre(<?= $orden['ID'] ?>)" title="Calculadora de Cierre">
                                             <i class="fa-solid fa-calculator"></i>
-                                        </a>
-                                        <?php endif; ?>
-                                        <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminarOrden(<?= $orden['ID'] ?>, '<?= safe_htmlspecialchars($orden['ClienteNombre'], 'Sin cliente') ?>')" title="Eliminar Orden">
-                                            <i class="fa-solid fa-trash"></i>
                                         </button>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>
@@ -308,21 +305,18 @@ require 'lavacar/partials/header.php';
                                         <i class="fa-solid fa-eye me-1"></i>Ver
                                     </button>
                                     <?php if ($orden['Estado'] < 4): ?>
-                                    <a href="editar-orden-final.php?id=<?= $orden['ID'] ?>" class="btn btn-sm btn-outline-warning" title="Editar Orden">
+                                    <button class="btn btn-sm btn-outline-warning" onclick="editarOrden(<?= $orden['ID'] ?>)" title="Editar Orden">
                                         <i class="fa-solid fa-edit me-1"></i>Editar
-                                    </a>
+                                    </button>
                                     <button class="btn btn-sm" style="background: var(--ordenes-success); color: white; border-color: var(--ordenes-success);" onclick="cambiarEstado(<?= $orden['ID'] ?>, <?= $orden['Estado'] + 1 ?>)" title="Avanzar Estado">
                                         <i class="fa-solid fa-arrow-right me-1"></i>Avanzar
                                     </button>
                                     <?php endif; ?>
                                     <?php if ($orden['Estado'] == 3): ?>
-                                    <a href="calculadora-cierre-final.php?id=<?= $orden['ID'] ?>" class="btn btn-sm btn-warning" title="Calculadora de Cierre">
+                                    <button class="btn btn-sm btn-warning" onclick="mostrarCalculadoraCierre(<?= $orden['ID'] ?>)" title="Calculadora de Cierre">
                                         <i class="fa-solid fa-calculator me-1"></i>Calculadora
-                                    </a>
-                                    <?php endif; ?>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminarOrden(<?= $orden['ID'] ?>, '<?= safe_htmlspecialchars($orden['ClienteNombre'], 'Sin cliente') ?>')" title="Eliminar Orden">
-                                        <i class="fa-solid fa-trash me-1"></i>Eliminar
                                     </button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -398,33 +392,54 @@ require 'lavacar/partials/header.php';
     </div>
 </div>
 
-<!-- Modal de Confirmación de Eliminación -->
-<div class="modal fade" id="eliminarOrdenModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm" style="max-width:500px; margin:auto;">
+<!-- Modal Editor de Orden -->
+<div class="modal fade" id="editarOrdenModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header" style="background: #dc3545; color: white; padding: 15px;">
-                <h6 class="modal-title mb-0">
-                    <i class="fa-solid fa-exclamation-triangle me-2"></i>Eliminar Orden
-                </h6>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-edit me-2"></i>
+                    Editar Orden #<span id="editOrdenId"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body text-center py-3">
-                <div class="mb-2">
-                    <i class="fa-solid fa-trash fa-2x" style="color: #dc3545;"></i>
-                </div>
-                <p class="mb-2"><strong>¿Eliminar esta orden?</strong></p>
-                <p class="text-muted small mb-2">Esta acción no se puede deshacer</p>
-                <div class="p-2 bg-light rounded">
-                    <small class="text-muted">Orden #<span id="deleteOrdenId"></span></small>
-                    <div id="deleteOrdenCliente" class="fw-bold"></div>
+            <div class="modal-body">
+                <div id="editOrdenContent">
+                    <!-- Contenido del editor se carga aquí -->
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 10px;">
-                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
-                    Cancelar
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="guardarCambiosBtn">
+                    <i class="fa-solid fa-save me-1"></i>
+                    Guardar Cambios
                 </button>
-                <button type="button" class="btn btn-sm btn-danger" id="confirmarEliminarBtn">
-                    <i class="fa-solid fa-trash me-1"></i>Eliminar
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Calculadora de Cierre -->
+<div class="modal fade" id="calculadoraCierreModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-calculator me-2"></i>
+                    Calculadora de Cierre - Orden #<span id="calcOrdenId"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="calculadoraContent">
+                    <!-- Contenido de la calculadora se carga aquí -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="cerrarOrdenBtn">
+                    <i class="fa-solid fa-lock me-1"></i>
+                    Cerrar Orden
                 </button>
             </div>
         </div>
@@ -1081,45 +1096,24 @@ function verDetalleOrden(ordenId) {
     
     // Cargar detalles
     fetch(`ajax/detalle-orden.php?id=${ordenId}`)
-        .then(response => {
-            console.log('Response status:', response.status);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text(); // Get as text first
-        })
-        .then(text => {
-            console.log('Raw response:', text);
-            try {
-                const data = JSON.parse(text);
-                if (data.success) {
-                    mostrarDetalleOrden(data);
-                } else {
-                    document.getElementById('modalContent').innerHTML = `
-                        <div class="alert alert-danger">
-                            <i class="fa-solid fa-exclamation-triangle me-2"></i>
-                            Error: ${data.message}
-                            ${data.error_detail ? '<pre>' + data.error_detail + '</pre>' : ''}
-                        </div>
-                    `;
-                }
-            } catch (e) {
-                console.error('JSON parse error:', e);
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarDetalleOrden(data);
+            } else {
                 document.getElementById('modalContent').innerHTML = `
                     <div class="alert alert-danger">
                         <i class="fa-solid fa-exclamation-triangle me-2"></i>
-                        Error parsing response: ${e.message}
-                        <pre>${text}</pre>
+                        Error: ${data.message}
                     </div>
                 `;
             }
         })
         .catch(error => {
-            console.error('Fetch error:', error);
             document.getElementById('modalContent').innerHTML = `
                 <div class="alert alert-danger">
                     <i class="fa-solid fa-exclamation-triangle me-2"></i>
-                    Error al cargar los detalles de la orden: ${error.message}
+                    Error al cargar los detalles de la orden
                 </div>
             `;
         });
@@ -1250,18 +1244,43 @@ function mostrarDetalleOrden(data) {
     
     document.getElementById('modalContent').innerHTML = content;
     
-    // Agregar botón de acción si es posible avanzar estado
+    // Agregar botones de acción según el estado
+    let botonesAccion = '';
+    
+    // Botón Editar Orden (disponible si no está cerrada)
+    if (orden.Estado < 4) {
+        botonesAccion += `
+            <button type="button" class="btn btn-outline-primary me-2" onclick="editarOrden(${orden.ID})">
+                <i class="fa-solid fa-edit me-1"></i>
+                Editar Orden
+            </button>
+        `;
+    }
+    
+    // Botón Calculadora de Cierre (solo para estado Terminado)
+    if (orden.Estado === 3) {
+        botonesAccion += `
+            <button type="button" class="btn btn-warning me-2" onclick="mostrarCalculadoraCierre(${orden.ID})">
+                <i class="fa-solid fa-calculator me-1"></i>
+                Calculadora de Cierre
+            </button>
+        `;
+    }
+    
+    // Botón de avanzar estado (funcionalidad existente)
     if (siguiente_estado) {
         const estadoInfo = getEstadoInfo(siguiente_estado);
         const buttonColor = estadoInfo.color;
         
-        document.getElementById('modalActions').innerHTML = `
+        botonesAccion += `
             <button type="button" class="btn" style="background: ${buttonColor}; color: white; border-color: ${buttonColor};" onclick="mostrarConfirmacionEstado(${orden.ID}, ${siguiente_estado}, '${siguiente_estado_texto}', '${siguiente_estado_icon}')">
                 <i class="fa-solid ${siguiente_estado_icon} me-1"></i>
                 ${siguiente_estado_texto}
             </button>
         `;
     }
+    
+    document.getElementById('modalActions').innerHTML = botonesAccion;
     
     // Forzar refresh de iconos después de actualizar el contenido
     setTimeout(() => {
@@ -1280,54 +1299,81 @@ function getEstadoInfo(estado) {
 }
 
 function mostrarConfirmacionEstado(ordenId, nuevoEstado, textoAccion, iconoAccion) {
-    // Cerrar modal de detalle
-    const detalleModal = bootstrap.Modal.getInstance(document.getElementById('detalleOrdenModal'));
-    if (detalleModal) detalleModal.hide();
-    
-    // Configurar modal de confirmación
-    const estadoInfo = getEstadoInfo(nuevoEstado);
-    
-    // Configurar icono con color directo
-    const iconElement = document.getElementById('estadoIcon');
-    iconElement.className = `fa-solid ${iconoAccion} fa-3x mb-3`;
-    iconElement.style.color = estadoInfo.color;
-    iconElement.style.display = 'inline-block';
-    
-    // Configurar textos
-    const tituloElement = document.getElementById('estadoTitulo');
-    tituloElement.textContent = `¿${textoAccion}?`;
-    tituloElement.style.display = 'block';
-    tituloElement.style.visibility = 'visible';
-    
-    const descripcionElement = document.getElementById('estadoDescripcion');
-    descripcionElement.textContent = `La orden cambiará al estado: ${estadoInfo.text}`;
-    descripcionElement.style.display = 'block';
-    descripcionElement.style.visibility = 'visible';
-    
-    document.getElementById('confirmOrdenId').textContent = ordenId;
-    document.getElementById('confirmOrdenInfo').textContent = `Esta acción actualizará el estado de la orden y registrará la fecha del cambio.`;
-    
-    // Configurar botón de confirmación
-    const confirmarBtn = document.getElementById('confirmarCambioBtn');
-    confirmarBtn.className = 'btn';
-    confirmarBtn.style.backgroundColor = estadoInfo.color;
-    confirmarBtn.style.borderColor = estadoInfo.color;
-    confirmarBtn.style.color = 'white';
-    confirmarBtn.disabled = false;
-    confirmarBtn.innerHTML = `<i class="fa-solid fa-check me-1"></i> ${textoAccion}`;
-    confirmarBtn.onclick = () => ejecutarCambioEstado(ordenId, nuevoEstado);
-    
-    // Mostrar modal
-    const confirmModal = new bootstrap.Modal(document.getElementById('cambiarEstadoModal'));
-    confirmModal.show();
-    
-    // Forzar refresh de iconos y texto después de mostrar el modal
-    setTimeout(() => {
-        refreshFontAwesome();
-        // Asegurar que los textos sean visibles
-        document.getElementById('estadoTitulo').style.opacity = '1';
-        document.getElementById('estadoDescripcion').style.opacity = '1';
-    }, 150);
+    try {
+        console.log('mostrarConfirmacionEstado called with:', { ordenId, nuevoEstado, textoAccion, iconoAccion });
+        
+        // Cerrar modal de detalle
+        const detalleModal = bootstrap.Modal.getInstance(document.getElementById('detalleOrdenModal'));
+        if (detalleModal) detalleModal.hide();
+        
+        // Configurar modal de confirmación
+        const estadoInfo = getEstadoInfo(nuevoEstado);
+        console.log('estadoInfo:', estadoInfo);
+        
+        // Configurar icono con color directo
+        const iconElement = document.getElementById('estadoIcon');
+        if (iconElement) {
+            iconElement.className = `fa-solid ${iconoAccion} fa-3x mb-3`;
+            iconElement.style.color = estadoInfo.color;
+            iconElement.style.display = 'inline-block';
+        }
+        
+        // Configurar textos
+        const tituloElement = document.getElementById('estadoTitulo');
+        if (tituloElement) {
+            tituloElement.textContent = `¿${textoAccion}?`;
+            tituloElement.style.display = 'block';
+            tituloElement.style.visibility = 'visible';
+        }
+        
+        const descripcionElement = document.getElementById('estadoDescripcion');
+        if (descripcionElement) {
+            descripcionElement.textContent = `La orden cambiará al estado: ${estadoInfo.text}`;
+            descripcionElement.style.display = 'block';
+            descripcionElement.style.visibility = 'visible';
+        }
+        
+        const confirmOrdenIdElement = document.getElementById('confirmOrdenId');
+        if (confirmOrdenIdElement) {
+            confirmOrdenIdElement.textContent = ordenId;
+        }
+        
+        const confirmOrdenInfoElement = document.getElementById('confirmOrdenInfo');
+        if (confirmOrdenInfoElement) {
+            confirmOrdenInfoElement.textContent = `Esta acción actualizará el estado de la orden y registrará la fecha del cambio.`;
+        }
+        
+        // Configurar botón de confirmación
+        const confirmarBtn = document.getElementById('confirmarCambioBtn');
+        if (confirmarBtn) {
+            confirmarBtn.className = 'btn';
+            confirmarBtn.style.backgroundColor = estadoInfo.color;
+            confirmarBtn.style.borderColor = estadoInfo.color;
+            confirmarBtn.style.color = 'white';
+            confirmarBtn.disabled = false;
+            confirmarBtn.innerHTML = `<i class="fa-solid fa-check me-1"></i> ${textoAccion}`;
+            confirmarBtn.onclick = () => ejecutarCambioEstado(ordenId, nuevoEstado);
+        }
+        
+        // Mostrar modal
+        const confirmModal = new bootstrap.Modal(document.getElementById('cambiarEstadoModal'));
+        confirmModal.show();
+        
+        // Forzar refresh de iconos y texto después de mostrar el modal
+        setTimeout(() => {
+            refreshFontAwesome();
+            // Asegurar que los textos sean visibles
+            const titulo = document.getElementById('estadoTitulo');
+            const descripcion = document.getElementById('estadoDescripcion');
+            if (titulo) titulo.style.opacity = '1';
+            if (descripcion) descripcion.style.opacity = '1';
+        }, 150);
+        
+    } catch (error) {
+        console.error('Error in mostrarConfirmacionEstado:', error);
+        // Fallback: usar toast en lugar del modal problemático
+        showAlert(`¿Confirmar ${textoAccion}?`, 'warning');
+    }
 }
 
 function ejecutarCambioEstado(ordenId, nuevoEstado) {
@@ -1339,9 +1385,12 @@ function ejecutarCambioEstado(ordenId, nuevoEstado) {
         color: confirmarBtn.style.color
     };
     
-    // Mostrar loading
-    confirmarBtn.disabled = true;
-    confirmarBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Procesando...';
+    // Cerrar modal inmediatamente al iniciar el proceso
+    const confirmModal = bootstrap.Modal.getInstance(document.getElementById('cambiarEstadoModal'));
+    if (confirmModal) confirmModal.hide();
+    
+    // Mostrar loading en toast en lugar del botón
+    showAlert('Procesando cambio de estado...', 'info');
     
     fetch('ajax/cambiar-estado-orden.php', {
         method: 'POST',
@@ -1351,48 +1400,19 @@ function ejecutarCambioEstado(ordenId, nuevoEstado) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Mostrar éxito en el botón
-            confirmarBtn.innerHTML = '<i class="fa-solid fa-check me-1"></i> ¡Completado!';
-            confirmarBtn.style.backgroundColor = '#10b981';
-            confirmarBtn.style.borderColor = '#10b981';
-            
-            // Actualizar el título y descripción del modal para mostrar éxito
-            document.getElementById('estadoTitulo').textContent = '¡Estado Actualizado!';
-            document.getElementById('estadoDescripcion').textContent = 'La orden ha sido actualizada exitosamente.';
-            
-            // Cambiar el icono a éxito
-            const iconElement = document.getElementById('estadoIcon');
-            iconElement.className = 'fa-solid fa-check-circle fa-3x mb-3';
-            iconElement.style.color = '#10b981';
-            
+            // Mostrar toast de éxito
             showAlert(data.message, 'success');
             
-            // Cerrar modal y recargar después de mostrar éxito
+            // Recargar página después de un breve delay
             setTimeout(() => {
-                const confirmModal = bootstrap.Modal.getInstance(document.getElementById('cambiarEstadoModal'));
-                if (confirmModal) confirmModal.hide();
-                
-                // Recargar página después de cerrar modal
-                setTimeout(() => {
-                    location.reload();
-                }, 300);
-            }, 2000);
+                location.reload();
+            }, 1000);
         } else {
             showAlert('Error: ' + data.message, 'error');
-            confirmarBtn.disabled = false;
-            confirmarBtn.innerHTML = originalContent;
-            confirmarBtn.style.backgroundColor = originalStyle.backgroundColor;
-            confirmarBtn.style.borderColor = originalStyle.borderColor;
-            confirmarBtn.style.color = originalStyle.color;
         }
     })
     .catch(error => {
         showAlert('Error al cambiar estado', 'error');
-        confirmarBtn.disabled = false;
-        confirmarBtn.innerHTML = originalContent;
-        confirmarBtn.style.backgroundColor = originalStyle.backgroundColor;
-        confirmarBtn.style.borderColor = originalStyle.borderColor;
-        confirmarBtn.style.color = originalStyle.color;
     });
 }
 
@@ -1417,77 +1437,104 @@ function showAlert(message, type = 'info') {
         existingAlert.remove();
     }
     
-    // Crear nueva alerta
-    const alert = document.createElement('div');
-    alert.className = `modern-alert alert-${type}`;
-    
-    const icons = {
-        success: 'fa-check-circle',
-        error: 'fa-exclamation-triangle',
-        warning: 'fa-exclamation-triangle',
-        info: 'fa-info-circle'
+    // Mapear tipos a Bootstrap
+    const getBootstrapAlertType = (type) => {
+        const typeMap = {
+            'success': 'success',
+            'error': 'danger',
+            'warning': 'warning',
+            'info': 'info'
+        };
+        return typeMap[type] || 'info';
     };
     
-    alert.innerHTML = `
-        <i class="fa-solid ${icons[type] || icons.info}"></i>
-        <span>${message}</span>
-        <button onclick="this.parentElement.remove()" class="alert-close">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    `;
+    // Mapear tipos a iconos
+    const getAlertIcon = (type) => {
+        const iconMap = {
+            'success': 'fa-check-circle',
+            'error': 'fa-exclamation-triangle',
+            'warning': 'fa-exclamation-triangle',
+            'info': 'fa-info-circle'
+        };
+        return iconMap[type] || 'fa-info-circle';
+    };
     
-    // Agregar estilos inline para la alerta
-    alert.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-        background: white;
-        border-radius: 12px;
-        padding: 16px 20px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-        border-left: 4px solid ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
-        display: flex;
-        align-items: center;
-        gap: 12px;
+    // Crear nueva alerta (toast style)
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${getBootstrapAlertType(type)} alert-dismissible fade show modern-alert`;
+    alertDiv.style.cssText = `
+        position: fixed; 
+        top: 20px; 
+        right: 20px; 
+        z-index: 9999; 
+        min-width: 320px; 
         max-width: 400px;
-        animation: slideIn 0.3s ease;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        border: none;
         font-weight: 500;
-        color: #1e293b;
+        animation: slideInRight 0.3s ease-out;
     `;
     
-    // Agregar animación
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        .alert-close {
-            background: none;
-            border: none;
-            color: #64748b;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-        .alert-close:hover {
-            background: #f1f5f9;
-            color: #1e293b;
-        }
+    alertDiv.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="fa-solid ${getAlertIcon(type)} me-2" style="font-size: 1.1em;"></i>
+            <span class="flex-grow-1">${message}</span>
+            <button type="button" class="btn-close ms-2" onclick="closeAlert(this)"></button>
+        </div>
     `;
-    document.head.appendChild(style);
     
-    document.body.appendChild(alert);
+    // Agregar animaciones CSS si no existen
+    if (!document.querySelector('#toast-animations-ordenes')) {
+        const style = document.createElement('style');
+        style.id = 'toast-animations-ordenes';
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
     
-    // Auto-remover después de 5 segundos
+    document.body.appendChild(alertDiv);
+    
+    // Auto-remover después de 3 segundos con animación
     setTimeout(() => {
-        if (alert && alert.parentNode) {
-            alert.style.animation = 'slideIn 0.3s ease reverse';
-            setTimeout(() => alert.remove(), 300);
+        if (alertDiv && alertDiv.parentNode) {
+            alertDiv.style.animation = 'slideOutRight 0.3s ease-in';
+            setTimeout(() => {
+                if (alertDiv && alertDiv.parentNode) alertDiv.remove();
+            }, 300);
         }
-    }, 5000);
+    }, 3000);
+}
+
+// Función para cerrar alerta manualmente
+function closeAlert(button) {
+    const alertDiv = button.closest('.modern-alert');
+    if (alertDiv && alertDiv.parentNode) {
+        alertDiv.style.animation = 'slideOutRight 0.2s ease-in';
+        setTimeout(() => {
+            if (alertDiv && alertDiv.parentNode) alertDiv.remove();
+        }, 200);
+    }
 }
 
 // Función para forzar la recarga de iconos Font Awesome
@@ -1622,30 +1669,35 @@ document.addEventListener('DOMContentLoaded', function() {
         aplicarFiltro(checkedRadio.value);
     }
 });
+</script>
 
-// Función para confirmar eliminación de orden
-function confirmarEliminarOrden(ordenId, clienteNombre) {
-    document.getElementById('deleteOrdenId').textContent = ordenId;
-    document.getElementById('deleteOrdenCliente').textContent = clienteNombre;
+<script>
+/* =========================
+   EDITOR DE ÓRDENES
+========================= */
+function editarOrden(ordenId) {
+    console.log('Editando orden:', ordenId);
     
-    const modal = new bootstrap.Modal(document.getElementById('eliminarOrdenModal'));
+    // Cerrar modal de detalle
+    const detalleModal = bootstrap.Modal.getInstance(document.getElementById('detalleOrdenModal'));
+    if (detalleModal) detalleModal.hide();
+    
+    // Mostrar modal de editor
+    document.getElementById('editOrdenId').textContent = ordenId;
+    
+    // Cargar contenido del editor
+    document.getElementById('editOrdenContent').innerHTML = `
+        <div class="text-center py-4">
+            <i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i>
+            <p>Cargando editor de orden...</p>
+        </div>
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('editarOrdenModal'));
     modal.show();
     
-    // Configurar botón de confirmación
-    const confirmarBtn = document.getElementById('confirmarEliminarBtn');
-    confirmarBtn.onclick = () => ejecutarEliminarOrden(ordenId);
-}
-
-// Función para ejecutar la eliminación
-function ejecutarEliminarOrden(ordenId) {
-    const confirmarBtn = document.getElementById('confirmarEliminarBtn');
-    const originalContent = confirmarBtn.innerHTML;
-    
-    // Mostrar loading
-    confirmarBtn.disabled = true;
-    confirmarBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Eliminando...';
-    
-    fetch('ajax/eliminar-orden.php', {
+    // Cargar datos de la orden para editar
+    fetch('ajax/obtener-orden-editar.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orden_id: ordenId })
@@ -1653,32 +1705,572 @@ function ejecutarEliminarOrden(ordenId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Mostrar éxito
-            confirmarBtn.innerHTML = '<i class="fa-solid fa-check me-1"></i> ¡Eliminada!';
-            confirmarBtn.className = 'btn btn-sm btn-success';
-            
-            showAlert(data.message, 'success');
-            
-            // Cerrar modal y recargar
-            setTimeout(() => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('eliminarOrdenModal'));
-                if (modal) modal.hide();
-                
-                setTimeout(() => {
-                    location.reload();
-                }, 300);
-            }, 1500);
+            renderizarEditorOrden(data.orden);
         } else {
-            showAlert('Error: ' + data.message, 'error');
-            confirmarBtn.disabled = false;
-            confirmarBtn.innerHTML = originalContent;
+            document.getElementById('editOrdenContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fa-solid fa-exclamation-triangle me-2"></i>
+                    Error al cargar la orden: ${data.message}
+                </div>
+            `;
         }
     })
     .catch(error => {
-        showAlert('Error al eliminar la orden', 'error');
-        confirmarBtn.disabled = false;
-        confirmarBtn.innerHTML = originalContent;
+        console.error('Error:', error);
+        document.getElementById('editOrdenContent').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fa-solid fa-exclamation-triangle me-2"></i>
+                Error al cargar la orden
+            </div>
+        `;
     });
+}
+
+function renderizarEditorOrden(orden) {
+    const servicios = JSON.parse(orden.ServiciosJSON || '[]');
+    
+    let serviciosHtml = '';
+    servicios.forEach((servicio, index) => {
+        serviciosHtml += `
+            <tr>
+                <td>
+                    <input type="text" class="form-control" value="${servicio.nombre || 'Servicio ' + servicio.id}" 
+                           id="servicio_nombre_${index}" placeholder="Nombre del servicio">
+                </td>
+                <td>
+                    <div class="input-group">
+                        <span class="input-group-text">₡</span>
+                        <input type="number" class="form-control" value="${servicio.precio}" 
+                               id="servicio_precio_${index}" min="0" step="0.01" onchange="recalcularTotalesEditor()">
+                    </div>
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarServicioEditor(${index})">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    const content = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6><i class="fa-solid fa-info-circle me-2"></i>Información de la Orden</h6>
+                <div class="card">
+                    <div class="card-body">
+                        <p><strong>Cliente:</strong> ${orden.ClienteNombre}</p>
+                        <p><strong>Vehículo:</strong> ${orden.Placa} - ${orden.Marca} ${orden.Modelo}</p>
+                        <p><strong>Estado:</strong> ${getEstadoTexto(orden.Estado)}</p>
+                        <p><strong>Fecha:</strong> ${new Date(orden.FechaIngreso).toLocaleString('es-CR')}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h6><i class="fa-solid fa-comment me-2"></i>Observaciones</h6>
+                <textarea class="form-control" id="edit_observaciones" rows="4" placeholder="Observaciones adicionales">${orden.Observaciones || ''}</textarea>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6><i class="fa-solid fa-list me-2"></i>Servicios</h6>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="agregarServicioEditor()">
+                        <i class="fa-solid fa-plus me-1"></i>
+                        Agregar Servicio
+                    </button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Servicio</th>
+                                <th width="200">Precio</th>
+                                <th width="80" class="text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicios-editor-body">
+                            ${serviciosHtml}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td><strong>Subtotal</strong></td>
+                                <td colspan="2" class="text-end"><strong id="editor-subtotal">₡0.00</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>IVA (13%)</strong></td>
+                                <td colspan="2" class="text-end"><strong id="editor-iva">₡0.00</strong></td>
+                            </tr>
+                            <tr class="table-success">
+                                <td><strong>Total</strong></td>
+                                <td colspan="2" class="text-end"><strong id="editor-total">₡0.00</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('editOrdenContent').innerHTML = content;
+    
+    // Configurar el botón de guardar
+    document.getElementById('guardarCambiosBtn').onclick = () => guardarCambiosOrden(orden.ID);
+    
+    // Calcular totales iniciales
+    setTimeout(recalcularTotalesEditor, 100);
+}
+
+function agregarServicioEditor() {
+    const tbody = document.getElementById('servicios-editor-body');
+    const index = tbody.children.length;
+    
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>
+            <input type="text" class="form-control" value="" 
+                   id="servicio_nombre_${index}" placeholder="Nombre del servicio">
+        </td>
+        <td>
+            <div class="input-group">
+                <span class="input-group-text">₡</span>
+                <input type="number" class="form-control" value="0" 
+                       id="servicio_precio_${index}" min="0" step="0.01" onchange="recalcularTotalesEditor()">
+            </div>
+        </td>
+        <td class="text-center">
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarServicioEditor(${index})">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </td>
+    `;
+    
+    tbody.appendChild(row);
+    
+    // Focus en el nombre del nuevo servicio
+    document.getElementById(`servicio_nombre_${index}`).focus();
+}
+
+function eliminarServicioEditor(index) {
+    const row = document.querySelector(`#servicio_nombre_${index}`).closest('tr');
+    if (row) {
+        row.remove();
+        recalcularTotalesEditor();
+    }
+}
+
+function recalcularTotalesEditor() {
+    let subtotal = 0;
+    
+    // Sumar todos los precios de servicios
+    const precios = document.querySelectorAll('[id^="servicio_precio_"]');
+    precios.forEach(input => {
+        subtotal += parseFloat(input.value) || 0;
+    });
+    
+    const iva = subtotal * 0.13;
+    const total = subtotal + iva;
+    
+    // Actualizar UI
+    document.getElementById('editor-subtotal').textContent = formatCurrency(subtotal);
+    document.getElementById('editor-iva').textContent = formatCurrency(iva);
+    document.getElementById('editor-total').textContent = formatCurrency(total);
+}
+
+function guardarCambiosOrden(ordenId) {
+    const btn = document.getElementById('guardarCambiosBtn');
+    const originalContent = btn.innerHTML;
+    
+    // Mostrar loading
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Guardando...';
+    
+    // Recopilar datos
+    const servicios = [];
+    const nombres = document.querySelectorAll('[id^="servicio_nombre_"]');
+    const precios = document.querySelectorAll('[id^="servicio_precio_"]');
+    
+    nombres.forEach((nombreInput, index) => {
+        const precioInput = precios[index];
+        if (nombreInput.value.trim() && precioInput.value > 0) {
+            servicios.push({
+                id: `custom_${index}`,
+                nombre: nombreInput.value.trim(),
+                precio: parseFloat(precioInput.value),
+                personalizado: true
+            });
+        }
+    });
+    
+    const datos = {
+        orden_id: ordenId,
+        servicios: servicios,
+        observaciones: document.getElementById('edit_observaciones').value.trim()
+    };
+    
+    // Enviar al servidor
+    fetch('ajax/actualizar-orden.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Orden actualizada exitosamente', 'success');
+            
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editarOrdenModal'));
+            if (modal) modal.hide();
+            
+            // Recargar página para mostrar cambios
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showAlert('Error: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('Error al actualizar la orden', 'error');
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalContent;
+    });
+}
+
+/* =========================
+   CALCULADORA DE CIERRE
+========================= */
+function mostrarCalculadoraCierre(ordenId) {
+    console.log('Mostrando calculadora de cierre para orden:', ordenId);
+    
+    // Cerrar modal de detalle
+    const detalleModal = bootstrap.Modal.getInstance(document.getElementById('detalleOrdenModal'));
+    if (detalleModal) detalleModal.hide();
+    
+    // Mostrar modal de calculadora
+    document.getElementById('calcOrdenId').textContent = ordenId;
+    
+    // Cargar contenido de la calculadora
+    document.getElementById('calculadoraContent').innerHTML = `
+        <div class="text-center py-4">
+            <i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i>
+            <p>Cargando calculadora de cierre...</p>
+        </div>
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('calculadoraCierreModal'));
+    modal.show();
+    
+    // Cargar datos de la orden
+    fetch('ajax/obtener-orden-editar.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orden_id: ordenId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            renderizarCalculadoraCierre(data.orden);
+        } else {
+            document.getElementById('calculadoraContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fa-solid fa-exclamation-triangle me-2"></i>
+                    Error al cargar la orden: ${data.message}
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('calculadoraContent').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fa-solid fa-exclamation-triangle me-2"></i>
+                Error al cargar la orden
+            </div>
+        `;
+    });
+}
+
+function renderizarCalculadoraCierre(orden) {
+    const servicios = JSON.parse(orden.ServiciosJSON || '[]');
+    
+    let serviciosHtml = '';
+    servicios.forEach((servicio, index) => {
+        serviciosHtml += `
+            <tr>
+                <td>${servicio.nombre || 'Servicio ' + servicio.id}</td>
+                <td>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">₡</span>
+                        <input type="number" class="form-control" value="${servicio.precio}" 
+                               id="calc_precio_${index}" min="0" step="0.01" onchange="recalcularTotalesCalculadora()">
+                    </div>
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarServicioCalculadora(${index})">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    const content = `
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fa-solid fa-info-circle me-2"></i>Información</h6>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Cliente:</strong><br>${orden.ClienteNombre}</p>
+                        <p><strong>Vehículo:</strong><br>${orden.Placa} - ${orden.Marca} ${orden.Modelo}</p>
+                        <p><strong>Estado:</strong><br><span class="badge bg-success">Terminado</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0"><i class="fa-solid fa-calculator me-2"></i>Calculadora de Precios</h6>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="agregarItemCalculadora()">
+                            <i class="fa-solid fa-plus me-1"></i>
+                            Agregar Item
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Concepto</th>
+                                        <th width="150">Precio</th>
+                                        <th width="60" class="text-center">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="calculadora-body">
+                                    ${serviciosHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fa-solid fa-percent me-1"></i>
+                                    Descuento
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="calc_descuento" 
+                                           value="${orden.Descuento || 0}" min="0" step="0.01" 
+                                           onchange="recalcularTotalesCalculadora()">
+                                    <span class="input-group-text">₡</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fa-solid fa-comment me-1"></i>
+                                    Notas de Cierre
+                                </label>
+                                <textarea class="form-control" id="calc_notas" rows="2" 
+                                          placeholder="Notas adicionales para el cierre">${orden.Observaciones || ''}</textarea>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row">
+                            <div class="col-md-6 offset-md-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Subtotal:</strong></td>
+                                        <td class="text-end"><strong id="calc-subtotal">₡0.00</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Descuento:</strong></td>
+                                        <td class="text-end"><strong id="calc-descuento-display">₡0.00</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>IVA (13%):</strong></td>
+                                        <td class="text-end"><strong id="calc-iva">₡0.00</strong></td>
+                                    </tr>
+                                    <tr class="table-success">
+                                        <td><strong>Total Final:</strong></td>
+                                        <td class="text-end"><strong id="calc-total">₡0.00</strong></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('calculadoraContent').innerHTML = content;
+    
+    // Configurar el botón de cerrar orden
+    document.getElementById('cerrarOrdenBtn').onclick = () => cerrarOrdenFinal(orden.ID);
+    
+    // Calcular totales iniciales
+    setTimeout(recalcularTotalesCalculadora, 100);
+}
+
+function agregarItemCalculadora() {
+    const tbody = document.getElementById('calculadora-body');
+    const index = tbody.children.length;
+    
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>
+            <input type="text" class="form-control form-control-sm" 
+                   id="calc_nombre_${index}" placeholder="Concepto adicional">
+        </td>
+        <td>
+            <div class="input-group input-group-sm">
+                <span class="input-group-text">₡</span>
+                <input type="number" class="form-control" value="0" 
+                       id="calc_precio_${index}" min="0" step="0.01" onchange="recalcularTotalesCalculadora()">
+            </div>
+        </td>
+        <td class="text-center">
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarServicioCalculadora(${index})">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </td>
+    `;
+    
+    tbody.appendChild(row);
+    
+    // Focus en el nombre del nuevo item
+    document.getElementById(`calc_nombre_${index}`).focus();
+}
+
+function eliminarServicioCalculadora(index) {
+    const row = document.querySelector(`#calc_precio_${index}`).closest('tr');
+    if (row) {
+        row.remove();
+        recalcularTotalesCalculadora();
+    }
+}
+
+function recalcularTotalesCalculadora() {
+    let subtotal = 0;
+    
+    // Sumar todos los precios
+    const precios = document.querySelectorAll('[id^="calc_precio_"]');
+    precios.forEach(input => {
+        subtotal += parseFloat(input.value) || 0;
+    });
+    
+    const descuento = parseFloat(document.getElementById('calc_descuento').value) || 0;
+    const subtotalConDescuento = subtotal - descuento;
+    const iva = subtotalConDescuento * 0.13;
+    const total = subtotalConDescuento + iva;
+    
+    // Actualizar UI
+    document.getElementById('calc-subtotal').textContent = formatCurrency(subtotal);
+    document.getElementById('calc-descuento-display').textContent = formatCurrency(descuento);
+    document.getElementById('calc-iva').textContent = formatCurrency(iva);
+    document.getElementById('calc-total').textContent = formatCurrency(total);
+}
+
+function cerrarOrdenFinal(ordenId) {
+    const btn = document.getElementById('cerrarOrdenBtn');
+    const originalContent = btn.innerHTML;
+    
+    // Mostrar loading
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Cerrando...';
+    
+    // Recopilar datos finales
+    const servicios = [];
+    const nombres = document.querySelectorAll('[id^="calc_nombre_"]');
+    const precios = document.querySelectorAll('[id^="calc_precio_"]');
+    
+    precios.forEach((precioInput, index) => {
+        const nombreInput = nombres[index];
+        const nombre = nombreInput ? nombreInput.value.trim() : `Servicio ${index + 1}`;
+        
+        if (precioInput.value > 0) {
+            servicios.push({
+                id: `final_${index}`,
+                nombre: nombre || `Servicio ${index + 1}`,
+                precio: parseFloat(precioInput.value),
+                personalizado: true
+            });
+        }
+    });
+    
+    const datos = {
+        orden_id: ordenId,
+        servicios: servicios,
+        descuento: parseFloat(document.getElementById('calc_descuento').value) || 0,
+        observaciones: document.getElementById('calc_notas').value.trim(),
+        estado: 4 // Cerrado
+    };
+    
+    // Enviar al servidor
+    fetch('ajax/cerrar-orden-final.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Orden cerrada exitosamente', 'success');
+            
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('calculadoraCierreModal'));
+            if (modal) modal.hide();
+            
+            // Recargar página para mostrar cambios
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showAlert('Error: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('Error al cerrar la orden', 'error');
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalContent;
+    });
+}
+
+// Función auxiliar para obtener texto del estado
+function getEstadoTexto(estado) {
+    const estados = {
+        1: 'Pendiente',
+        2: 'En Proceso', 
+        3: 'Terminado',
+        4: 'Cerrado'
+    };
+    return estados[estado] || 'Desconocido';
+}
+
+// Función auxiliar para formatear moneda
+function formatCurrency(value) {
+    return value.toLocaleString('es-CR', {
+        style: 'currency',
+        currency: 'CRC'
+    });
+}
+
+// Función para mostrar toast (alias para showAlert)
+function showToast(message, type) {
+    showAlert(message, type);
 }
 </script>
 

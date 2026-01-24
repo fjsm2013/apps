@@ -4,7 +4,7 @@
         <h4 class="fw-bold text-white mb-4">
           <i class="fas fa-car me-2"></i>FROSH LavaCar App
         </h4>
-        <p>Solución de gestión especializada para lavaderos de autos. Optimizamos tu operación y mejoramos la experiencia de tus clientes.</p>
+        <p>Solución de gestión especializada para autolavados. Optimizamos tu operación y mejoramos la experiencia de tus clientes.</p>
         <div class="d-flex gap-3 mt-4">
           <a href="#" class="text-white" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
           <a href="#" class="text-white" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
@@ -45,7 +45,7 @@
     <hr class="my-4 border-secondary">
     
     <div class="text-center">
-      <p class="mb-2">© <?php echo date('Y');?> <strong>FROSH Systems</strong> - Sistema de Gestión para Lavaderos de Autos</p>
+      <p class="mb-2">© <?php echo date('Y');?> <strong>FROSH Systems</strong> - Sistema de Gestión para Autolavados</p>
       <small class="text-muted">Optimiza tu operación, mejora la satisfacción de tus clientes y haz crecer tu negocio</small>
     </div>
   </div>

@@ -172,35 +172,36 @@ class OrdenManager
     }
 
     /* =========================
-       GET SERVICES FROM JSON
+       GET SERVICES FROM TABLE (NOT JSON)
+    /* =========================
+       GET SERVICES FROM TABLE (NOT JSON)
     ========================= */
     public function getServicios(int $id): array
     {
-        $orden = $this->find($id);
-        if (!$orden || !$orden['ServiciosJSON']) {
-            return [];
-        }
+        // Read directly from orden_servicios table (single source of truth)
+        $result = CrearConsulta(
+            $this->db,
+            "SELECT os.ID, os.ServicioID, os.Precio, os.ServicioPersonalizado, os.Cantidad, os.Subtotal,
+                    s.Descripcion as ServicioNombre
+             FROM {$this->dbName}.orden_servicios os
+             LEFT JOIN {$this->dbName}.servicios s ON os.ServicioID = s.ID
+             WHERE os.OrdenID = ?
+             ORDER BY os.ID",
+            [$id]
+        );
         
-        $servicios = json_decode($orden['ServiciosJSON'], true) ?? [];
-        
-        // Asegurar que todos los servicios tengan nombre
-        foreach ($servicios as &$servicio) {
-            if (empty($servicio['nombre']) && !empty($servicio['id'])) {
-                $servicioInfo = ObtenerPrimerRegistro(
-                    $this->db,
-                    "SELECT Descripcion FROM {$this->dbName}.servicios WHERE ID = ?",
-                    [$servicio['id']]
-                );
-                if ($servicioInfo) {
-                    $servicio['nombre'] = $servicioInfo['Descripcion'];
-                } else {
-                    $servicio['nombre'] = 'Servicio no encontrado';
-                }
+        $servicios = [];
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $servicios[] = [
+                    'id' => $row['ServicioID'] ?: 'custom_' . $row['ID'],
+                    'nombre' => $row['ServicioPersonalizado'] ?: $row['ServicioNombre'],
+                    'precio' => floatval($row['Precio']),
+                    'cantidad' => intval($row['Cantidad'] ?? 1),
+                    'subtotal' => floatval($row['Subtotal'] ?? $row['Precio']),
+                    'personalizado' => !empty($row['ServicioPersonalizado'])
+                ];
             }
-            
-            // Asegurar valores por defecto
-            $servicio['nombre'] = $servicio['nombre'] ?? 'Sin nombre';
-            $servicio['precio'] = $servicio['precio'] ?? 0;
         }
         
         return $servicios;
