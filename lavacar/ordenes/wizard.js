@@ -1155,37 +1155,95 @@ let serviciosPersonalizados = [];
 let contadorServiciosPersonalizados = 0;
 
 function mostrarFormularioServicioPersonalizado() {
-    const formulario = document.getElementById('formulario-servicio-personalizado');
-    formulario.style.display = 'block';
+    // En lugar de mostrar un formulario separado, agregar una fila editable directamente en la tabla
+    const tbody = document.getElementById('services-body');
     
-    // Limpiar campos
-    document.getElementById('servicio-personalizado-nombre').value = '';
-    document.getElementById('servicio-personalizado-precio').value = '';
+    // Verificar si ya hay una fila de edición activa
+    const filaEdicionExistente = tbody.querySelector('.fila-edicion-servicio');
+    if (filaEdicionExistente) {
+        // Si ya existe, hacer focus en el campo de nombre
+        filaEdicionExistente.querySelector('.input-nombre-servicio').focus();
+        return;
+    }
     
-    // Focus en el campo nombre
-    document.getElementById('servicio-personalizado-nombre').focus();
+    // Crear nueva fila editable
+    contadorServiciosPersonalizados++;
+    const row = document.createElement('tr');
+    row.className = 'servicio-personalizado-row fila-edicion-servicio';
+    row.innerHTML = `
+        <td>
+            <input type="text" 
+                   class="form-control input-nombre-servicio" 
+                   placeholder="Nombre del servicio adicional"
+                   maxlength="100">
+            <small class="text-success">
+                <i class="fa-solid fa-plus-circle me-1"></i>Nuevo servicio
+            </small>
+        </td>
+        <td class="text-center">
+            <div class="btn-group btn-group-sm">
+                <button type="button" class="btn btn-success btn-sm" onclick="guardarServicioPersonalizado(this)" title="Guardar">
+                    <i class="fa-solid fa-check"></i>
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="cancelarFilaServicioPersonalizado(this)" title="Cancelar">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+        </td>
+        <td>
+            <div class="input-group">
+                <span class="input-group-text">₡</span>
+                <input type="number" 
+                       class="form-control input-precio-servicio text-end" 
+                       placeholder="0.00"
+                       min="0"
+                       step="0.01">
+            </div>
+        </td>
+    `;
+    
+    // Agregar la fila al final del tbody
+    tbody.appendChild(row);
+    
+    // Focus en el campo de nombre
+    row.querySelector('.input-nombre-servicio').focus();
+    
+    // Agregar event listener para Enter
+    const nombreInput = row.querySelector('.input-nombre-servicio');
+    const precioInput = row.querySelector('.input-precio-servicio');
+    
+    nombreInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            precioInput.focus();
+        }
+    });
+    
+    precioInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            guardarServicioPersonalizado(row.querySelector('.btn-success'));
+        }
+    });
 }
 
-function cancelarServicioPersonalizado() {
-    const formulario = document.getElementById('formulario-servicio-personalizado');
-    formulario.style.display = 'none';
-    
-    // Limpiar campos
-    document.getElementById('servicio-personalizado-nombre').value = '';
-    document.getElementById('servicio-personalizado-precio').value = '';
+function cancelarFilaServicioPersonalizado(btn) {
+    const row = btn.closest('tr');
+    row.remove();
 }
 
-function agregarServicioPersonalizado() {
-    const nombre = document.getElementById('servicio-personalizado-nombre').value.trim();
-    const precio = parseFloat(document.getElementById('servicio-personalizado-precio').value) || 0;
+function guardarServicioPersonalizado(btn) {
+    const row = btn.closest('tr');
+    const nombre = row.querySelector('.input-nombre-servicio').value.trim();
+    const precio = parseFloat(row.querySelector('.input-precio-servicio').value) || 0;
     
     // Validaciones
     if (!nombre) {
         showAlert({
             type: 'warning',
-            message: 'Ingrese el nombre del servicio personalizado'
+            message: 'Ingrese el nombre del servicio'
         });
-        document.getElementById('servicio-personalizado-nombre').focus();
+        row.querySelector('.input-nombre-servicio').focus();
         return;
     }
     
@@ -1194,12 +1252,11 @@ function agregarServicioPersonalizado() {
             type: 'warning',
             message: 'Ingrese un precio válido mayor a 0'
         });
-        document.getElementById('servicio-personalizado-precio').focus();
+        row.querySelector('.input-precio-servicio').focus();
         return;
     }
     
     // Crear servicio personalizado
-    contadorServiciosPersonalizados++;
     const servicioPersonalizado = {
         id: `custom_${contadorServiciosPersonalizados}`,
         nombre: nombre,
@@ -1218,14 +1275,33 @@ function agregarServicioPersonalizado() {
         personalizado: true
     });
     
-    // Renderizar la lista
-    renderServiciosPersonalizados();
+    // Reemplazar la fila de edición con la fila final
+    row.className = 'servicio-personalizado-row';
+    row.innerHTML = `
+        <td>
+            <div class="d-flex align-items-center">
+                <i class="fa-solid fa-star text-warning me-2"></i>
+                <div>
+                    <strong>${nombre}</strong>
+                    <br>
+                    <small class="text-muted">
+                        <span class="badge bg-success">Personalizado</span>
+                    </small>
+                </div>
+            </div>
+        </td>
+        <td class="text-center">
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarServicioPersonalizado('${servicioPersonalizado.id}')" title="Eliminar">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </td>
+        <td class="text-end">
+            <strong class="text-success">₡${precio.toLocaleString('es-CR', {minimumFractionDigits: 2})}</strong>
+        </td>
+    `;
     
     // Actualizar totales
     recalcularTotales();
-    
-    // Ocultar formulario
-    cancelarServicioPersonalizado();
     
     // Mostrar mensaje de éxito
     showAlert({
@@ -1234,52 +1310,24 @@ function agregarServicioPersonalizado() {
     });
 }
 
-function renderServiciosPersonalizados() {
-    // Limpiar servicios personalizados existentes de la tabla
-    const serviciosPersonalizadosExistentes = document.querySelectorAll('.servicio-personalizado-row');
-    serviciosPersonalizadosExistentes.forEach(row => row.remove());
-    
-    // Si no hay servicios personalizados, no hacer nada
-    if (serviciosPersonalizados.length === 0) {
-        return;
+function cancelarServicioPersonalizado() {
+    // Esta función ya no se usa, pero la mantenemos por compatibilidad
+    const filaEdicion = document.querySelector('.fila-edicion-servicio');
+    if (filaEdicion) {
+        filaEdicion.remove();
     }
-    
-    // Obtener el tbody de la tabla de servicios
-    const tbody = document.getElementById('services-body');
-    
-    // Agregar cada servicio personalizado como una fila en la tabla
-    serviciosPersonalizados.forEach(servicio => {
-        const row = document.createElement('tr');
-        row.className = 'servicio-personalizado-row';
-        row.innerHTML = `
-            <td>
-                <div class="d-flex align-items-center">
-                    <i class="fa-solid fa-star text-warning me-2"></i>
-                    <div>
-                        <strong>${servicio.nombre}</strong>
-                        <br>
-                        <small class="text-muted">
-                            <span class="badge bg-success">Personalizado</span>
-                        </small>
-                    </div>
-                </div>
-            </td>
-            <td class="text-center">
-                <div class="d-flex align-items-center justify-content-center">
-                    <i class="fa-solid fa-check-circle text-success me-2"></i>
-                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarServicioPersonalizado('${servicio.id}')" title="Eliminar servicio personalizado">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </td>
-            <td class="text-end">
-                <strong class="text-success">₡${servicio.precio.toLocaleString('es-CR', {minimumFractionDigits: 2})}</strong>
-            </td>
-        `;
-        
-        // Insertar la fila antes del tfoot (antes de los totales)
-        tbody.appendChild(row);
-    });
+}
+
+function agregarServicioPersonalizado() {
+    // Función legacy - redirigir a la nueva implementación
+    mostrarFormularioServicioPersonalizado();
+}
+
+// Función legacy - ya no se usa con la nueva implementación inline
+function renderServiciosPersonalizados() {
+    // Esta función ya no es necesaria porque los servicios se agregan directamente como filas
+    // Se mantiene por compatibilidad pero no hace nada
+    return;
 }
 
 function eliminarServicioPersonalizado(servicioId) {
@@ -1303,8 +1351,15 @@ function eliminarServicioPersonalizado(servicioId) {
         wizardState.servicios.splice(wizardServiceIndex, 1);
     }
     
-    // Re-renderizar la lista
-    renderServiciosPersonalizados();
+    // Eliminar la fila de la tabla
+    const tbody = document.getElementById('services-body');
+    const rows = tbody.querySelectorAll('.servicio-personalizado-row');
+    rows.forEach(row => {
+        const deleteBtn = row.querySelector('button[onclick*="' + servicioId + '"]');
+        if (deleteBtn) {
+            row.remove();
+        }
+    });
     
     // Actualizar totales
     recalcularTotales();
@@ -1322,40 +1377,16 @@ function resetWizardWithCustomServices() {
     serviciosPersonalizados = [];
     contadorServiciosPersonalizados = 0;
     
-    // Limpiar las filas de servicios personalizados de la tabla
-    const serviciosPersonalizadosExistentes = document.querySelectorAll('.servicio-personalizado-row');
+    // Limpiar las filas de servicios personalizados de la tabla (incluyendo filas de edición)
+    const serviciosPersonalizadosExistentes = document.querySelectorAll('.servicio-personalizado-row, .fila-edicion-servicio');
     serviciosPersonalizadosExistentes.forEach(row => row.remove());
-    
-    // Ocultar formulario si está visible
-    const formulario = document.getElementById('formulario-servicio-personalizado');
-    if (formulario) {
-        formulario.style.display = 'none';
-    }
     
     // Llamar al reset original
     resetWizard();
 }
 
-// Agregar event listeners para Enter en los campos del formulario
+// Event listeners ya no son necesarios - se agregan dinámicamente en mostrarFormularioServicioPersonalizado()
+// Esta sección se mantiene vacía por compatibilidad
 document.addEventListener('DOMContentLoaded', function() {
-    const nombreInput = document.getElementById('servicio-personalizado-nombre');
-    const precioInput = document.getElementById('servicio-personalizado-precio');
-    
-    if (nombreInput) {
-        nombreInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                precioInput.focus();
-            }
-        });
-    }
-    
-    if (precioInput) {
-        precioInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                agregarServicioPersonalizado();
-            }
-        });
-    }
+    // Los event listeners ahora se agregan dinámicamente cuando se crea cada fila
 });

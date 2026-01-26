@@ -213,14 +213,17 @@ require 'lavacar/partials/header.php';
                                         <a href="editar-orden-final.php?id=<?= $orden['ID'] ?>" class="btn btn-sm btn-outline-warning" title="Editar Orden">
                                             <i class="fa-solid fa-edit"></i>
                                         </a>
-                                        <button class="btn btn-sm" style="background: var(--ordenes-success); color: white; border-color: var(--ordenes-success);" onclick="cambiarEstado(<?= $orden['ID'] ?>, <?= $orden['Estado'] + 1 ?>)" title="Avanzar Estado">
-                                            <i class="fa-solid fa-arrow-right"></i>
-                                        </button>
                                         <?php endif; ?>
                                         <?php if ($orden['Estado'] == 3): ?>
                                         <a href="calculadora-cierre-final.php?id=<?= $orden['ID'] ?>" class="btn btn-sm btn-warning" title="Calculadora de Cierre">
                                             <i class="fa-solid fa-calculator"></i>
                                         </a>
+                                        <?php else: ?>
+                                        <?php if ($orden['Estado'] < 3): ?>
+                                        <button class="btn btn-sm" style="background: var(--ordenes-success); color: white; border-color: var(--ordenes-success);" onclick="cambiarEstado(<?= $orden['ID'] ?>, <?= $orden['Estado'] + 1 ?>)" title="Avanzar Estado">
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </button>
+                                        <?php endif; ?>
                                         <?php endif; ?>
                                         <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminarOrden(<?= $orden['ID'] ?>, '<?= safe_htmlspecialchars($orden['ClienteNombre'], 'Sin cliente') ?>')" title="Eliminar Orden">
                                             <i class="fa-solid fa-trash"></i>
@@ -311,14 +314,17 @@ require 'lavacar/partials/header.php';
                                     <a href="editar-orden-final.php?id=<?= $orden['ID'] ?>" class="btn btn-sm btn-outline-warning" title="Editar Orden">
                                         <i class="fa-solid fa-edit me-1"></i>Editar
                                     </a>
-                                    <button class="btn btn-sm" style="background: var(--ordenes-success); color: white; border-color: var(--ordenes-success);" onclick="cambiarEstado(<?= $orden['ID'] ?>, <?= $orden['Estado'] + 1 ?>)" title="Avanzar Estado">
-                                        <i class="fa-solid fa-arrow-right me-1"></i>Avanzar
-                                    </button>
                                     <?php endif; ?>
                                     <?php if ($orden['Estado'] == 3): ?>
                                     <a href="calculadora-cierre-final.php?id=<?= $orden['ID'] ?>" class="btn btn-sm btn-warning" title="Calculadora de Cierre">
                                         <i class="fa-solid fa-calculator me-1"></i>Calculadora
                                     </a>
+                                    <?php else: ?>
+                                    <?php if ($orden['Estado'] < 3): ?>
+                                    <button class="btn btn-sm" style="background: var(--ordenes-success); color: white; border-color: var(--ordenes-success);" onclick="cambiarEstado(<?= $orden['ID'] ?>, <?= $orden['Estado'] + 1 ?>)" title="Avanzar Estado">
+                                        <i class="fa-solid fa-arrow-right me-1"></i>Avanzar
+                                    </button>
+                                    <?php endif; ?>
                                     <?php endif; ?>
                                     <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminarOrden(<?= $orden['ID'] ?>, '<?= safe_htmlspecialchars($orden['ClienteNombre'], 'Sin cliente') ?>')" title="Eliminar Orden">
                                         <i class="fa-solid fa-trash me-1"></i>Eliminar

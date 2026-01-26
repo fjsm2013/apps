@@ -262,28 +262,48 @@ require 'lavacar/partials/header.php';
                         </button>
                     </div>
                     <div class="card-body">
-                        <div id="servicios-container">
-                            <?php foreach ($servicios as $index => $servicio): ?>
-                            <div class="row mb-3 servicio-row">
-                                <input type="hidden" name="servicios[<?= $index ?>][db_id]" value="<?= $servicio['db_id'] ?>">
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" name="servicios[<?= $index ?>][nombre]" 
-                                           value="<?= htmlspecialchars($servicio['nombre']) ?>" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="input-group">
-                                        <span class="input-group-text">₡</span>
-                                        <input type="number" class="form-control precio-input" name="servicios[<?= $index ?>][precio]" 
-                                               value="<?= $servicio['precio'] ?>" min="0" step="0.01" required onchange="recalcularTotales()">
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="eliminarServicio(this)">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <?php endforeach; ?>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle" id="servicios-table">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 50%;">Servicio</th>
+                                        <th style="width: 30%;">Precio</th>
+                                        <th style="width: 20%;" class="text-center">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="servicios-container">
+                                    <?php foreach ($servicios as $index => $servicio): ?>
+                                    <tr class="servicio-row">
+                                        <td>
+                                            <input type="hidden" name="servicios[<?= $index ?>][db_id]" value="<?= $servicio['db_id'] ?>">
+                                            <input type="text" class="form-control" name="servicios[<?= $index ?>][nombre]" 
+                                                   value="<?= htmlspecialchars($servicio['nombre']) ?>" required>
+                                        </td>
+                                        <td>
+                                            <div class="input-group">
+                                                <span class="input-group-text">₡</span>
+                                                <input type="number" class="form-control precio-input" name="servicios[<?= $index ?>][precio]" 
+                                                       value="<?= $servicio['precio'] ?>" min="0" step="0.01" required onchange="recalcularTotales()">
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarServicio(this)">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm w-100" onclick="agregarServicio()">
+                                                <i class="fa-solid fa-plus me-1"></i>Agregar Servicio
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
 
                         <div class="row mt-4">
@@ -323,34 +343,34 @@ require 'lavacar/partials/header.php';
 let contadorServicios = <?= count($servicios) ?>;
 
 function agregarServicio() {
-    const container = document.getElementById('servicios-container');
+    const tbody = document.getElementById('servicios-container');
     const index = contadorServicios++;
     
-    const div = document.createElement('div');
-    div.className = 'row mb-3 servicio-row';
-    div.innerHTML = `
-        <input type="hidden" name="servicios[${index}][db_id]" value="0">
-        <div class="col-md-6">
+    const tr = document.createElement('tr');
+    tr.className = 'servicio-row';
+    tr.innerHTML = `
+        <td>
+            <input type="hidden" name="servicios[${index}][db_id]" value="0">
             <input type="text" class="form-control" name="servicios[${index}][nombre]" 
                    placeholder="Servicio personalizado" required>
-            <small class="text-success">Nuevo</small>
-        </div>
-        <div class="col-md-4">
+            <small class="text-success"><i class="fa-solid fa-plus-circle me-1"></i>Nuevo</small>
+        </td>
+        <td>
             <div class="input-group">
                 <span class="input-group-text">₡</span>
                 <input type="number" class="form-control precio-input" name="servicios[${index}][precio]" 
                        value="0" min="0" step="0.01" required onchange="recalcularTotales()">
             </div>
-        </div>
-        <div class="col-md-2">
-            <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="eliminarServicio(this)">
+        </td>
+        <td class="text-center">
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarServicio(this)">
                 <i class="fa-solid fa-trash"></i>
             </button>
-        </div>
+        </td>
     `;
     
-    container.appendChild(div);
-    div.querySelector('input[type="text"]').focus();
+    tbody.appendChild(tr);
+    tr.querySelector('input[type="text"]').focus();
     recalcularTotales();
 }
 
