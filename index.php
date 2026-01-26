@@ -391,10 +391,14 @@
         <li class="nav-item"><a class="nav-link" href="#pasos">Estados</a></li>
         <li class="nav-item"><a class="nav-link" href="#beneficios">Beneficios</a></li>
         <li class="nav-item">
-          <a class="btn btn-outline-light ms-lg-3 px-3" href="login.php">Iniciar Sesión</a>
+          <a class="btn btn-outline-light ms-lg-3 px-3" href="login.php">
+            <i class="fas fa-sign-in-alt me-1"></i>Iniciar Sesión
+          </a>
         </li>
         <li class="nav-item">
-          <a class="btn btn-primary ms-2 px-3" href="register.php">Registrarse</a>
+          <a class="btn btn-primary ms-2 px-3" href="register.php">
+            <i class="fas fa-user-plus me-1"></i>Registrarse
+          </a>
         </li>
       </ul>
     </div>
@@ -418,10 +422,10 @@
       </a>
       */ ?>
       <a href="register.php" class="btn btn-light btn-lg fw-semibold px-5 py-3">
-        <i class="fas fa-rocket me-2"></i>Probar Ahora
+        <i class="fas fa-rocket me-2"></i>Prueba Gratuita 7 Días
       </a>
       <a href="#funciona" class="btn btn-outline-light btn-lg fw-semibold px-5 py-3">
-        <i class="fas fa-info-circle me-2"></i>Ver cómo funciona
+        <i class="fas fa-info-circle me-2"></i>Ver Cómo Funciona
       </a>
     </div>
     
@@ -456,68 +460,323 @@
 </section>
 
 <!-- PROBLEMA -->
-<section id="problema" class="section-padding">
+
+<!-- TABLA COMPARATIVA - Antes vs Con FROSH -->
+<section id="problema" class="section-padding bg-light">
   <div class="container">
     <div class="text-center mb-5">
-      <h2 class="fw-bold">¿Estás enfrentando estos problemas en tu autolavado?</h2>
-      <p class="text-muted lead">Identificamos los desafíos comunes que afectan la productividad de los autolavados</p>
+      <h2 class="fw-bold">Antes vs Con FROSH LavaCar App</h2>
+      <p class="text-muted lead">La diferencia es evidente: transforma tu operación completamente</p>
     </div>
 
-    <div class="row g-4">
-      <div class="col-md-6">
-        <div class="problem-item">
-          <div class="problem-icon text-danger"><i class="fas fa-times-circle"></i></div>
-          <div>
-            <h5 class="fw-bold">Clientes preguntando constantemente</h5>
-            <p class="mb-0">"¿Ya está mi carro?" interrumpe tu flujo de trabajo y genera estrés en el personal.</p>
+    <!-- Versión Desktop -->
+    <div class="d-none d-md-block">
+      <div class="table-responsive">
+        <table class="table table-borderless comparison-table">
+          <thead>
+            <tr>
+              <th class="text-center py-4" style="width: 40%;">
+                <div class="comparison-header before">
+                  <i class="fas fa-times-circle fa-2x mb-2 text-danger"></i>
+                  <h3 class="fw-bold">Sin FroshApp</h3>
+                  <p class="mb-0 text-muted">Operación tradicional</p>
+                </div>
+              </th>
+              <th style="width: 20%;"></th>
+              <th class="text-center py-4" style="width: 40%;">
+                <div class="comparison-header after">
+                  <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
+                  <h3 class="fw-bold">Con FroshApp</h3>
+                  <p class="mb-0 text-muted">Operación automatizada</p>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="comparison-cell before">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
+                  <i class="fas fa-phone-slash text-danger me-2"></i>
+                  <strong>Clientes preguntando constantemente "¿Ya está mi carro?"</strong><br>
+                  <small class="text-muted">Las interrupciones frecuentes afectan el flujo de trabajo y generan estrés en el personal.</small>
+                </div>
+              </td>
+              <td class="text-center align-middle">
+                <i class="fas fa-arrow-right text-primary fa-lg"></i>
+              </td>
+              <td class="comparison-cell after">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
+                  <i class="fas fa-bell text-success me-2"></i>
+                  <strong>Comunicación automatizada con el cliente</strong><br>
+                  <small class="text-muted">Los clientes reciben actualizaciones claras y oportunas sobre el estado de su vehículo, reduciendo interrupciones.</small>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="comparison-cell before">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
+                  <i class="fas fa-question-circle text-danger me-2"></i>
+                  <strong>Desorganización en la fila de vehículos</strong><br>
+                  <small class="text-muted">Confusión sobre qué auto sigue, prioridades mal definidas y tiempos de espera poco claros.</small>
+                </div>
+              </td>
+              <td class="text-center align-middle">
+                <i class="fas fa-arrow-right text-primary fa-lg"></i>
+              </td>
+              <td class="comparison-cell after">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
+                  <i class="fas fa-list-ol text-success me-2"></i>
+                  <strong>Gestión ordenada de la fila de trabajo</strong><br>
+                  <small class="text-muted">El sistema organiza automáticamente los vehículos según prioridad y etapa del servicio.</small>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="comparison-cell before">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
+                  <i class="fas fa-eye-slash text-danger me-2"></i>
+                  <strong>Falta de control del proceso</strong><br>
+                  <small class="text-muted">Dificultad para saber en qué etapa se encuentra cada vehículo y cuánto tiempo falta para finalizarlo.</small>
+                </div>
+              </td>
+              <td class="text-center align-middle">
+                <i class="fas fa-arrow-right text-primary fa-lg"></i>
+              </td>
+              <td class="comparison-cell after">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
+                  <i class="fas fa-tasks text-success me-2"></i>
+                  <strong>Control total del proceso</strong><br>
+                  <small class="text-muted">Visualización en tiempo real del estado de cada vehículo y de los tiempos estimados.</small>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="comparison-cell before">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
+                  <i class="fas fa-angry text-danger me-2"></i>
+                  <strong>Reclamos por tiempos de espera</strong><br>
+                  <small class="text-muted">Clientes insatisfechos debido a la falta de información sobre demoras.</small>
+                </div>
+              </td>
+              <td class="text-center align-middle">
+                <i class="fas fa-arrow-right text-primary fa-lg"></i>
+              </td>
+              <td class="comparison-cell after">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
+                  <i class="fas fa-smile text-success me-2"></i>
+                  <strong>Mayor transparencia y satisfacción del cliente</strong><br>
+                  <small class="text-muted">Información clara que reduce reclamos y mejora la experiencia del usuario.</small>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="comparison-cell before">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
+                  <i class="fas fa-clock text-danger me-2"></i>
+                  <strong>Pérdida de eficiencia operativa</strong><br>
+                  <small class="text-muted">Tiempo valioso empleado en exceso en coordinar manualmente el flujo de trabajo.</small>
+                </div>
+              </td>
+              <td class="text-center align-middle">
+                <i class="fas fa-arrow-right text-primary fa-lg"></i>
+              </td>
+              <td class="comparison-cell after">
+                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
+                  <i class="fas fa-rocket text-success me-2"></i>
+                  <strong>Optimización de la eficiencia operativa</strong><br>
+                  <small class="text-muted">Automatización del flujo de trabajo que permite al equipo enfocarse en el servicio.</small>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Versión Mobile -->
+    <div class="d-md-none">
+      <div class="comparison-mobile">
+        <!-- Item 1 -->
+        <div class="comparison-item-single mb-4">
+          <div class="card shadow-sm">
+            <div class="card-body p-3">
+              <!-- Sin FroshApp -->
+              <div class="comparison-side mb-3 pb-3 border-bottom">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-times-circle text-danger me-2 fa-lg flex-shrink-0"></i>
+                  <div class="flex-grow-1">
+                    <div class="badge bg-danger mb-2">Sin FroshApp</div>
+                    <p class="mb-1 fw-bold">Clientes preguntando constantemente "¿Ya está mi carro?"</p>
+                    <small class="text-muted">Las interrupciones frecuentes afectan el flujo de trabajo y generan estrés en el personal.</small>
+                  </div>
+                </div>
+              </div>
+              <!-- Con FroshApp -->
+              <div class="comparison-side">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-check-circle text-success me-2 fa-lg flex-shrink-0"></i>
+                  <div class="flex-grow-1">
+                    <div class="badge bg-success mb-2">Con FroshApp</div>
+                    <p class="mb-1 fw-bold">Comunicación automatizada con el cliente</p>
+                    <small class="text-muted">Los clientes reciben actualizaciones claras y oportunas sobre el estado de su vehículo, reduciendo interrupciones.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <div class="problem-item">
-          <div class="problem-icon text-danger"><i class="fas fa-times-circle"></i></div>
-          <div>
-            <h5 class="fw-bold">Desorganización en la fila de vehículos</h5>
-            <p class="mb-0">Confusión sobre qué auto sigue, prioridades y tiempos de espera no claros.</p>
+
+        <!-- Item 2 -->
+        <div class="comparison-item-single mb-4">
+          <div class="card shadow-sm">
+            <div class="card-body p-3">
+              <!-- Sin FroshApp -->
+              <div class="comparison-side mb-3 pb-3 border-bottom">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-times-circle text-danger me-2 fa-lg flex-shrink-0"></i>
+                  <div class="flex-grow-1">
+                    <div class="badge bg-danger mb-2">Sin FroshApp</div>
+                    <p class="mb-1 fw-bold">Desorganización en la fila de vehículos</p>
+                    <small class="text-muted">Confusión sobre qué auto sigue, prioridades mal definidas y tiempos de espera poco claros.</small>
+                  </div>
+                </div>
+              </div>
+              <!-- Con FroshApp -->
+              <div class="comparison-side">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-check-circle text-success me-2 fa-lg flex-shrink-0"></i>
+                  <div class="flex-grow-1">
+                    <div class="badge bg-success mb-2">Con FroshApp</div>
+                    <p class="mb-1 fw-bold">Gestión ordenada de la fila de trabajo</p>
+                    <small class="text-muted">El sistema organiza automáticamente los vehículos según prioridad y etapa del servicio.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <div class="problem-item">
-          <div class="problem-icon text-danger"><i class="fas fa-times-circle"></i></div>
-          <div>
-            <h5 class="fw-bold">Falta de control del proceso</h5>
-            <p class="mb-0">No saber exactamente en qué etapa está cada vehículo y cuánto tiempo llevará.</p>
+
+        <!-- Item 3 -->
+        <div class="comparison-item-single mb-4">
+          <div class="card shadow-sm">
+            <div class="card-body p-3">
+              <!-- Sin FroshApp -->
+              <div class="comparison-side mb-3 pb-3 border-bottom">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-times-circle text-danger me-2 fa-lg flex-shrink-0"></i>
+                  <div class="flex-grow-1">
+                    <div class="badge bg-danger mb-2">Sin FroshApp</div>
+                    <p class="mb-1 fw-bold">Falta de control del proceso</p>
+                    <small class="text-muted">Dificultad para saber en qué etapa se encuentra cada vehículo y cuánto tiempo falta para finalizarlo.</small>
+                  </div>
+                </div>
+              </div>
+              <!-- Con FroshApp -->
+              <div class="comparison-side">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-check-circle text-success me-2 fa-lg flex-shrink-0"></i>
+                  <div class="flex-grow-1">
+                    <div class="badge bg-success mb-2">Con FroshApp</div>
+                    <p class="mb-1 fw-bold">Control total del proceso</p>
+                    <small class="text-muted">Visualización en tiempo real del estado de cada vehículo y de los tiempos estimados.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="comparison-item-single mb-4">
+          <div class="card shadow-sm">
+            <div class="card-body p-3">
+              <!-- Sin FroshApp -->
+              <div class="comparison-side mb-3 pb-3 border-bottom">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-times-circle text-danger me-2 fa-lg flex-shrink-0"></i>
+                  <div class="flex-grow-1">
+                    <div class="badge bg-danger mb-2">Sin FroshApp</div>
+                    <p class="mb-1 fw-bold">Reclamos por tiempos de espera</p>
+                    <small class="text-muted">Clientes insatisfechos debido a la falta de información sobre demoras.</small>
+                  </div>
+                </div>
+              </div>
+              <!-- Con FroshApp -->
+              <div class="comparison-side">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-check-circle text-success me-2 fa-lg flex-shrink-0"></i>
+                  <div class="flex-grow-1">
+                    <div class="badge bg-success mb-2">Con FroshApp</div>
+                    <p class="mb-1 fw-bold">Mayor transparencia y satisfacción del cliente</p>
+                    <small class="text-muted">Información clara que reduce reclamos y mejora la experiencia del usuario.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 5 -->
+        <div class="comparison-item-single mb-4">
+          <div class="card shadow-sm">
+            <div class="card-body p-3">
+              <!-- Sin FroshApp -->
+              <div class="comparison-side mb-3 pb-3 border-bottom">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-times-circle text-danger me-2 fa-lg flex-shrink-0"></i>
+                  <div class="flex-grow-1">
+                    <div class="badge bg-danger mb-2">Sin FroshApp</div>
+                    <p class="mb-1 fw-bold">Pérdida de eficiencia operativa</p>
+                    <small class="text-muted">Tiempo valioso empleado en exceso en coordinar manualmente el flujo de trabajo.</small>
+                  </div>
+                </div>
+              </div>
+              <!-- Con FroshApp -->
+              <div class="comparison-side">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-check-circle text-success me-2 fa-lg flex-shrink-0"></i>
+                  <div class="flex-grow-1">
+                    <div class="badge bg-success mb-2">Con FroshApp</div>
+                    <p class="mb-1 fw-bold">Optimización de la eficiencia operativa</p>
+                    <small class="text-muted">Automatización del flujo de trabajo que permite al equipo enfocarse en el servicio.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      
-      <div class="col-md-6">
-        <div class="problem-item">
-          <div class="problem-icon text-danger"><i class="fas fa-times-circle"></i></div>
-          <div>
-            <h5 class="fw-bold">Reclamos por tiempos de espera</h5>
-            <p class="mb-0">Clientes insatisfechos por falta de información sobre demoras y esperas.</p>
-          </div>
-        </div>
-        
-        <div class="problem-item">
-          <div class="problem-icon text-danger"><i class="fas fa-times-circle"></i></div>
-          <div>
-            <h5 class="fw-bold">Pérdida de eficiencia operativa</h5>
-            <p class="mb-0">Tiempo valioso desperdiciado en coordinar manualmente el flujo de trabajo.</p>
-          </div>
-        </div>
-        
-        <div class="problem-item bg-primary text-white">
-          <div class="problem-icon text-white"><i class="fas fa-check-circle"></i></div>
-          <div>
-            <h5 class="fw-bold">Solución Integral FROSH</h5>
-            <p class="mb-0"><strong>FROSH LavaCar App elimina estos problemas</strong> con un sistema automatizado de gestión.</p>
+    </div>
+
+    <!-- CTA al final de la comparación -->
+    <div class="text-center mt-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card border-primary border-2 shadow-sm">
+            <div class="card-body p-4">
+              <h4 class="fw-bold text-primary mb-3">
+                <i class="fas fa-lightbulb me-2"></i>¿Por qué seguir con los problemas del pasado?
+              </h4>
+              <p class="mb-4">Haz la transición a una operación moderna y eficiente. Tus clientes y tu equipo te lo agradecerán.</p>
+              <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                <a href="register.php" class="btn btn-primary btn-lg fw-semibold px-4">
+                  <i class="fas fa-arrow-right me-2"></i>Hacer el Cambio Ahora
+                </a>
+                <a href="login.php" class="btn btn-outline-primary btn-lg fw-semibold px-4">
+                  <i class="fas fa-user me-2"></i>Ya soy usuario
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+
+
+
 
 <!-- CTA ESTRATÉGICO 1 - Después de problemas -->
 <section class="py-4 bg-primary">
@@ -786,344 +1045,6 @@
   </div>
 </section>
 
-<!-- TABLA COMPARATIVA - Antes vs Con FROSH -->
-<section class="section-padding bg-light">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold">Antes vs Con FROSH LavaCar App</h2>
-      <p class="text-muted lead">La diferencia es evidente: transforma tu operación completamente</p>
-    </div>
-
-    <!-- Versión Desktop -->
-    <div class="d-none d-md-block">
-      <div class="table-responsive">
-        <table class="table table-borderless comparison-table">
-          <thead>
-            <tr>
-              <th class="text-center py-4" style="width: 40%;">
-                <div class="comparison-header before">
-                  <i class="fas fa-times-circle fa-2x mb-2 text-danger"></i>
-                  <h3 class="fw-bold">Sin FROSH</h3>
-                  <p class="mb-0 text-muted">Operación tradicional</p>
-                </div>
-              </th>
-              <th style="width: 20%;"></th>
-              <th class="text-center py-4" style="width: 40%;">
-                <div class="comparison-header after">
-                  <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
-                  <h3 class="fw-bold">Con FROSH</h3>
-                  <p class="mb-0 text-muted">Operación automatizada</p>
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="comparison-cell before">
-                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
-                  <i class="fas fa-phone-slash text-danger me-2"></i>
-                  <strong>Clientes preguntando constantemente</strong><br>
-                  <small class="text-muted">"¿Ya está mi carro?" interrumpe el flujo de trabajo</small>
-                </div>
-              </td>
-              <td class="text-center align-middle">
-                <i class="fas fa-arrow-right text-primary fa-lg"></i>
-              </td>
-              <td class="comparison-cell after">
-                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
-                  <i class="fas fa-bell text-success me-2"></i>
-                  <strong>Notificaciones automáticas</strong><br>
-                  <small class="text-muted">Cliente informado en cada etapa sin intervención</small>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td class="comparison-cell before">
-                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
-                  <i class="fas fa-question-circle text-danger me-2"></i>
-                  <strong>Desorganización en la fila</strong><br>
-                  <small class="text-muted">Confusión sobre prioridades y tiempos</small>
-                </div>
-              </td>
-              <td class="text-center align-middle">
-                <i class="fas fa-arrow-right text-primary fa-lg"></i>
-              </td>
-              <td class="comparison-cell after">
-                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
-                  <i class="fas fa-list-ol text-success me-2"></i>
-                  <strong>Organización clara de turnos</strong><br>
-                  <small class="text-muted">Sistema automatizado con tiempos estimados</small>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td class="comparison-cell before">
-                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
-                  <i class="fas fa-eye-slash text-danger me-2"></i>
-                  <strong>Falta de control del proceso</strong><br>
-                  <small class="text-muted">No saber en qué etapa está cada vehículo</small>
-                </div>
-              </td>
-              <td class="text-center align-middle">
-                <i class="fas fa-arrow-right text-primary fa-lg"></i>
-              </td>
-              <td class="comparison-cell after">
-                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
-                  <i class="fas fa-tasks text-success me-2"></i>
-                  <strong>Control total en tiempo real</strong><br>
-                  <small class="text-muted">Visualización completa del progreso</small>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td class="comparison-cell before">
-                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
-                  <i class="fas fa-angry text-danger me-2"></i>
-                  <strong>Reclamos por tiempos de espera</strong><br>
-                  <small class="text-muted">Clientes insatisfechos por falta de información</small>
-                </div>
-              </td>
-              <td class="text-center align-middle">
-                <i class="fas fa-arrow-right text-primary fa-lg"></i>
-              </td>
-              <td class="comparison-cell after">
-                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
-                  <i class="fas fa-smile text-success me-2"></i>
-                  <strong>+35% satisfacción del cliente</strong><br>
-                  <small class="text-muted">Transparencia total y comunicación proactiva</small>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td class="comparison-cell before">
-                <div class="p-3 bg-white rounded shadow-sm border-start border-danger border-3">
-                  <i class="fas fa-clock text-danger me-2"></i>
-                  <strong>Pérdida de eficiencia operativa</strong><br>
-                  <small class="text-muted">Tiempo desperdiciado en coordinación manual</small>
-                </div>
-              </td>
-              <td class="text-center align-middle">
-                <i class="fas fa-arrow-right text-primary fa-lg"></i>
-              </td>
-              <td class="comparison-cell after">
-                <div class="p-3 bg-white rounded shadow-sm border-start border-success border-3">
-                  <i class="fas fa-rocket text-success me-2"></i>
-                  <strong>+40% eficiencia operativa</strong><br>
-                  <small class="text-muted">Automatización completa del flujo de trabajo</small>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Versión Mobile -->
-    <div class="d-md-none">
-      <div class="comparison-mobile">
-        <!-- Item 1 -->
-        <div class="comparison-item mb-4">
-          <div class="comparison-before mb-3">
-            <div class="card border-danger border-2">
-              <div class="card-body">
-                <div class="d-flex align-items-start">
-                  <i class="fas fa-times-circle text-danger me-3 mt-1 fa-lg"></i>
-                  <div>
-                    <h6 class="fw-bold mb-1 text-danger">Sin FROSH</h6>
-                    <p class="mb-1"><strong>Clientes preguntando constantemente</strong></p>
-                    <small class="text-muted">"¿Ya está mi carro?" interrumpe el flujo de trabajo</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="text-center mb-3">
-            <i class="fas fa-arrow-down text-primary fa-2x"></i>
-          </div>
-          <div class="comparison-after">
-            <div class="card border-success border-2">
-              <div class="card-body">
-                <div class="d-flex align-items-start">
-                  <i class="fas fa-check-circle text-success me-3 mt-1 fa-lg"></i>
-                  <div>
-                    <h6 class="fw-bold mb-1 text-success">Con FROSH</h6>
-                    <p class="mb-1"><strong>Notificaciones automáticas</strong></p>
-                    <small class="text-muted">Cliente informado en cada etapa sin intervención</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Item 2 -->
-        <div class="comparison-item mb-4">
-          <div class="comparison-before mb-3">
-            <div class="card border-danger border-2">
-              <div class="card-body">
-                <div class="d-flex align-items-start">
-                  <i class="fas fa-times-circle text-danger me-3 mt-1 fa-lg"></i>
-                  <div>
-                    <h6 class="fw-bold mb-1 text-danger">Sin FROSH</h6>
-                    <p class="mb-1"><strong>Desorganización en la fila</strong></p>
-                    <small class="text-muted">Confusión sobre prioridades y tiempos</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="text-center mb-3">
-            <i class="fas fa-arrow-down text-primary fa-2x"></i>
-          </div>
-          <div class="comparison-after">
-            <div class="card border-success border-2">
-              <div class="card-body">
-                <div class="d-flex align-items-start">
-                  <i class="fas fa-check-circle text-success me-3 mt-1 fa-lg"></i>
-                  <div>
-                    <h6 class="fw-bold mb-1 text-success">Con FROSH</h6>
-                    <p class="mb-1"><strong>Organización clara de turnos</strong></p>
-                    <small class="text-muted">Sistema automatizado con tiempos estimados</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Item 3 -->
-        <div class="comparison-item mb-4">
-          <div class="comparison-before mb-3">
-            <div class="card border-danger border-2">
-              <div class="card-body">
-                <div class="d-flex align-items-start">
-                  <i class="fas fa-times-circle text-danger me-3 mt-1 fa-lg"></i>
-                  <div>
-                    <h6 class="fw-bold mb-1 text-danger">Sin FROSH</h6>
-                    <p class="mb-1"><strong>Falta de control del proceso</strong></p>
-                    <small class="text-muted">No saber en qué etapa está cada vehículo</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="text-center mb-3">
-            <i class="fas fa-arrow-down text-primary fa-2x"></i>
-          </div>
-          <div class="comparison-after">
-            <div class="card border-success border-2">
-              <div class="card-body">
-                <div class="d-flex align-items-start">
-                  <i class="fas fa-check-circle text-success me-3 mt-1 fa-lg"></i>
-                  <div>
-                    <h6 class="fw-bold mb-1 text-success">Con FROSH</h6>
-                    <p class="mb-1"><strong>Control total en tiempo real</strong></p>
-                    <small class="text-muted">Visualización completa del progreso</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Item 4 -->
-        <div class="comparison-item mb-4">
-          <div class="comparison-before mb-3">
-            <div class="card border-danger border-2">
-              <div class="card-body">
-                <div class="d-flex align-items-start">
-                  <i class="fas fa-times-circle text-danger me-3 mt-1 fa-lg"></i>
-                  <div>
-                    <h6 class="fw-bold mb-1 text-danger">Sin FROSH</h6>
-                    <p class="mb-1"><strong>Reclamos por tiempos de espera</strong></p>
-                    <small class="text-muted">Clientes insatisfechos por falta de información</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="text-center mb-3">
-            <i class="fas fa-arrow-down text-primary fa-2x"></i>
-          </div>
-          <div class="comparison-after">
-            <div class="card border-success border-2">
-              <div class="card-body">
-                <div class="d-flex align-items-start">
-                  <i class="fas fa-check-circle text-success me-3 mt-1 fa-lg"></i>
-                  <div>
-                    <h6 class="fw-bold mb-1 text-success">Con FROSH</h6>
-                    <p class="mb-1"><strong>+35% satisfacción del cliente</strong></p>
-                    <small class="text-muted">Transparencia total y comunicación proactiva</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Item 5 -->
-        <div class="comparison-item mb-4">
-          <div class="comparison-before mb-3">
-            <div class="card border-danger border-2">
-              <div class="card-body">
-                <div class="d-flex align-items-start">
-                  <i class="fas fa-times-circle text-danger me-3 mt-1 fa-lg"></i>
-                  <div>
-                    <h6 class="fw-bold mb-1 text-danger">Sin FROSH</h6>
-                    <p class="mb-1"><strong>Pérdida de eficiencia operativa</strong></p>
-                    <small class="text-muted">Tiempo desperdiciado en coordinación manual</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="text-center mb-3">
-            <i class="fas fa-arrow-down text-primary fa-2x"></i>
-          </div>
-          <div class="comparison-after">
-            <div class="card border-success border-2">
-              <div class="card-body">
-                <div class="d-flex align-items-start">
-                  <i class="fas fa-check-circle text-success me-3 mt-1 fa-lg"></i>
-                  <div>
-                    <h6 class="fw-bold mb-1 text-success">Con FROSH</h6>
-                    <p class="mb-1"><strong>+40% eficiencia operativa</strong></p>
-                    <small class="text-muted">Automatización completa del flujo de trabajo</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CTA al final de la comparación -->
-    <div class="text-center mt-5">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="card border-primary border-2 shadow-sm">
-            <div class="card-body p-4">
-              <h4 class="fw-bold text-primary mb-3">
-                <i class="fas fa-lightbulb me-2"></i>¿Por qué seguir con los problemas del pasado?
-              </h4>
-              <p class="mb-4">Haz la transición a una operación moderna y eficiente. Tus clientes y tu equipo te lo agradecerán.</p>
-              <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                <a href="register.php" class="btn btn-primary btn-lg fw-semibold px-4">
-                  <i class="fas fa-arrow-right me-2"></i>Hacer el Cambio Ahora
-                </a>
-                <a href="login.php" class="btn btn-outline-primary btn-lg fw-semibold px-4">
-                  <i class="fas fa-user me-2"></i>Ya soy usuario
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- CTA ESTRATÉGICO 3 - Después de beneficios -->
 <section class="py-5" style="background: linear-gradient(135deg, #274AB3, #0dcaf0);">
   <div class="container">
@@ -1139,7 +1060,7 @@
         </a>
       </div>
       <p class="mt-3 mb-0 small text-white">
-        <i class="fas fa-shield-alt me-1"></i>Sin tarjeta de crédito • Configuración en 5 minutos
+        <i class="fas fa-shield-alt me-1"></i> Configuración en 5 minutos
       </p>
     </div>
   </div>
