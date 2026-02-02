@@ -534,6 +534,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                         <i class="fas fa-sign-in-alt me-2"></i>Iniciar sesión
                     </button>
                 </form>
+
+                <div class="text-center mt-4">
+                    <p class="mb-3" style="color: var(--frosh-gray-600); font-size: 0.9rem;">¿No tienes una cuenta?</p>
+                    <a href="register.php" class="btn btn-outline-dark" style="width: 100%; border-radius: 12px; padding: 0.875rem 1rem; font-weight: 600; transition: all 0.2s ease;">
+                        <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+                    </a>
+                </div>
             </div>
         </div>
     </div>

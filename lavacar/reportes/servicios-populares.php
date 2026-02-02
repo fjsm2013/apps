@@ -27,58 +27,64 @@ if ($limite < 5 || $limite > 50) {
     $limite = 10;
 }
 
-// Obtener servicios populares - Método compatible
+// Obtener servicios populares - Método actualizado usando orden_servicios table
 $serviciosPopulares = array();
 
-// Primero intentar con JSON_TABLE (MySQL 8.0+)
 try {
+    // Método principal: usar tabla orden_servicios (single source of truth)
     $serviciosPopulares = CrearConsulta($conn,
         "SELECT 
-            s.ID,
-            s.Descripcion,
-            COUNT(*) as cantidad_ordenes,
-            SUM(o.Monto) as ingresos_totales,
-            AVG(o.Monto) as ticket_promedio,
-            ROUND((COUNT(*) * 100.0 / (SELECT COUNT(*) FROM {$dbName}.ordenes WHERE DATE(FechaIngreso) BETWEEN ? AND ? AND Estado >= 3)), 2) as porcentaje_participacion
-         FROM {$dbName}.ordenes o
-         CROSS JOIN JSON_TABLE(o.ServiciosJSON, '$[*]' COLUMNS (
-             servicio_id INT PATH '$.id',
-             servicio_precio DECIMAL(10,2) PATH '$.precio',
-             servicio_nombre VARCHAR(255) PATH '$.nombre'
-         )) AS jt
-         JOIN {$dbName}.servicios s ON s.ID = jt.servicio_id
+            COALESCE(s.ID, 0) as ID,
+            COALESCE(s.Descripcion, os.ServicioPersonalizado, 'Servicio Personalizado') as Descripcion,
+            COUNT(DISTINCT os.OrdenID) as cantidad_ordenes,
+            SUM(os.Precio) as ingresos_totales,
+            AVG(os.Precio) as ticket_promedio,
+            ROUND((COUNT(DISTINCT os.OrdenID) * 100.0 / (
+                SELECT COUNT(DISTINCT ID) FROM {$dbName}.ordenes 
+                WHERE DATE(FechaIngreso) BETWEEN ? AND ? AND Estado >= 3
+            )), 2) as porcentaje_participacion
+         FROM {$dbName}.orden_servicios os
+         JOIN {$dbName}.ordenes o ON o.ID = os.OrdenID
+         LEFT JOIN {$dbName}.servicios s ON s.ID = os.ServicioID
          WHERE DATE(o.FechaIngreso) BETWEEN ? AND ? 
          AND o.Estado >= 3
-         GROUP BY s.ID, s.Descripcion
+         GROUP BY COALESCE(s.ID, 0), COALESCE(s.Descripcion, os.ServicioPersonalizado)
          ORDER BY cantidad_ordenes DESC, ingresos_totales DESC
          LIMIT ?", 
         [$fechaInicio, $fechaFin, $fechaInicio, $fechaFin, $limite])->fetch_all(MYSQLI_ASSOC);
+        
 } catch (Exception $e) {
-    // Si JSON_TABLE no está disponible, usar método alternativo
+    error_log("Error getting popular services from orden_servicios: " . $e->getMessage());
     $serviciosPopulares = array();
 }
 
-// Si no hay datos con JSON_TABLE, usar método alternativo
+// Fallback: Si no hay datos en orden_servicios, usar ServiciosJSON (para compatibilidad con órdenes antiguas)
 if (empty($serviciosPopulares)) {
     try {
+        // Método alternativo usando JSON_TABLE (MySQL 8.0+)
         $serviciosPopulares = CrearConsulta($conn,
             "SELECT 
                 s.ID,
                 s.Descripcion,
-                COUNT(DISTINCT o.ID) as cantidad_ordenes,
+                COUNT(*) as cantidad_ordenes,
                 SUM(o.Monto) as ingresos_totales,
                 AVG(o.Monto) as ticket_promedio,
-                0 as porcentaje_participacion
+                ROUND((COUNT(*) * 100.0 / (SELECT COUNT(*) FROM {$dbName}.ordenes WHERE DATE(FechaIngreso) BETWEEN ? AND ? AND Estado >= 3)), 2) as porcentaje_participacion
              FROM {$dbName}.ordenes o
-             JOIN {$dbName}.servicios s ON JSON_CONTAINS(o.ServiciosJSON, JSON_OBJECT('id', s.ID))
+             CROSS JOIN JSON_TABLE(o.ServiciosJSON, '$[*]' COLUMNS (
+                 servicio_id INT PATH '$.id',
+                 servicio_precio DECIMAL(10,2) PATH '$.precio',
+                 servicio_nombre VARCHAR(255) PATH '$.nombre'
+             )) AS jt
+             JOIN {$dbName}.servicios s ON s.ID = jt.servicio_id
              WHERE DATE(o.FechaIngreso) BETWEEN ? AND ? 
              AND o.Estado >= 3
              GROUP BY s.ID, s.Descripcion
              ORDER BY cantidad_ordenes DESC, ingresos_totales DESC
              LIMIT ?", 
-            [$fechaInicio, $fechaFin, $limite])->fetch_all(MYSQLI_ASSOC);
+            [$fechaInicio, $fechaFin, $fechaInicio, $fechaFin, $limite])->fetch_all(MYSQLI_ASSOC);
     } catch (Exception $e) {
-        // Si tampoco funciona JSON_CONTAINS, usar método más básico
+        // Si JSON_TABLE no está disponible, usar método alternativo
         $serviciosPopulares = array();
     }
 }

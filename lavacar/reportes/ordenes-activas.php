@@ -297,6 +297,38 @@ require 'lavacar/partials/header.php';
                                         </div>
                                     </div>
 
+                                    <!-- Servicios Contratados -->
+                                    <?php if (!empty($orden['servicios'])): ?>
+                                    <div class="services-info mb-3">
+                                        <div class="services-header mb-2">
+                                            <i class="fa-solid fa-tags me-2 text-muted"></i>
+                                            <span class="fw-bold text-muted" style="font-size: 0.85rem;">Servicios Contratados:</span>
+                                        </div>
+                                        <div class="services-list">
+                                            <?php foreach ($orden['servicios'] as $index => $servicio): ?>
+                                                <?php if ($index < 3): // Mostrar máximo 3 servicios ?>
+                                                <div class="service-item">
+                                                    <span class="service-name"><?= safe_htmlspecialchars($servicio['nombre'], 'Servicio sin nombre') ?></span>
+                                                    <span class="service-price">₡<?= safe_number_format($servicio['precio'], 0) ?></span>
+                                                </div>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                            <?php if (count($orden['servicios']) > 3): ?>
+                                            <div class="service-item more-services">
+                                                <span class="text-muted">+ <?= count($orden['servicios']) - 3 ?> servicio(s) más</span>
+                                            </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="services-info mb-3">
+                                        <div class="services-header mb-2">
+                                            <i class="fa-solid fa-tags me-2 text-muted"></i>
+                                            <span class="text-muted" style="font-size: 0.85rem;">Sin servicios registrados</span>
+                                        </div>
+                                    </div>
+                                    <?php endif; ?>
+
                                     <div class="order-details-row">
                                         <div class="amount-info">
                                             <strong class="text-success">
@@ -811,8 +843,14 @@ require 'lavacar/partials/header.php';
 }
 
 @media (max-width: 767px) {
-    .table-responsive {
+    /* Only hide the main desktop table, not tables in modals */
+    .card-body > .table-responsive {
         display: none !important;
+    }
+    
+    /* Keep modal tables visible */
+    .modal .table-responsive {
+        display: block !important;
     }
 }
 
@@ -891,6 +929,85 @@ require 'lavacar/partials/header.php';
     color: #64748b;
     width: 16px;
     flex-shrink: 0;
+}
+
+/* Services display in mobile cards */
+.services-info {
+    background: #f8fafc !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    display: block !important;
+    visibility: visible !important;
+}
+
+.services-header {
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 8px !important;
+    visibility: visible !important;
+}
+
+.services-header i {
+    color: #64748b !important;
+    width: 16px !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+}
+
+.services-header span {
+    display: inline-block !important;
+    visibility: visible !important;
+    color: #64748b !important;
+    font-weight: 600 !important;
+}
+
+.services-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    visibility: visible !important;
+}
+
+.service-item {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    font-size: 0.8rem !important;
+    padding: 4px 0 !important;
+    visibility: visible !important;
+    min-height: 20px !important;
+}
+
+.service-name {
+    color: #374151 !important;
+    font-weight: 500 !important;
+    flex: 1 !important;
+    margin-right: 8px !important;
+    display: inline-block !important;
+    visibility: visible !important;
+}
+
+.service-price {
+    color: #059669 !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
+    visibility: visible !important;
+}
+
+.service-item.more-services {
+    border-top: 1px solid #e2e8f0 !important;
+    padding-top: 8px !important;
+    margin-top: 4px !important;
+}
+
+.service-item.more-services span {
+    font-style: italic !important;
+    color: #64748b !important;
+    font-size: 0.75rem !important;
+    display: inline-block !important;
+    visibility: visible !important;
 }
 
 .order-details-row {

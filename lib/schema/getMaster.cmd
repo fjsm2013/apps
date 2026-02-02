@@ -1,1 +1,1 @@
-mysqldump  --single-transaction -h localhost --port=3306 -C -u fmorgan -p4sf7xnah frosh_lavacar > master.sql
+REM mysqldump  --single-transaction -h localhost --port=3306 -C -u fmorgan -p4sf7xnah frosh_lavacar > master.sql

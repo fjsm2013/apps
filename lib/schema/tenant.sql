@@ -1,4 +1,17 @@
 --
+-- Table structure for table `empresas`
+--
+
+DROP TABLE IF EXISTS `empresas`;
+CREATE TABLE `empresas` (
+  `id_empresa` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `estado` enum('activo','inactivo','pendiente') COLLATE utf8mb4_unicode_ci DEFAULT 'activo',
+  `fecha_registro` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_empresa`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
 -- Table structure for table `categoria_servicios`
 --
 

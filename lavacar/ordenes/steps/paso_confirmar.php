@@ -127,9 +127,9 @@
                     <i class="fa-solid fa-arrow-left me-1"></i> Atrás
                 </button>
                 
-                <button class="btn btn-outline-info" onclick="verOrdenesActivas()">
+                <!--<button class="btn btn-outline-info" onclick="verOrdenesActivas()">
                     <i class="fa-solid fa-list me-1"></i> Ver Órdenes Activas
-                </button>
+                </button>-->
             </div>
 
             <button class="btn btn-success btn-lg" onclick="guardarOrden()" id="confirmarBtn">

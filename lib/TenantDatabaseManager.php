@@ -46,10 +46,14 @@ class TenantDatabaseManager
             ];
             
         } catch (Exception $e) {
+            // Log the detailed error for debugging
+            error_log("TenantDatabaseManager Error: " . $e->getMessage());
+            error_log("Company ID: $companyId, Company Name: $companyName");
+            
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
-                'message' => "Failed to create database for company: $companyName"
+                'message' => "Failed to create database for company: $companyName - " . $e->getMessage()
             ];
         }
     }
@@ -59,12 +63,34 @@ class TenantDatabaseManager
      */
     private function createDatabase($dbName)
     {
+        // First check if we have CREATE privileges
+        $privilegeCheck = $this->masterConn->query("SHOW GRANTS FOR CURRENT_USER()");
+        if ($privilegeCheck) {
+            $hasCreatePrivilege = false;
+            while ($row = $privilegeCheck->fetch_array()) {
+                if (stripos($row[0], 'CREATE') !== false || stripos($row[0], 'ALL PRIVILEGES') !== false) {
+                    $hasCreatePrivilege = true;
+                    break;
+                }
+            }
+            
+            if (!$hasCreatePrivilege) {
+                throw new Exception("Database user does not have CREATE privileges. Please contact your database administrator.");
+            }
+        }
+        
         $sql = "CREATE DATABASE IF NOT EXISTS `$dbName` 
                 CHARACTER SET utf8mb4 
                 COLLATE utf8mb4_unicode_ci";
         
         if (!$this->masterConn->query($sql)) {
-            throw new Exception("Failed to create database: " . $this->masterConn->error);
+            throw new Exception("Failed to create database '$dbName': " . $this->masterConn->error);
+        }
+        
+        // Verify the database was created
+        $checkDb = $this->masterConn->query("SHOW DATABASES LIKE '$dbName'");
+        if (!$checkDb || $checkDb->num_rows === 0) {
+            throw new Exception("Database '$dbName' was not created successfully");
         }
     }
     
@@ -80,22 +106,35 @@ class TenantDatabaseManager
             throw new Exception("Tenant template file not found: $templatePath");
         }
         
+        if (!is_readable($templatePath)) {
+            throw new Exception("Tenant template file is not readable: $templatePath");
+        }
+        
         $sql = file_get_contents($templatePath);
         
         if ($sql === false) {
-            throw new Exception("Failed to read tenant template file");
+            throw new Exception("Failed to read tenant template file: $templatePath");
+        }
+        
+        if (empty(trim($sql))) {
+            throw new Exception("Tenant template file is empty: $templatePath");
         }
         
         // Connect to the new database
         $tenantConn = new mysqli($this->dbHost, $this->dbUser, $this->dbPass, $dbName);
         
         if ($tenantConn->connect_error) {
-            throw new Exception("Failed to connect to tenant database: " . $tenantConn->connect_error);
+            throw new Exception("Failed to connect to tenant database '$dbName': " . $tenantConn->connect_error);
         }
+        
+        // Set charset
+        $tenantConn->set_charset("utf8mb4");
         
         // Execute the SQL commands
         if (!$tenantConn->multi_query($sql)) {
-            throw new Exception("Failed to import tenant template: " . $tenantConn->error);
+            $error = $tenantConn->error;
+            $tenantConn->close();
+            throw new Exception("Failed to import tenant template into '$dbName': $error");
         }
         
         // Process all results to avoid "Commands out of sync" error
@@ -104,6 +143,12 @@ class TenantDatabaseManager
                 $result->free();
             }
         } while ($tenantConn->next_result());
+        
+        if ($tenantConn->error) {
+            $error = $tenantConn->error;
+            $tenantConn->close();
+            throw new Exception("Error during template import: $error");
+        }
         
         $tenantConn->close();
     }
@@ -142,7 +187,7 @@ class TenantDatabaseManager
             'Moto'
         ];
         
-        $stmt = $tenantConn->prepare("INSERT INTO categoriavehiculo (TipoVehiculo, Estado, Orden) VALUES (?, 1, ?)");
+        $stmt = $tenantConn->prepare("INSERT INTO categoriavehiculo (TipoVehiculo, Estado, OrdenClasificacion) VALUES (?, 1, ?)");
         if ($stmt) {
             $orden = 1;
             foreach ($defaultCategories as $category) {

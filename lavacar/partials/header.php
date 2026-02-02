@@ -1128,19 +1128,19 @@
         <i class="fa-solid fa-plus"></i>
     </button>-->
     <div class="fab-menu" id="fabMenu">
-        <a href="<?= LAVACAR_BASE_URL ?>/dashboard.php" class="fab-item" title="Dashboard">
+        <a href="<?= LAVACAR_BASE_URL ?>/dashboard.php" class="fab-item" title="Dashboard" target="_blank">
             <i class="fa-solid fa-home"></i>
         </a>
-        <a href="<?= LAVACAR_BASE_URL ?>/ordenes/index.php" class="fab-item" title="Nueva Orden">
+        <a href="<?= LAVACAR_BASE_URL ?>/ordenes/index.php" class="fab-item" title="Nueva Orden" target="_blank">
             <i class="fa-solid fa-plus-circle"></i>
         </a>
-        <a href="<?= LAVACAR_BASE_URL ?>/reportes/ordenes-activas.php" class="fab-item" title="Órdenes Activas">
+        <a href="<?= LAVACAR_BASE_URL ?>/reportes/ordenes-activas.php" class="fab-item" title="Órdenes Activas" target="_blank">
             <i class="fa-solid fa-list-check"></i>
         </a>
-        <a href="<?= LAVACAR_BASE_URL ?>/empleados/panel-trabajo.php" class="fab-item" title="Panel de Trabajo"  target="new">
+        <a href="<?= LAVACAR_BASE_URL ?>/empleados/panel-trabajo.php" class="fab-item" title="Panel de Trabajo" target="_blank">
             <i class="fa-solid fa-tv"></i>
         </a>
-        <a href="<?= LAVACAR_BASE_URL ?>/reportes/index.php" class="fab-item" title="Reportes">
+        <a href="<?= LAVACAR_BASE_URL ?>/reportes/index.php" class="fab-item" title="Reportes" target="_blank">
             <i class="fa-solid fa-chart-bar"></i>
         </a>
     </div>
@@ -1359,29 +1359,29 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="d-flex justify-content-between align-items-center">
                 <!-- Logo and Quick Navigation -->
                 <div class="d-flex align-items-center gap-3">
-                    <a href="<?= LAVACAR_BASE_URL ?>/dashboard.php" class="logo-link">
+                    <a href="<?= LAVACAR_BASE_URL ?>/dashboard.php" class="logo-link" target="_blank">
                         <img src="<?= LAVACAR_BASE_URL ?>/lib/images/logo-frosh.png" alt="Frosh" class="logo">
                     </a>
                     
                     <!-- Quick Navigation Menu -->
                     <div class="quick-nav d-flex">
-                        <a href="<?= LAVACAR_BASE_URL ?>/dashboard.php" class="nav-btn" title="Dashboard">
+                        <a href="<?= LAVACAR_BASE_URL ?>/dashboard.php" class="nav-btn" title="Dashboard" target="_blank">
                             <i class="fa-solid fa-home"></i>
                             <span>Inicio</span>
                         </a>
-                        <a href="<?= LAVACAR_BASE_URL ?>/ordenes/index.php" class="nav-btn" title="Nueva Orden">
+                        <a href="<?= LAVACAR_BASE_URL ?>/ordenes/index.php" class="nav-btn" title="Nueva Orden" target="_blank">
                             <i class="fa-solid fa-plus-circle"></i>
                             <span>Nueva Orden</span>
                         </a>
-                        <a href="<?= LAVACAR_BASE_URL ?>/reportes/ordenes-activas.php" class="nav-btn" title="Órdenes Activas">
+                        <a href="<?= LAVACAR_BASE_URL ?>/reportes/ordenes-activas.php" class="nav-btn" title="Órdenes Activas" target="_blank">
                             <i class="fa-solid fa-list-check"></i>
                             <span>Órdenes</span>
                         </a>
-                        <a href="<?= LAVACAR_BASE_URL ?>/empleados/panel-trabajo.php" class="nav-btn" title="Panel de Trabajo">
+                        <a href="<?= LAVACAR_BASE_URL ?>/empleados/panel-trabajo.php" class="nav-btn" title="Panel de Trabajo" target="_blank">
                             <i class="fa-solid fa-tv"></i>
                             <span>Panel</span>
                         </a>
-                        <a href="<?= LAVACAR_BASE_URL ?>/reportes/index.php" class="nav-btn" title="Reportes">
+                        <a href="<?= LAVACAR_BASE_URL ?>/reportes/index.php" class="nav-btn" title="Reportes" target="_blank">
                             <i class="fa-solid fa-chart-bar"></i>
                             <span>Reportes</span>
                         </a>
@@ -1396,23 +1396,23 @@ document.addEventListener('DOMContentLoaded', function() {
                             <i class="fa-solid fa-bars"></i>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/dashboard.php">
+                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/dashboard.php" target="_blank">
                                 <i class="fa-solid fa-home me-2"></i>Dashboard
                             </a></li>
-                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/ordenes/index.php">
+                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/ordenes/index.php" target="_blank">
                                 <i class="fa-solid fa-plus-circle me-2"></i>Nueva Orden
                             </a></li>
-                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/reportes/ordenes-activas.php">
+                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/reportes/ordenes-activas.php"  target="_blank">
                                 <i class="fa-solid fa-list-check me-2"></i>Órdenes Activas
                             </a></li>
-                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/empleados/panel-trabajo.php">
+                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/empleados/panel-trabajo.php"  target="_blank">
                                 <i class="fa-solid fa-tv me-2"></i>Panel de Trabajo
                             </a></li>
-                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/reportes/index.php">
+                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/reportes/index.php"  target="_blank">
                                 <i class="fa-solid fa-chart-bar me-2"></i>Reportes
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/administracion/index.php">
+                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/administracion/index.php"  target="_blank">
                                 <i class="fa-solid fa-cog me-2"></i>Administración
                             </a></li>
                         </ul>
@@ -1429,17 +1429,17 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <i class="fas fa-user me-1"></i><?= htmlspecialchars($user['name']) ?>
                             </h6></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/administracion/perfil.php">
+                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/administracion/perfil.php"  target="_blank">
                                 <i class="fas fa-user-edit me-2"></i>Mi Perfil
                             </a></li>
-                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/administracion/usuarios.php">
+                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/administracion/usuarios.php"  target="_blank">
                                 <i class="fas fa-users me-2"></i>Usuarios
                             </a></li>
-                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/administracion/miempresa.php">
+                            <li><a class="dropdown-item" href="<?= LAVACAR_BASE_URL ?>/administracion/miempresa.php"  target="_blank">
                                 <i class="fas fa-building me-2"></i>Mi Empresa
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="<?= LAVACAR_BASE_URL ?>/../logout.php">
+                            <li><a class="dropdown-item text-danger" href="<?= LAVACAR_BASE_URL ?>/../logout.php"  target="_blank">
                                 <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
                             </a></li>
                         </ul>

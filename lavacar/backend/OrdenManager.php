@@ -71,11 +71,14 @@ class OrdenManager
             []
         )->fetch_all(MYSQLI_ASSOC);
         
-        // Asegurar que los valores críticos no sean null
+        // Asegurar que los valores críticos no sean null y agregar servicios
         foreach ($ordenes as &$orden) {
             $orden['ClienteNombre'] = $orden['ClienteNombre'] ?? 'Cliente no asignado';
             $orden['Placa'] = $orden['Placa'] ?? 'Sin placa';
             $orden['Monto'] = $orden['Monto'] ?? 0.00;
+            
+            // Agregar servicios para cada orden
+            $orden['servicios'] = $this->getServicios($orden['ID']);
         }
         
         return $ordenes;
@@ -201,6 +204,28 @@ class OrdenManager
                     'subtotal' => floatval($row['Subtotal'] ?? $row['Precio']),
                     'personalizado' => !empty($row['ServicioPersonalizado'])
                 ];
+            }
+        } else {
+            // DEBUG: Check if there are any records in orden_servicios for this order
+            error_log("DEBUG: No services found for order $id in {$this->dbName}.orden_servicios");
+            
+            // Fallback: Try to get services from JSON field if they exist
+            $orden = $this->find($id);
+            if ($orden && !empty($orden['ServiciosJSON'])) {
+                $serviciosJson = json_decode($orden['ServiciosJSON'], true);
+                if (is_array($serviciosJson)) {
+                    error_log("DEBUG: Found services in JSON field for order $id: " . count($serviciosJson) . " services");
+                    foreach ($serviciosJson as $servicio) {
+                        $servicios[] = [
+                            'id' => $servicio['id'] ?? 'json_service',
+                            'nombre' => $servicio['nombre'] ?? 'Servicio desde JSON',
+                            'precio' => floatval($servicio['precio'] ?? 0),
+                            'cantidad' => 1,
+                            'subtotal' => floatval($servicio['precio'] ?? 0),
+                            'personalizado' => false
+                        ];
+                    }
+                }
             }
         }
         

@@ -16,9 +16,28 @@ require 'lavacar/partials/header.php';
 ?>
 
 <main class="container my-4">
-    <div class="mb-4">
-        <h2><i class="fa-solid fa-chart-line me-2"></i>Centro de Reportes</h2>
-        <p class="text-muted">Análisis y estadísticas del negocio</p>
+    <!-- Header con Órdenes Activas destacada -->
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <h2><i class="fa-solid fa-chart-line me-2"></i>Centro de Reportes</h2>
+            <p class="text-muted">Análisis y estadísticas del negocio</p>
+        </div>
+        <div class="col-md-4">
+            <a href="ordenes-activas.php" class="text-decoration-none">
+                <div class="report-card report-featured">
+                    <div class="report-icon">
+                        <i class="fa-solid fa-tasks"></i>
+                    </div>
+                    <div class="report-content">
+                        <h5>Órdenes Activas</h5>
+                        <p>Gestión de órdenes en proceso</p>
+                        <div class="report-features">
+                            <span class="feature-tag tag-realtime">Tiempo Real</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
     </div>
 
     <!-- Reportes Principales -->
@@ -65,16 +84,17 @@ require 'lavacar/partials/header.php';
         </div>
 
         <div class="col-md-6 col-lg-4">
-            <a href="ordenes-activas.php" class="text-decoration-none">
+            <a href="ordenes-cerradas.php" class="text-decoration-none">
                 <div class="report-card report-main">
                     <div class="report-icon">
-                        <i class="fa-solid fa-tasks"></i>
+                        <i class="fa-solid fa-archive"></i>
                     </div>
                     <div class="report-content">
-                        <h5>Órdenes Activas</h5>
-                        <p>Gestión de órdenes en proceso</p>
+                        <h5>Órdenes Cerradas</h5>
+                        <p>Historial de órdenes completadas y facturadas</p>
                         <div class="report-features">
-                            <span class="feature-tag tag-realtime">Tiempo Real</span>
+                            <span class="feature-tag tag-historical">Histórico</span>
+                            <span class="feature-tag tag-revenue">Ingresos</span>
                         </div>
                     </div>
                 </div>
@@ -281,6 +301,22 @@ require 'lavacar/partials/header.php';
 .report-main .report-icon {
     background: linear-gradient(135deg, var(--report-info, #274AB3), #1e3a8a);
     color: white !important;
+}
+
+/* Reporte destacado - Gradiente especial */
+.report-featured .report-icon {
+    background: linear-gradient(135deg, var(--report-warning, #D3AF37), var(--report-info, #274AB3));
+    color: white !important;
+}
+
+.report-featured {
+    border: 2px solid var(--report-warning, #D3AF37);
+    box-shadow: 0 8px 25px rgba(211, 175, 55, 0.2);
+}
+
+.report-featured:hover {
+    border-color: var(--report-info, #274AB3);
+    box-shadow: 0 12px 35px rgba(39, 74, 179, 0.3);
 }
 
 /* Reportes de análisis - Dorado */

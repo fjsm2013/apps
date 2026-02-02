@@ -1077,9 +1077,11 @@ function guardarOrden() {
             
             // Redirigir después de un momento
             setTimeout(() => {
+                console.log('Redirigiendo a ordenes-activas.php...');
                 // Limpiar estado del wizard
                 resetWizard();
-                window.location.href = 'index.php';
+                // Usar ruta absoluta para asegurar la redirección
+                window.location.replace('/interpal/apps/lavacar/reportes/ordenes-activas.php');
             }, 2000);
             
         } else {

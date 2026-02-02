@@ -274,4 +274,4 @@ require 'lavacar/partials/header.php';
 </main>
 
 <?php require 'lavacar/partials/footer.php'; ?>
-<script src="wizard.js"></script>
+<script src="wizard.js?v=<?= time() ?>"></script>

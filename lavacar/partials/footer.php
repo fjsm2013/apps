@@ -1,6 +1,6 @@
 <!-- FOOTER -->
 <footer>
-    © 2025 Frosh Systems
+    © <?php echo date('Y');?> Frosh Systems
 </footer>
 
 <!-- froshOverLay -->
