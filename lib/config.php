@@ -1,4 +1,7 @@
 <?php
+// Configurar zona horaria de Costa Rica para toda la aplicación
+date_default_timezone_set("America/Costa_Rica");
+
 // Auto-setup: Check and create master database if needed
 require_once __DIR__ . '/check-setup.php';
 

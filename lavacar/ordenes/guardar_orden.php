@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+// Configurar zona horaria de Costa Rica
+date_default_timezone_set("America/Costa_Rica");
+
 require_once '../../lib/config.php';
 require_once 'lib/Auth.php';
 

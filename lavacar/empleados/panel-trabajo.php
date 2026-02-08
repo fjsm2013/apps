@@ -818,7 +818,8 @@ body {
                             $fechaInicio = $fechaIngreso;
                             $tiempoLabel = ($orden['Estado'] == 1) ? 'esperando' : 'desde ingreso';
                         }
-                        
+                        //var_dump($fechaInicio);
+						echo $orden['FechaProceso'];
                         $tiempoTranscurrido = $fechaInicio->diff($ahora);
                         
                         // Formato de tiempo más legible
