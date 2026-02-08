@@ -681,7 +681,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <i class="fas fa-arrow-left me-2"></i>Anterior
                             </a>
                             <button type="submit" class="btn btn-register" id="submitBtn">
-                                <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+                                <i class="fas fa-user-plus me-2"></i>Continuar
                             </button>
                         </div>
                     </form>

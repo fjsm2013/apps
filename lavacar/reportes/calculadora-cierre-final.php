@@ -111,7 +111,38 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'cerrar') {
         
         $conn->commit();
         
-        $_SESSION['success'] = 'Orden cerrada exitosamente';
+        // Enviar correo de notificación al cliente
+        require_once 'lavacar/ordenes/enviar_correo_estado.php';
+        
+        // Get order data with client email
+        $stmt = $conn->prepare("
+            SELECT o.*, c.Correo as ClienteCorreo
+            FROM `{$dbName}`.ordenes o
+            LEFT JOIN `{$dbName}`.clientes c ON o.ClienteID = c.ID
+            WHERE o.ID = ?
+        ");
+        $stmt->bind_param("i", $ordenId);
+        $stmt->execute();
+        $ordenData = $stmt->get_result()->fetch_assoc();
+        
+        $emailEnviado = false;
+        if (!empty($ordenData['ClienteCorreo'])) {
+            try {
+                $emailEnviado = enviarCorreoEstado($ordenId, 4); // Estado 4 = Cerrado
+            } catch (Exception $e) {
+                error_log("Error enviando email de cierre: " . $e->getMessage());
+                // No fallar la operación si el email falla
+            }
+        }
+        
+        $successMessage = 'Orden cerrada exitosamente';
+        if ($emailEnviado) {
+            $successMessage .= ' - Notificación enviada al cliente';
+        } elseif (!empty($ordenData['ClienteCorreo'])) {
+            $successMessage .= ' - Error enviando notificación';
+        }
+        
+        $_SESSION['success'] = $successMessage;
         header("Location: ordenes-activas.php?updated=" . time());
         exit;
         

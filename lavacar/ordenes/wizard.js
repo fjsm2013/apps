@@ -1081,7 +1081,7 @@ function guardarOrden() {
                 // Limpiar estado del wizard
                 resetWizard();
                 // Usar ruta absoluta para asegurar la redirección
-                window.location.replace('/interpal/apps/lavacar/reportes/ordenes-activas.php');
+                window.location.replace('/lavacar/reportes/ordenes-activas.php');
             }, 2000);
             
         } else {

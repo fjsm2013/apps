@@ -80,6 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    DATA
 ========================= */
 $categorias = $manager->all(false);
+
+// Check which categories can be deleted
+foreach ($categorias as &$categoria) {
+    $categoria['can_delete'] = $manager->canDelete($categoria['ID']);
+}
+unset($categoria);
+
 $flash = $_SESSION['flash'] ?? null;
 unset($_SESSION['flash']);
 
@@ -143,18 +150,99 @@ $breadcrumbs = array(
                         onclick="openEdit(<?= htmlspecialchars(json_encode($c)) ?>)">
                         <i class="fa fa-edit"></i>
                     </button>
-                    <a class="btn btn-sm btn-outline-frosh-gray" href="?action=toggle&id=<?= $c['ID'] ?>">
+                    <button class="btn btn-sm btn-outline-frosh-gray" 
+                        onclick="confirmarToggleCategoria(<?= $c['ID'] ?>, '<?= htmlspecialchars($c['TipoVehiculo']) ?>', <?= $c['Estado'] ?>)">
                         <i class="fa fa-power-off"></i>
-                    </a>
-                    <a class="btn btn-sm btn-outline-danger" href="?action=delete&id=<?= $c['ID'] ?>"
-                        onclick="return confirm('Eliminar categoría?')">
-                        <i class="fa fa-trash"></i>
-                    </a>
+                    </button>
+                    <?php if ($c['can_delete']['can_delete']): ?>
+                        <button class="btn btn-sm btn-outline-danger" 
+                            onclick="confirmarEliminarCategoria(<?= $c['ID'] ?>, '<?= htmlspecialchars($c['TipoVehiculo']) ?>')">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    <?php else: ?>
+                        <button class="btn btn-sm btn-outline-secondary" 
+                            disabled
+                            title="No se puede eliminar: <?= htmlspecialchars($c['can_delete']['reason']) ?>"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="left">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    <?php endif; ?>
                 </td>
             </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
+</div>
+
+<!-- Modal de Confirmación de Toggle -->
+<div class="modal fade" id="toggleCategoriaModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm" style="max-width:500px; margin:auto;">
+        <div class="modal-content">
+            <div class="modal-header" style="background: var(--ordenes-warning, #D3AF37); color: white; padding: 15px;">
+                <h6 class="modal-title mb-0">
+                    <i class="fa-solid fa-power-off me-2"></i>Cambiar Estado
+                </h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-3">
+                <div class="mb-2">
+                    <i class="fa-solid fa-power-off fa-2x" style="color: var(--ordenes-warning, #D3AF37);"></i>
+                </div>
+                <p class="mb-2"><strong id="toggleActionText">¿Desactivar esta categoría?</strong></p>
+                <p class="text-muted small mb-2">Puedes reactivarla en cualquier momento</p>
+                <div class="p-2 bg-light rounded">
+                    <small class="text-muted">Categoría</small>
+                    <div id="toggleCategoriaNombre" class="fw-bold"></div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 10px;">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-sm" id="confirmarToggleBtn" style="background: var(--ordenes-warning, #D3AF37); color: white; border: none;">
+                    <i class="fa-solid fa-power-off me-1"></i>Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+<div class="modal fade" id="eliminarCategoriaModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm" style="max-width:500px; margin:auto;">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #dc3545; color: white; padding: 15px;">
+                <h6 class="modal-title mb-0">
+                    <i class="fa-solid fa-exclamation-triangle me-2"></i>Eliminar Categoría
+                </h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-3">
+                <div class="mb-2">
+                    <i class="fa-solid fa-trash fa-2x" style="color: #dc3545;"></i>
+                </div>
+                <p class="mb-2"><strong>¿Eliminar esta categoría?</strong></p>
+                <p class="text-muted small mb-2">Esta acción no se puede deshacer</p>
+                <div class="p-2 bg-light rounded">
+                    <small class="text-muted">Categoría</small>
+                    <div id="deleteCategoriaNombre" class="fw-bold"></div>
+                </div>
+                <div id="deleteWarningDetails" class="alert alert-warning mt-3" style="display: none;">
+                    <small><strong>⚠️ No se puede eliminar:</strong></small>
+                    <ul id="deleteWarningList" class="mb-0 mt-2 text-start" style="font-size: 0.85rem;"></ul>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 10px;">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-sm btn-danger" id="confirmarEliminarBtn">
+                    <i class="fa-solid fa-trash me-1"></i>Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- MODAL -->
@@ -197,9 +285,17 @@ $breadcrumbs = array(
 
 <script>
 let modal;
+// Store categories data for validation
+const categoriasData = <?= json_encode($categorias) ?>;
 
 document.addEventListener('DOMContentLoaded', function() {
     modal = new bootstrap.Modal(document.getElementById('catModal'));
+    
+    // Initialize Bootstrap tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 });
 
 /* =========================
@@ -223,6 +319,91 @@ function openEdit(cat) {
     //document.getElementById('orden').value = cat.OrdenClasificacion;
     document.getElementById('estado').value = cat.Estado;
     modal.show();
+}
+
+/* =========================
+   TOGGLE CATEGORIA
+========================= */
+function confirmarToggleCategoria(categoriaId, categoriaNombre, estadoActual) {
+    document.getElementById('toggleCategoriaNombre').textContent = categoriaNombre;
+    
+    // Cambiar texto según el estado actual
+    const actionText = estadoActual == 1 ? '¿Desactivar esta categoría?' : '¿Activar esta categoría?';
+    document.getElementById('toggleActionText').textContent = actionText;
+    
+    const modal = new bootstrap.Modal(document.getElementById('toggleCategoriaModal'));
+    modal.show();
+    
+    // Configurar botón de confirmación
+    const confirmarBtn = document.getElementById('confirmarToggleBtn');
+    confirmarBtn.onclick = () => ejecutarToggleCategoria(categoriaId);
+}
+
+function ejecutarToggleCategoria(categoriaId) {
+    const confirmarBtn = document.getElementById('confirmarToggleBtn');
+    const originalContent = confirmarBtn.innerHTML;
+    
+    // Mostrar loading
+    confirmarBtn.disabled = true;
+    confirmarBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Procesando...';
+    
+    // Redirigir con acción toggle
+    window.location.href = '?action=toggle&id=' + categoriaId;
+}
+
+/* =========================
+   ELIMINAR CATEGORIA
+========================= */
+function confirmarEliminarCategoria(categoriaId, categoriaNombre) {
+    document.getElementById('deleteCategoriaNombre').textContent = categoriaNombre;
+    
+    // Find category data
+    const categoria = categoriasData.find(c => c.ID == categoriaId);
+    const warningDiv = document.getElementById('deleteWarningDetails');
+    const warningList = document.getElementById('deleteWarningList');
+    const confirmarBtn = document.getElementById('confirmarEliminarBtn');
+    
+    // Check if can delete
+    if (categoria && !categoria.can_delete.can_delete) {
+        // Show warning
+        warningDiv.style.display = 'block';
+        warningList.innerHTML = '';
+        
+        categoria.can_delete.details.forEach(detail => {
+            const li = document.createElement('li');
+            li.textContent = detail;
+            warningList.appendChild(li);
+        });
+        
+        // Disable delete button
+        confirmarBtn.disabled = true;
+        confirmarBtn.innerHTML = '<i class="fa-solid fa-ban me-1"></i>No se puede eliminar';
+        confirmarBtn.className = 'btn btn-sm btn-secondary';
+    } else {
+        // Hide warning
+        warningDiv.style.display = 'none';
+        
+        // Enable delete button
+        confirmarBtn.disabled = false;
+        confirmarBtn.innerHTML = '<i class="fa-solid fa-trash me-1"></i>Eliminar';
+        confirmarBtn.className = 'btn btn-sm btn-danger';
+        confirmarBtn.onclick = () => ejecutarEliminarCategoria(categoriaId);
+    }
+    
+    const modal = new bootstrap.Modal(document.getElementById('eliminarCategoriaModal'));
+    modal.show();
+}
+
+function ejecutarEliminarCategoria(categoriaId) {
+    const confirmarBtn = document.getElementById('confirmarEliminarBtn');
+    const originalContent = confirmarBtn.innerHTML;
+    
+    // Mostrar loading
+    confirmarBtn.disabled = true;
+    confirmarBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Eliminando...';
+    
+    // Redirigir con acción delete
+    window.location.href = '?action=delete&id=' + categoriaId;
 }
 </script>
 

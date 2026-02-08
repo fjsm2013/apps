@@ -96,13 +96,73 @@ class CategoriaVehiculoManager
     }
 
     /* =========================
+       CHECK IF CAN DELETE
+    ========================= */
+    public function canDelete(int $id): array
+    {
+        $result = [
+            'can_delete' => true,
+            'reason' => '',
+            'details' => []
+        ];
+
+        // Check precios
+        $preciosCount = ObtenerPrimerRegistro(
+            $this->db,
+            "SELECT COUNT(*) as total
+             FROM {$this->dbName}.precios
+             WHERE TipoCategoriaID = ?",
+            [$id]
+        )['total'] ?? 0;
+
+        if ($preciosCount > 0) {
+            $result['can_delete'] = false;
+            $result['reason'] = 'Tiene precios asociados';
+            $result['details'][] = "$preciosCount precio(s) configurado(s)";
+        }
+
+        // Check vehiculos
+        $vehiculosCount = ObtenerPrimerRegistro(
+            $this->db,
+            "SELECT COUNT(*) as total
+             FROM {$this->dbName}.vehiculos
+             WHERE CategoriaVehiculo = ?",
+            [$id]
+        )['total'] ?? 0;
+
+        if ($vehiculosCount > 0) {
+            $result['can_delete'] = false;
+            $result['reason'] = 'Tiene vehículos registrados';
+            $result['details'][] = "$vehiculosCount vehículo(s) registrado(s)";
+        }
+
+        // Check ordenes
+        $ordenesCount = ObtenerPrimerRegistro(
+            $this->db,
+            "SELECT COUNT(DISTINCT o.ID) as total
+             FROM {$this->dbName}.ordenes o
+             INNER JOIN {$this->dbName}.vehiculos v ON o.VehiculoID = v.ID
+             WHERE v.CategoriaVehiculo = ?",
+            [$id]
+        )['total'] ?? 0;
+
+        if ($ordenesCount > 0) {
+            $result['can_delete'] = false;
+            $result['reason'] = 'Tiene órdenes asociadas';
+            $result['details'][] = "$ordenesCount orden(es) asociada(s)";
+        }
+
+        return $result;
+    }
+
+    /* =========================
        DELETE
        (safe: prevents deleting if in use)
     ========================= */
     public function delete(int $id): void
     {
-        // Prevent delete if category is in use
-        $used = ObtenerPrimerRegistro(
+        // Check if category is used in precios
+        $usedInPrecios = ObtenerPrimerRegistro(
             $this->db,
             "SELECT ID
              FROM {$this->dbName}.precios
@@ -111,10 +171,40 @@ class CategoriaVehiculoManager
             [$id]
         );
 
-        if ($used) {
-            throw new Exception("No se puede eliminar la categoría porque está en uso.");
+        if ($usedInPrecios) {
+            throw new Exception("No se puede eliminar: la categoría tiene precios asociados.");
         }
 
+        // Check if category is used in vehiculos
+        $usedInVehiculos = ObtenerPrimerRegistro(
+            $this->db,
+            "SELECT ID
+             FROM {$this->dbName}.vehiculos
+             WHERE CategoriaVehiculo = ?
+             LIMIT 1",
+            [$id]
+        );
+
+        if ($usedInVehiculos) {
+            throw new Exception("No se puede eliminar: existen vehículos registrados con esta categoría.");
+        }
+
+        // Check if category is used in ordenes (through vehiculos)
+        $usedInOrdenes = ObtenerPrimerRegistro(
+            $this->db,
+            "SELECT o.ID
+             FROM {$this->dbName}.ordenes o
+             INNER JOIN {$this->dbName}.vehiculos v ON o.VehiculoID = v.ID
+             WHERE v.CategoriaVehiculo = ?
+             LIMIT 1",
+            [$id]
+        );
+
+        if ($usedInOrdenes) {
+            throw new Exception("No se puede eliminar: existen órdenes asociadas a vehículos de esta categoría.");
+        }
+
+        // Safe to delete
         EjecutarSQL(
             $this->db,
             "DELETE FROM {$this->dbName}.categoriavehiculo

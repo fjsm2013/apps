@@ -87,8 +87,7 @@ $hasPrecios = count($precios) > 0;
                                            name="precios[<?= $servicio['ID'] ?>][<?= $tipo['ID'] ?>]" 
                                            class="form-control text-end" 
                                            value="<?= $precioActual ?>"
-                                           placeholder="0" 
-                                           step="500">
+                                           placeholder="0">
                                 </div>
                             </td>
                             <?php endforeach; ?>
