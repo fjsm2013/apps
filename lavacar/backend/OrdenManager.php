@@ -31,13 +31,13 @@ class OrdenManager
         
         $impuesto = $subtotal * 0.13; // 13% IVA
         $total = $subtotal + $impuesto;
-        
+        $fechaIngreso = date('Y-m-d H:i:s');
         return EjecutarSQL(
             $this->db,
             "INSERT INTO {$this->dbName}.ordenes 
             (ClienteID, VehiculoID, Monto, Descuento, Impuesto, Estado, 
              FechaIngreso, Categoria, TipoServicio, ServiciosJSON, Observaciones)
-             VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?)",
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
                 $data['cliente_id'],
                 $data['vehiculo_id'],
@@ -45,6 +45,7 @@ class OrdenManager
                 $data['descuento'] ?? 0.00,
                 $impuesto,
                 $data['estado'] ?? 1,
+				$fechaIngreso,
                 $data['categoria_id'],
                 $data['tipo_servicio'] ?? 1,
                 json_encode($serviciosData),
@@ -128,28 +129,37 @@ class OrdenManager
        UPDATE ORDER STATUS
     ========================= */
     public function updateStatus(int $id, int $estado): void
-    {
-        $fechaCampo = '';
-        switch ($estado) {
-            case 2: // En proceso
-                $fechaCampo = ', FechaProceso = NOW()';
-                break;
-            case 3: // Terminado
-                $fechaCampo = ', FechaTerminado = NOW()';
-                break;
-            case 4: // Cerrado
-                $fechaCampo = ', FechaCierre = NOW()';
-                break;
-        }
-        
-        EjecutarSQL(
-            $this->db,
-            "UPDATE {$this->dbName}.ordenes 
-             SET Estado = ? {$fechaCampo}
-             WHERE ID = ?",
-            [$estado, $id]
-        );
-    }
+	{
+		$fecha = date('Y-m-d H:i:s');
+
+		$campoFecha = null;
+
+		switch ($estado) {
+			case 2:
+				$campoFecha = 'FechaProceso';
+				break;
+			case 3:
+				$campoFecha = 'FechaTerminado';
+				break;
+			case 4:
+				$campoFecha = 'FechaCierre';
+				break;
+		}
+
+		$sql = "UPDATE {$this->dbName}.ordenes SET Estado = ?";
+		$params = [$estado];
+
+		if ($campoFecha !== null) {
+			$sql .= ", {$campoFecha} = ?";
+			$params[] = $fecha;
+		}
+
+		$sql .= " WHERE ID = ?";
+		$params[] = $id;
+
+		EjecutarSQL($this->db, $sql, $params);
+	}
+
 
     /* =========================
        GET ORDER TOTALS
