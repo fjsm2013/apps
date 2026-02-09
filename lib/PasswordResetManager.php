@@ -49,8 +49,8 @@ class PasswordResetManager
 
         // Generate reset link
         $hostName = "http://localhost/interpal/apps";
-        if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] == 'soc2.go2mti.com') {
-            $hostName = "https://soc2.go2mti.com/interpal/apps";
+        if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] == 'froshsystems.com') {
+            $hostName = "https://froshsystems.com";
         }
         $resetLink = sprintf("%s/reset-password.php?token=%s", $hostName, urlencode($token));
 
@@ -67,34 +67,36 @@ class PasswordResetManager
     {
         try {
             $subject = "FROSH Systems - Recuperacion de Clave";
-            
+
             // Check if template exists
             $templatePath = "lib/templates/forgotPassword.htm";
             if (!file_exists($templatePath)) {
                 // Create a simple template if it doesn't exist
                 $template = $this->getDefaultResetTemplate();
-            } else {
+            }
+            else {
                 $template = file_get_contents($templatePath);
             }
-            
+
             $year = date('Y');
             $displayName = !empty($name) ? htmlspecialchars($name) : 'Usuario';
 
             $message = str_replace(
-                ['{{name}}', '{{link}}', '{{current_year}}', '[NAME]', '[RESET_LINK]', '[CURRENT_YEAR]'],
-                [$displayName, htmlspecialchars($link), $year, $displayName, htmlspecialchars($link), $year],
+            ['{{name}}', '{{link}}', '{{current_year}}', '[NAME]', '[RESET_LINK]', '[CURRENT_YEAR]'],
+            [$displayName, htmlspecialchars($link), $year, $displayName, htmlspecialchars($link), $year],
                 $template
             );
 
             // Send email using the same function as the working examples
             $result = EnviarEmail($subject, $message, [$to, $displayName]);
-            
+
             // Also send copy to admin for debugging
             EnviarEmail($subject . " (Copia)", $message, ["myinterpal@gmail.com", "Administración"]);
-            
+
             return $result;
-            
-        } catch (Exception $e) {
+
+        }
+        catch (Exception $e) {
             error_log("Error enviando email de reset: " . $e->getMessage());
             return false;
         }
@@ -153,11 +155,9 @@ class PasswordResetManager
     public function validateToken($token)
     {
         $stmt = $this->conn->prepare("
-            SELECT user_id 
+            SELECT user_id, expires_at, used
             FROM {$this->table_resets}
             WHERE token = ?
-            AND expires_at > NOW()
-            AND used = 0
             LIMIT 1
         ");
         $stmt->bind_param("s", $token);
@@ -165,7 +165,23 @@ class PasswordResetManager
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
 
-        return $row ? $row['user_id'] : false;
+        if (!$row) {
+            return false;
+        }
+
+        if ($row['used'] == 1) {
+            return false;
+        }
+
+        // Compare timestamps in PHP to avoid MySQL timezone mismatches
+        $expiresAt = strtotime($row['expires_at']);
+        $now = time();
+
+        if ($now > $expiresAt) {
+            return false;
+        }
+
+        return $row['user_id'];
     }
 
     /************************************************************
